@@ -15,8 +15,12 @@ from datetime import timedelta
 from pathlib import Path
 
 import cloudinary
-import dj_database_url
 from decouple import config
+
+try:
+    import dj_database_url
+except Exception:  # pragma: no cover - handles incompatible installs on older Python
+    dj_database_url = None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -127,7 +131,7 @@ WSGI_APPLICATION = 'newsapp.wsgi.application'
 # }
 
 
-if os.getenv("DATABASE_URL"):
+if os.getenv("DATABASE_URL") and dj_database_url is not None:
     DATABASES = {
         "default": dj_database_url.config(
             default=os.getenv("DATABASE_URL"),
@@ -205,8 +209,8 @@ SITE_ID = 1
 # Authentication settings
 REST_USE_JWT = True  # Optional: use JWT for authentication
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 
 
 REST_FRAMEWORK = {

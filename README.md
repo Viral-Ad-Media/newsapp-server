@@ -347,3 +347,24 @@ DEBUG=True
 - This project now installs `psycopg2-binary` only on Linux by default.
 - On macOS local development, SQLite is used unless you explicitly configure PostgreSQL.
 - If you need PostgreSQL on macOS, install libpq and add `pg_config` to PATH before installing `psycopg2-binary`.
+
+### `TypeError: 'type' object is not subscriptable` from `dj_database_url`
+
+- Cause: `dj-database-url` version incompatible with Python 3.8.
+- Fix:
+
+```bash
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+### `NotOpenSSLWarning` (LibreSSL) from `urllib3`
+
+- This is a warning, but on Python 3.8/macOS it is best to keep `urllib3<2`.
+- If needed, force reinstall:
+
+```bash
+source .venv/bin/activate
+python -m pip install "urllib3<2" --force-reinstall
+```
