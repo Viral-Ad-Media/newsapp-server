@@ -1,7 +1,11 @@
 import requests
-from django.core.management.base import BaseCommand
 from decouple import config
-from news.models import NewsArticle, NewsSource, NewsCategory
+from django.core.management.base import BaseCommand
+
+from news.models import NewsArticle, NewsSource
+
+REQUEST_TIMEOUT_SECONDS = 15
+FALLBACK_SOURCE_URL = "https://newsapi.org"
 
 class Command(BaseCommand):
     help = 'Fetch news articles from multiple sources and save them to the database'
@@ -9,38 +13,73 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write(self.style.SUCCESS('Starting news fetch...'))
 
-        # Example for fetching from one API (repeat as needed for additional APIs)
-        url = f'https://newsapi.org/v2/top-headlines?country=us&apiKey={config("NEWS_API_KEY")}'
-        response = requests.get(url)
+        api_key = config("NEWS_API_KEY", default="")
+        if not api_key:
+            self.stdout.write(self.style.ERROR("NEWS_API_KEY is not configured."))
+            return
 
-        if response.status_code == 200:
-            articles = response.json().get('articles', [])
-            self.save_articles(articles)
-            self.stdout.write(self.style.SUCCESS('News fetch completed.'))
-        else:
-            self.stdout.write(self.style.ERROR(f"Failed to fetch news. Status code: {response.status_code}"))
+        url = "https://newsapi.org/v2/top-headlines"
+        params = {"country": "us", "apiKey": api_key}
+        try:
+            response = requests.get(url, params=params, timeout=REQUEST_TIMEOUT_SECONDS)
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            self.stdout.write(self.style.ERROR(f"Failed to fetch news: {exc}"))
+            return
+
+        articles = response.json().get("articles", [])
+        if not articles:
+            self.stdout.write(self.style.WARNING("No articles returned from upstream API."))
+            return
+
+        created_count, updated_count = self.save_articles(articles)
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"News fetch completed. Created: {created_count}, Updated: {updated_count}"
+            )
+        )
 
     def save_articles(self, articles):
+        created_count = 0
+        updated_count = 0
+
         for article in articles:
-            source_name = article.get('source', {}).get('name', 'Unknown')
-            title = article.get('title')
-            description = article.get('description')
-            content = article.get('content')
-            image = article.get('urlToImage', '')
+            source_data = article.get("source") or {}
+            source_name = (source_data.get("name") or "Unknown").strip()
+            source_url = (source_data.get("url") or FALLBACK_SOURCE_URL).strip()
+            title = (article.get("title") or "").strip()
+            description = article.get("description") or ""
+            content = article.get("content") or description
 
             if not title or not content:
                 continue
 
-            # Save or get the source
-            source, created = NewsSource.objects.get_or_create(name=source_name)
-
-            # Create the news article
-            NewsArticle.objects.create(
-                title=title,
-                description=description,
-                content=content,
-                image=image,
-                source=source,
-                location=article.get('country', ''),  # Example location, update as needed
+            source, _ = NewsSource.objects.get_or_create(
+                name=source_name,
+                defaults={"url": source_url},
             )
-            self.stdout.write(self.style.SUCCESS(f"Saved article: {title}"))
+            if source_url and source.url != source_url:
+                source.url = source_url
+                source.save(update_fields=["url"])
+
+            article_obj, created = NewsArticle.objects.update_or_create(
+                title=title,
+                source=source,
+                defaults={
+                    "description": description,
+                    "content": content,
+                    "author": article.get("author") or "",
+                    "location": article.get("country", ""),
+                },
+            )
+            if created:
+                created_count += 1
+            else:
+                updated_count += 1
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"{'Created' if created else 'Updated'} article: {article_obj.title}"
+                )
+            )
+
+        return created_count, updated_count

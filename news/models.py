@@ -1,4 +1,5 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 from taggit.managers import TaggableManager  # Import the TaggableManager for tagging
 
 class NewsSource(models.Model):
@@ -11,7 +12,7 @@ class NewsSource(models.Model):
 
 class NewsCategory(models.Model):
     name = models.CharField(max_length=100)
-    image = models.ImageField(upload_to='category_images/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
 
     def __str__(self):
         return self.name
@@ -22,7 +23,7 @@ class NewsArticle(models.Model):
     author = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField()
     content = models.TextField()
-    image = models.ImageField(upload_to='images/', blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True)
     categories = models.ManyToManyField(NewsCategory, related_name='articles')
     location = models.CharField(max_length=100, blank=True, null=True)
     published_at = models.DateTimeField(auto_now_add=True)
@@ -52,10 +53,7 @@ class NewsArticle(models.Model):
         Update coverage data based on external API response.
         """
         self.total_sources = total_sources
-        if total_sources > 0:
-            self.left_coverage_percentage = int((left_sources / total_sources) * 100)
-            self.right_coverage_percentage = int((right_sources / total_sources) * 100)
-        self.save()
+        self.save(update_fields=["total_sources"])
 
     def update_sentiment_data(self, sentiment, positive, neutral, negative):
         """
@@ -65,4 +63,11 @@ class NewsArticle(models.Model):
         self.sentiment_positive = positive
         self.sentiment_neutral = neutral
         self.sentiment_negative = negative
-        self.save()
+        self.save(
+            update_fields=[
+                "sentiment",
+                "sentiment_positive",
+                "sentiment_neutral",
+                "sentiment_negative",
+            ]
+        )

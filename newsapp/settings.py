@@ -9,9 +9,18 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-from decouple import config
-from pathlib import Path
+
+import os
 from datetime import timedelta
+from pathlib import Path
+
+import cloudinary
+from decouple import config
+
+try:
+    import dj_database_url
+except Exception:  # pragma: no cover - handles incompatible installs on older Python
+    dj_database_url = None
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,9 +30,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('SECRET_KEY')
+SECRET_KEY = config("SECRET_KEY", default="unsafe-dev-secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
+<<<<<<< HEAD
 DEBUG = True
 
 ALLOWED_HOSTS = ['newsapp-server-u11s.onrender.com', 'https://newsapp-server-u11s.onrender.com','https://radiant-naiad-e03ca9.netlify.app' 'https://674f013303f72c0008f3ec6c--radiant-naiad-e03ca9.netlify.app']
@@ -57,20 +67,63 @@ INSTALLED_APPS = [
     'corsheaders',
     'taggit',
     'news',
+=======
+DEBUG = config("DEBUG", cast=bool, default=False)
+
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in config(
+        "ALLOWED_HOSTS",
+        default="newsapp-najw.onrender.com,aboki-newsapp-8c7372ca5580.herokuapp.com,localhost,127.0.0.1",
+    ).split(",")
+    if host.strip()
+>>>>>>> 884d48c91d6811cedbcc0d02b1f7e1dcc1bb5f23
+]
+
+
+# Load the API key from environment variables
+NEWS_API_KEY = config("NEWS_API_KEY", default="")
+NEWS_DATA_IO_API_KEY = config("NEWS_DATA_IO_API_KEY", default="")
+OPENAI_API_KEY = config("OPENAI_API_KEY", default="")
+
+
+
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'dj_rest_auth.registration',
+    'corsheaders',
+    'taggit',
+    'news',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'allauth.account.middleware.AccountMiddleware',
 ]
+<<<<<<< HEAD
 
 CORS_ALLOWED_ORIGINS = [ 
     'http://localhost:3000',
@@ -111,8 +164,75 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+=======
+
+CORS_ALLOWED_ORIGINS = [ 
+    'http://localhost:3000',
+    'https://674f013303f72c0008f3ec6c--radiant-naiad-e03ca9.netlify.app',
+    'https://radiant-naiad-e03ca9.netlify.app',  # Your Netlify domain
+    'https://aboki-newsapp-8c7372ca5580.herokuapp.com',        # Your API's own domain
+]
+
+# Optional: Allow credentials if necessary
+CORS_ALLOW_CREDENTIALS = True
+
+
+ROOT_URLCONF = 'newsapp.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'newsapp.wsgi.application'
+
+
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+
+if os.getenv("DATABASE_URL") and dj_database_url is not None:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.getenv("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=not DEBUG,
+        )
+>>>>>>> 884d48c91d6811cedbcc0d02b1f7e1dcc1bb5f23
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
+
+
+# we only need the engine name, as heroku takes care of the rest
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#     }
+# }
 
 
 # Password validation
@@ -152,14 +272,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-MIDDLEWARE.append('whitenoise.middleware.WhiteNoiseMiddleware')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_URL = '/media/'
+MEDIA_URL = 'https://res.cloudinary.com/dz58pgz41/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
 
@@ -169,8 +288,8 @@ SITE_ID = 1
 # Authentication settings
 REST_USE_JWT = True  # Optional: use JWT for authentication
 ACCOUNT_EMAIL_VERIFICATION = 'none'
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_LOGIN_METHODS = {'username'}
+ACCOUNT_SIGNUP_FIELDS = ['email', 'username*', 'password1*', 'password2*']
 
 
 REST_FRAMEWORK = {
@@ -185,6 +304,23 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = not DEBUG
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
+# Cloudinary Configuration
+CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="")
+CLOUDINARY_API_KEY = config("CLOUDINARY_API_KEY", default="")
+CLOUDINARY_API_SECRET = config("CLOUDINARY_API_SECRET", default="")
+
+if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
+    )
+    # Use Cloudinary for media file storage
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+
 
