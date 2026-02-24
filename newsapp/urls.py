@@ -45,5 +45,8 @@ urlpatterns = [
     path('api/news/<int:article_id>/related/', related_news, name='related_news'),
 
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.MEDIA_URL.startswith("/"):
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

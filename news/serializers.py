@@ -14,26 +14,55 @@ class NewsCategorySerializer(serializers.ModelSerializer):
     articles = serializers.PrimaryKeyRelatedField(
         many=True,
         read_only=True
-    )  # Ensure this works with the ManyToManyField in NewsArticle
+    )
 
     class Meta:
         model = NewsCategory
-        fields = '__all__'  # Include all fields
-    
+        fields = ["id", "name", "image", "image_url", "articles"]
+
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None  # Return Cloudinary URL
+        return obj.image.url if obj.image else None
+
+
+class NewsCategoryLiteSerializer(serializers.ModelSerializer):
+    image_url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = NewsCategory
+        fields = ["id", "name", "image_url"]
+
+    def get_image_url(self, obj):
+        return obj.image.url if obj.image else None
 
 
 class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
-    source = NewsSourceSerializer()
-    categories = NewsCategorySerializer(many=True)
-    tags = TagListSerializerField()  # Serialize tags as a list of strings
+    source = NewsSourceSerializer(read_only=True)
+    categories = NewsCategoryLiteSerializer(many=True, read_only=True)
+    tags = TagListSerializerField(required=False)
 
     class Meta:
         model = NewsArticle
-        fields = '__all__'  # Include all fields, including tags
-    
+        fields = [
+            "id",
+            "title",
+            "author",
+            "description",
+            "content",
+            "image",
+            "image_url",
+            "categories",
+            "location",
+            "published_at",
+            "source",
+            "total_sources",
+            "sentiment",
+            "sentiment_positive",
+            "sentiment_neutral",
+            "sentiment_negative",
+            "tags",
+        ]
+
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None  # Return Cloudinary URL
+        return obj.image.url if obj.image else None
 

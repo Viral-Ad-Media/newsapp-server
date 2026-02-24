@@ -53,10 +53,7 @@ class NewsArticle(models.Model):
         Update coverage data based on external API response.
         """
         self.total_sources = total_sources
-        if total_sources > 0:
-            self.left_coverage_percentage = int((left_sources / total_sources) * 100)
-            self.right_coverage_percentage = int((right_sources / total_sources) * 100)
-        self.save()
+        self.save(update_fields=["total_sources"])
 
     def update_sentiment_data(self, sentiment, positive, neutral, negative):
         """
@@ -66,4 +63,11 @@ class NewsArticle(models.Model):
         self.sentiment_positive = positive
         self.sentiment_neutral = neutral
         self.sentiment_negative = negative
-        self.save()
+        self.save(
+            update_fields=[
+                "sentiment",
+                "sentiment_positive",
+                "sentiment_neutral",
+                "sentiment_negative",
+            ]
+        )

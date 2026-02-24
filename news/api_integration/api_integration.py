@@ -1,6 +1,7 @@
 import requests
-from .models import NewsArticle, NewsSource
-from django.utils import timezone
+from .models import NewsArticle
+
+REQUEST_TIMEOUT_SECONDS = 10
 
 def fetch_news_data(article_id):
     """
@@ -24,15 +25,24 @@ def fetch_news_data(article_id):
     ]
 
     for api in external_apis:
-        response = requests.get(api, params={'query': article.title, 'published_at': article.published_at})
-        if response.status_code == 200:
-            data = response.json()
-            for source in data.get('sources', []):
-                if source['bias'] == 'left':
-                    left_sources += 1
-                elif source['bias'] == 'right':
-                    right_sources += 1
-                total_sources += 1
+        try:
+            response = requests.get(
+                api,
+                params={"query": article.title, "published_at": article.published_at},
+                timeout=REQUEST_TIMEOUT_SECONDS,
+            )
+            response.raise_for_status()
+        except requests.RequestException:
+            continue
+
+        data = response.json()
+        for source in data.get("sources", []):
+            source_bias = source.get("bias")
+            if source_bias == "left":
+                left_sources += 1
+            elif source_bias == "right":
+                right_sources += 1
+            total_sources += 1
 
     # Update article coverage data
     article.update_coverage_data(left_sources, right_sources, total_sources)
