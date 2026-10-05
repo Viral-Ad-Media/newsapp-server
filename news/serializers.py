@@ -6,19 +6,20 @@ from .models import NewsSource, NewsCategory, NewsArticle
 class NewsSourceSerializer(serializers.ModelSerializer):
     class Meta:
         model = NewsSource
-        fields = ['id', 'name', 'url']  # Removed 'bias' since it's not a field in NewsSource
+        fields = [
+            "id",
+            "name",
+            "url",
+        ]  # Removed 'bias' since it's not a field in NewsSource
 
 
 class NewsCategorySerializer(serializers.ModelSerializer):
     image_url = serializers.SerializerMethodField()
-    articles = serializers.PrimaryKeyRelatedField(
-        many=True,
-        read_only=True
-    )
+    article_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = NewsCategory
-        fields = ["id", "name", "image", "image_url", "articles"]
+        fields = ["id", "name", "image", "image_url", "article_count"]
 
     def get_image_url(self, obj):
         return obj.image.url if obj.image else None
@@ -40,6 +41,7 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     source = NewsSourceSerializer(read_only=True)
     categories = NewsCategoryLiteSerializer(many=True, read_only=True)
     tags = TagListSerializerField(required=False)
+    summary = serializers.CharField(source="description", read_only=True)
 
     class Meta:
         model = NewsArticle
@@ -48,6 +50,8 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             "title",
             "author",
             "description",
+            "summary",
+            "article_url",
             "content",
             "image",
             "image_url",
@@ -64,5 +68,4 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
         ]
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
-
+        return obj.image.url if obj.image else (obj.remote_image_url or None)
