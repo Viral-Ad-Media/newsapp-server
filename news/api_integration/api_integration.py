@@ -1,49 +1,6 @@
-import requests
-from .models import NewsArticle
+from news.models import NewsArticle
 
-REQUEST_TIMEOUT_SECONDS = 10
 
 def fetch_news_data(article_id):
-    """
-    Fetch news coverage details from multiple APIs and update NewsArticle and LopsidedStory models.
-    """
-    try:
-        article = NewsArticle.objects.get(id=article_id)
-    except NewsArticle.DoesNotExist:
-        return None
-
-    # Placeholder for API calls (implement actual API URLs and parameters)
-    left_sources = 0
-    right_sources = 0
-    total_sources = 0
-
-    # Example: Fetch data from each API
-    external_apis = [
-        'https://newsapi1.com/data',
-        'https://newsapi2.com/data',
-        # Add more APIs here
-    ]
-
-    for api in external_apis:
-        try:
-            response = requests.get(
-                api,
-                params={"query": article.title, "published_at": article.published_at},
-                timeout=REQUEST_TIMEOUT_SECONDS,
-            )
-            response.raise_for_status()
-        except requests.RequestException:
-            continue
-
-        data = response.json()
-        for source in data.get("sources", []):
-            source_bias = source.get("bias")
-            if source_bias == "left":
-                left_sources += 1
-            elif source_bias == "right":
-                right_sources += 1
-            total_sources += 1
-
-    # Update article coverage data
-    article.update_coverage_data(left_sources, right_sources, total_sources)
-    return article
+    """Return stored coverage; no verified external bias provider is configured."""
+    return NewsArticle.objects.filter(pk=article_id).first()

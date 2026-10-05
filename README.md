@@ -50,7 +50,7 @@ It uses:
 ## Tech Stack
 
 - Python
-- Django `4.2.x` on Python `<3.10`, Django `5.1.x` on Python `>=3.10`
+- Django `5.2.x` LTS on Python `>=3.11`
 - Django REST Framework
 - django-allauth
 - dj-rest-auth
@@ -368,3 +368,27 @@ python -m pip install -r requirements.txt
 source .venv/bin/activate
 python -m pip install "urllib3<2" --force-reinstall
 ```
+
+## Audit repairs and deployment
+
+Use Python 3.11 or newer and install `requirements.txt` (Django 5.2 LTS). Configuration is documented in `.env.example`; `SECRET_KEY` is mandatory with `DEBUG=False`. Configure `DATABASE_URL` for a durable production database and set `ALLOWED_HOSTS` to hostname values without URL schemes. Set `CORS_ALLOWED_ORIGINS` to your frontend's HTTPS origin.
+
+Run these before serving traffic:
+
+```sh
+python manage.py migrate
+python manage.py collectstatic --noinput
+python manage.py check
+```
+
+The original `0001_initial` migration has been restored from repository history because it had been overwritten with a later schema incompatible with migrations 0002–0010. Migration 0011 adds reader profiles, upstream article/image URLs, and publication-time support. Back up the production database before applying migrations; do not delete it or reset migration history. If the existing database was created from the overwritten initial migration with later migrations faked, compare its schema and migration records before rollout.
+
+News and category lists now return `{count, next, previous, results}` and support bounded `page_size` (maximum 100). News supports exact `category_id`, `search`, location, and time filters. Category responses contain `article_count`; request articles via `/api/news/?category_id=<id>` instead of fetching each article separately.
+
+Authenticated reader APIs: `/api/feed/`, `/api/preferences/`, `/api/saved/`, `/api/saved/<id>/`, and `/api/saved-status/?ids=1,2`. Use JWT access tokens from `/api/token/` and renew them via `/api/token/refresh/`.
+
+The single installed `fetch_news` command imports both NewsAPI and NewsData feeds, normalizes nullable fields, keeps provider publication times, and defaults to Nigeria. Run `python manage.py fetch_news --country ng`; configure at least one upstream news API key. It fails with a nonzero exit code on provider errors without printing credentials.
+
+`/api/ask/` accepts a question of up to 500 characters and uses a maximum of five stored news excerpts. Configure `OPENAI_API_KEY` for generated answers; without it, the response explicitly indicates unavailability and supplies stored headlines. Political-bias classifications are not fabricated or fetched from placeholder domains.
+
+Validation: `DEBUG=True python manage.py check`, `DEBUG=True python manage.py makemigrations --check --dry-run`, and `DEBUG=True python manage.py test`.
