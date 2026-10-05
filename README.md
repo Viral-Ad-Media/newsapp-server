@@ -1,394 +1,175 @@
 # NewsApp Backend
 
-NewsApp is a Django REST backend for aggregating and serving news content with category filters, related-story lookup, sentiment metadata, and JWT-based authentication.
+Django REST API for AbokiNews: news ingestion, paginated feeds, categories, source coverage, reader preferences, saved stories, and questions grounded in stored news.
 
-## Table of Contents
+Companion frontend: [Viral-Ad-Media/my-news-app](https://github.com/Viral-Ad-Media/my-news-app).
 
-1. Overview
-2. Features
-3. Tech Stack
-4. Project Structure
-5. Data Model
-6. API Reference
-7. Authentication
-8. Environment Variables
-9. Local Development Setup
-10. Running Tests
-11. Background Data Fetching
-12. Deployment Notes
-13. Troubleshooting
+## Requirements
 
-## Overview
+- Python 3.11 or 3.12 (both covered by CI)
+- Django 5.2 LTS and dependencies in `requirements.txt`
+- SQLite for local development; a durable PostgreSQL database for production
+- At least one news-provider key to ingest stories
 
-This project exposes REST endpoints for:
+## Local setup
 
-- Listing and filtering news articles
-- Fetching single article details
-- Returning sentiment/coverage metadata for an article
-- Returning related articles by shared category
-- Listing categories
-
-It uses:
-
-- Django + Django REST Framework
-- `dj-rest-auth` / `allauth` / `simplejwt` for auth
-- Cloudinary for media storage (optional)
-- SQLite locally, PostgreSQL in production via `DATABASE_URL`
-
-## Features
-
-- News article listing with filters:
-  - `category`
-  - `location`
-  - `filter` (`last_day`, `last_week`, `last_month`)
-- Related article endpoint with fallback logic
-- Coverage/sentiment endpoint
-- Category endpoints via DRF router and direct detail route
-- JWT token issue/refresh endpoints
-- Admin interface for `NewsSource`, `NewsCategory`, and `NewsArticle`
-
-## Tech Stack
-
-- Python
-- Django `5.2.x` LTS on Python `>=3.11`
-- Django REST Framework
-- django-allauth
-- dj-rest-auth
-- djangorestframework-simplejwt
-- django-taggit
-- requests
-- cloudinary + django-cloudinary-storage
-- gunicorn + whitenoise
-
-## Project Structure
-
-```text
-newsapp/
-├── manage.py
-├── Procfile
-├── requirements.txt
-├── news/
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   ├── urls.py
-│   ├── tests.py
-│   ├── admin.py
-│   ├── management/commands/fetch_news.py
-│   ├── api_integration/api_integration.py
-│   └── utils/ai_summarizer.py
-└── newsapp/
-    ├── settings.py
-    ├── urls.py
-    ├── wsgi.py
-    └── asgi.py
-```
-
-## Data Model
-
-### `NewsSource`
-
-- `name` (char)
-- `url` (URL)
-
-### `NewsCategory`
-
-- `name` (char)
-- `image` (Cloudinary field, optional)
-
-### `NewsArticle`
-
-- `title`, `author`, `description`, `content`
-- `image` (Cloudinary field, optional)
-- `categories` (many-to-many to `NewsCategory`)
-- `location`
-- `published_at`
-- `source` (foreign key to `NewsSource`)
-- Coverage field:
-  - `total_sources`
-- Sentiment fields:
-  - `sentiment`
-  - `sentiment_positive`
-  - `sentiment_neutral`
-  - `sentiment_negative`
-- Tags:
-  - `tags` (`django-taggit`)
-
-## API Reference
-
-Base path: `/api/`
-
-### Health of Core News Endpoints
-
-1. `GET /api/news/`
-2. `GET /api/news/<pk>/`
-3. `GET /api/category/<category_id>/`
-4. `GET /api/categories/`
-5. `GET /api/categories/<pk>/`
-6. `GET /api/news/<article_id>/coverage/`
-7. `GET /api/news/<article_id>/related/`
-
-### `GET /api/news/` Query Parameters
-
-- `category` (string, case-insensitive category name match)
-- `location` (string, case-insensitive location match)
-- `filter`:
-  - `last_day`
-  - `last_week`
-  - `last_month`
-
-Example:
-
-```bash
-curl "http://127.0.0.1:8000/api/news/?category=Politics&filter=last_week"
-```
-
-### Example Article Response (shape)
-
-```json
-{
-  "id": 1,
-  "title": "Example headline",
-  "author": "Reporter",
-  "description": "Short summary",
-  "content": "Full article body...",
-  "image": "cloudinary-field-value",
-  "image_url": "https://res.cloudinary.com/...",
-  "categories": [
-    { "id": 2, "name": "Politics", "image_url": "https://..." }
-  ],
-  "location": "US",
-  "published_at": "2026-02-24T12:00:00Z",
-  "source": {
-    "id": 1,
-    "name": "Example Source",
-    "url": "https://example.com"
-  },
-  "total_sources": 0,
-  "sentiment": "neutral",
-  "sentiment_positive": 0.0,
-  "sentiment_neutral": 0.0,
-  "sentiment_negative": 0.0,
-  "tags": ["world", "policy"]
-}
-```
-
-## Authentication
-
-Configured auth routes:
-
-- `POST /api/token/` (obtain access/refresh JWT pair)
-- `POST /api/token/refresh/` (refresh access token)
-- `GET|POST /api/auth/...` (`dj-rest-auth` endpoints)
-- `POST /api/auth/registration/...` (registration endpoints)
-- `/accounts/...` (allauth routes)
-
-Default API auth class:
-
-- `rest_framework_simplejwt.authentication.JWTAuthentication`
-
-## Environment Variables
-
-Create a `.env` file in project root.
-
-Required for production:
-
-```env
-SECRET_KEY=change-me
-DEBUG=False
-ALLOWED_HOSTS=newsapp-najw.onrender.com,example.com
-
-DATABASE_URL=postgresql://user:password@host:5432/dbname
-
-NEWS_API_KEY=your_newsapi_key
-NEWS_DATA_IO_API_KEY=your_newsdata_key
-
-OPENAI_API_KEY=your_openai_key
-OPENAI_SUMMARY_MODEL=gpt-4o-mini
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_cloudinary_key
-CLOUDINARY_API_SECRET=your_cloudinary_secret
-```
-
-Notes:
-
-- If `DATABASE_URL` is not set, local SQLite (`db.sqlite3`) is used.
-- If Cloudinary vars are missing, Cloudinary storage is not enabled.
-- Keep `DEBUG=True` in local development to avoid forced HTTPS redirect behavior.
-
-## Local Development Setup
-
-### 1. Create and activate a virtual environment
+From the repository root:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-### 2. Install dependencies
-
-```bash
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-### 3. Configure environment
-
-```bash
-touch .env
-# then populate it with the variables from the "Environment Variables" section
-```
-
-### 4. Run migrations
-
-```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+cp .env.example .env
+# Edit .env: keep DEBUG=True locally and set a random SECRET_KEY.
 python manage.py migrate
-```
-
-### 5. Create superuser (optional)
-
-```bash
-python manage.py createsuperuser
-```
-
-### 6. Start development server
-
-```bash
+python manage.py createsuperuser  # optional
 python manage.py runserver
 ```
 
-Server URL:
+API: `http://localhost:8000/api/`. Admin: `http://localhost:8000/admin/`.
+Start the companion frontend at `http://localhost:3000`.
 
-- `http://127.0.0.1:8000/`
+## Configuration
 
-Admin URL:
+Use `.env` for local values and environment variables on the production host. Keep credentials out of version control.
 
-- `http://127.0.0.1:8000/admin/`
+| Variable | Purpose |
+| --- | --- |
+| `DEBUG` | `True` locally; `False` in production. Defaults to `False`. |
+| `SECRET_KEY` | Long random Django secret; required when `DEBUG=False`. |
+| `ALLOWED_HOSTS` | Comma-separated backend hostnames, without schemes or paths. |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated frontend origins including scheme and port, such as `http://localhost:3000` or your HTTPS domain. Also used for trusted CSRF origins. |
+| `DATABASE_URL` | PostgreSQL connection URL. Set as a runtime environment variable; current settings read it through `os.getenv`, rather than loading this value from `.env`. Without it, SQLite is used. |
+| `NEWS_API_KEY` | NewsAPI credential; enables this ingestion provider. |
+| `NEWS_DATA_IO_API_KEY` | NewsData credential; enables this ingestion provider. |
+| `OPENAI_API_KEY` | Optional; enables generated answers using stored excerpts. |
+| `OPENAI_SUMMARY_MODEL` | Model used by AI helpers; default `gpt-4o-mini`. |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Optional media configuration; all three are needed to enable Cloudinary storage. |
+| `SECURE_SSL_REDIRECT` | Defaults to enabled outside debug mode. Configure HTTPS proxy forwarding correctly. |
 
-## Running Tests
+The Linux dependency install includes `psycopg2-binary`. For PostgreSQL development on another platform, install a compatible PostgreSQL driver separately; SQLite needs no additional driver.
 
-Project tests currently live in `news/tests.py`.
+## API reference
 
-```bash
-python manage.py test
-```
+All paths below are relative to `/api/`. Reader endpoints require `Authorization: Bearer <access-token>`.
 
-Or app-specific:
+| Method | Path | Behavior |
+| --- | --- | --- |
+| GET | `news/` | Paginated news, newest publication first. |
+| GET | `news/<id>/` | Article detail; missing IDs return 404. |
+| GET | `categories/` | Paginated categories with `article_count`. |
+| GET | `categories/<id>/` | Category metadata. |
+| GET | `category/<id>/` | Alternate category metadata route; does not return articles. |
+| GET | `news/<id>/related/` | Up to four related stories, with latest-story fallback; excludes the current story. |
+| GET | `news/<id>/coverage/` | Object containing source articles and stored sentiment metadata. |
+| GET | `feed/` | Reader feed filtered by selected categories; all news when no categories are selected. |
+| GET, PUT | `preferences/` | Read or replace category IDs using `{"categories": [1, 2]}`. |
+| GET | `saved/` | Paginated reader's saved stories. |
+| GET, PUT, DELETE | `saved/<id>/` | Check saved status, save a story, or unsave it. DELETE returns 204. |
+| GET | `saved-status/?ids=1,2` | Batch status, returning `{"saved_ids": [1]}`; at most 100 IDs. |
+| POST | `ask/` | Ask a question using `{"question": "What are the latest headlines?"}`; returns `answer` and `sources`. This backend endpoint allows anonymous access. |
+| POST | `token/` | Username/password login; returns access and refresh JWTs. |
+| POST | `token/refresh/` | Refresh access using `{"refresh": "<refresh-token>"}`. |
+| GET | `auth/user/` | Authenticated reader profile. |
+| POST | `auth/registration/` | Signup using `username`, `password1`, and `password2`. |
 
-```bash
-python manage.py test news
-```
+Additional authentication routes are supplied by `dj-rest-auth` under `auth/` and allauth under `/accounts/`.
 
-## Background Data Fetching
+### Filtering and pagination
 
-Primary management command:
+`news/`, `feed/`, and `saved/` support:
 
-```bash
-python manage.py fetch_news
-```
-
-What it does:
-
-- Pulls top headlines from NewsAPI (`country=us`)
-- Creates/updates `NewsSource`
-- Upserts `NewsArticle` by `(title, source)`
-- Prints created/updated counts
-
-Prerequisite:
-
-- `NEWS_API_KEY` must be configured
-
-## Deployment Notes
-
-- `Procfile` uses:
-
-```bash
-web: gunicorn newsapp.wsgi --log-file -
-```
-
-- Static files served via WhiteNoise middleware.
-- SSL redirect is enabled automatically when `DEBUG=False`.
-- PostgreSQL is expected in production via `DATABASE_URL`.
-
-## Troubleshooting
-
-### `ModuleNotFoundError: No module named 'django'`
-
-- Activate virtual environment:
-
-```bash
-source .venv/bin/activate
-```
-
-- Reinstall dependencies:
+| Parameter | Meaning |
+| --- | --- |
+| `category_id` | Exact category ID. |
+| `category` | Case-insensitive substring of a category name. |
+| `search` | Case-insensitive title/description search, limited to 200 characters. |
+| `location` | Case-insensitive location substring; ingested country codes include `ng`, `us`, and `gb`. |
+| `filter` | `last_day`, `last_week`, or `last_month` (30 days). |
+| `page`, `page_size` | Page number and size; default 20, maximum 100. Also supported by category lists. |
 
 ```bash
-pip install -r requirements.txt
+curl 'http://localhost:8000/api/news/?location=ng&category_id=1&page_size=20'
 ```
 
-### Redirect loop / HTTPS issues in local dev
+Paginated lists return:
 
-- Ensure:
-
-```env
-DEBUG=True
+```json
+{"count": 1, "next": null, "previous": null, "results": [{"id": 1, "title": "Example headline"}]}
 ```
 
-### News fetch command returns API errors
+Article fields include `description`, its `summary` alias, `content`, `article_url`, `image_url`, `published_at`, nested `source` and `categories`, tags, and stored sentiment fields. Images use a configured Cloudinary image or the upstream image URL. Category lists return counts rather than embedding all article IDs; use `news/?category_id=<id>` to retrieve articles.
 
-- Verify:
-  - `NEWS_API_KEY` is set
-  - Network egress is available from your runtime
-  - Your API key has not exceeded rate limits
+Coverage returns an object, not an array:
 
-### `pg_config executable not found` during install
+```json
+{
+  "total_sources": 1,
+  "articles": [{"id": 1, "title": "Example headline", "source": "Example Source", "url": "https://example.com/story", "published_at": "2026-10-05T12:00:00Z"}],
+  "sentiment_stats": {"positive": 0, "neutral": 0, "negative": 0},
+  "sentiment": "neutral"
+}
+```
 
-- This project now installs `psycopg2-binary` only on Linux by default.
-- On macOS local development, SQLite is used unless you explicitly configure PostgreSQL.
-- If you need PostgreSQL on macOS, install libpq and add `pg_config` to PATH before installing `psycopg2-binary`.
+The source count uses the stored count or one known source; `articles` currently contains the stored story's source. Zero sentiment values do not establish a measured distribution. Political-bias classification and a comprehensive multi-source comparison are not implemented.
 
-### `TypeError: 'type' object is not subscriptable` from `dj_database_url`
+### Authentication and limits
 
-- Cause: `dj-database-url` version incompatible with Python 3.8.
-- Fix:
+Access JWTs last 60 minutes; refresh JWTs last one day. The companion frontend keeps them in HttpOnly cookies and refreshes access server-side. Backend signup currently does not require email verification.
+
+Default API throttles are 120 requests/minute for anonymous clients and 240/minute for authenticated readers. `ask/` uses its own 10/minute throttle. Questions are limited to 500 characters and up to five stored excerpts. When OpenAI is unconfigured or unavailable, the answer explicitly reports unavailability and lists stored headlines; it does not claim live news access.
+
+## News ingestion
 
 ```bash
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
+python manage.py fetch_news --country ng
 ```
 
-### `NotOpenSSLWarning` (LibreSSL) from `urllib3`
+The default country is `ng`. Set `NEWS_API_KEY`, `NEWS_DATA_IO_API_KEY`, or both. The command runs each configured provider, normalizes nullable data and country names, preserves valid provider publication times, and stores original story/image URLs. Stories are updated or created by title and source; valid categories and tags are retained. Output includes created, updated, and skipped counts.
 
-- This is a warning, but on Python 3.8/macOS it is best to keep `urllib3<2`.
-- If needed, force reinstall:
+Missing credentials or provider errors produce a nonzero exit code without logging credential-bearing URLs. If one provider fails, stories imported from another provider can still be saved. Scheduling is external: configure a cron job or hosting scheduler to invoke the command at an interval allowed by your provider plan.
+
+## Validation
 
 ```bash
-source .venv/bin/activate
-python -m pip install "urllib3<2" --force-reinstall
+DEBUG=True python manage.py check
+DEBUG=True python manage.py makemigrations --check --dry-run
+DEBUG=True python manage.py test
 ```
 
-## Audit repairs and deployment
+CI runs checks and tests on Python 3.11 and 3.12. The merged repair was validated with 17 Django tests, a fresh database migration, and companion frontend integration checks. See the frontend README for the local smoke test.
 
-Use Python 3.11 or newer and install `requirements.txt` (Django 5.2 LTS). Configuration is documented in `.env.example`; `SECRET_KEY` is mandatory with `DEBUG=False`. Configure `DATABASE_URL` for a durable production database and set `ALLOWED_HOSTS` to hostname values without URL schemes. Set `CORS_ALLOWED_ORIGINS` to your frontend's HTTPS origin.
+## Deployment and migration
 
-Run these before serving traffic:
+Deploy this backend and apply its migrations before deploying the companion frontend.
 
-```sh
+1. Back up the production database and inspect migration records.
+2. Configure `DEBUG=False`, a random `SECRET_KEY`, runtime `DATABASE_URL`, backend `ALLOWED_HOSTS`, and the frontend HTTPS origin in `CORS_ALLOWED_ORIGINS`.
+3. Install dependencies and run:
+
+```bash
 python manage.py migrate
 python manage.py collectstatic --noinput
 python manage.py check
 ```
 
-The original `0001_initial` migration has been restored from repository history because it had been overwritten with a later schema incompatible with migrations 0002–0010. Migration 0011 adds reader profiles, upstream article/image URLs, and publication-time support. Back up the production database before applying migrations; do not delete it or reset migration history. If the existing database was created from the overwritten initial migration with later migrations faked, compare its schema and migration records before rollout.
+4. Start the web service using the existing Procfile command:
 
-News and category lists now return `{count, next, previous, results}` and support bounded `page_size` (maximum 100). News supports exact `category_id`, `search`, location, and time filters. Category responses contain `article_count`; request articles via `/api/news/?category_id=<id>` instead of fetching each article separately.
+```bash
+gunicorn newsapp.wsgi --log-file -
+```
 
-Authenticated reader APIs: `/api/feed/`, `/api/preferences/`, `/api/saved/`, `/api/saved/<id>/`, and `/api/saved-status/?ids=1,2`. Use JWT access tokens from `/api/token/` and renew them via `/api/token/refresh/`.
+WhiteNoise serves collected static files. The proxy must supply the correct `X-Forwarded-Proto` header for HTTPS. Configure provider keys and schedule ingestion if the service should refresh news automatically.
 
-The single installed `fetch_news` command imports both NewsAPI and NewsData feeds, normalizes nullable fields, keeps provider publication times, and defaults to Nigeria. Run `python manage.py fetch_news --country ng`; configure at least one upstream news API key. It fails with a nonzero exit code on provider errors without printing credentials.
+**Existing database migration caveat:** the original `0001_initial` was restored from repository history because an overwritten version was incompatible with migrations 0002–0010. Migration 0011 adds reader profiles, upstream article/image URLs, and publication-time support. If an existing database used the overwritten snapshot and faked later migrations, compare its actual schema with migration records before rollout. Do not delete the database or reset migration history to bypass this review.
 
-`/api/ask/` accepts a question of up to 500 characters and uses a maximum of five stored news excerpts. Configure `OPENAI_API_KEY` for generated answers; without it, the response explicitly indicates unavailability and supplies stored headlines. Political-bias classifications are not fabricated or fetched from placeholder domains.
+## Troubleshooting
 
-Validation: `DEBUG=True python manage.py check`, `DEBUG=True python manage.py makemigrations --check --dry-run`, and `DEBUG=True python manage.py test`.
+- **Startup requires `SECRET_KEY`:** set a production secret or use `DEBUG=True` for local development.
+- **Local HTTPS redirect:** confirm `DEBUG=True`; inspect `SECURE_SSL_REDIRECT` and proxy headers.
+- **Empty feeds:** run ingestion, confirm provider permissions/country support, and inspect active filters and reader preferences.
+- **401 from reader routes:** use an unexpired access JWT or refresh it; the frontend handles refresh through its own session routes.
+- **Signup/CORS failures:** add the exact frontend origin, including local port, to `CORS_ALLOWED_ORIGINS`.
+- **Provider failures:** check configured keys, quotas, supported country, and network access. Credentials are intentionally excluded from error output.
+- **Migration failure on an existing database:** inspect the schema/history caveat above before changing migration state.
