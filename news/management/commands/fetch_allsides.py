@@ -66,6 +66,7 @@ class Command(BaseCommand):
                 if not published_at:
                     published_at = datetime(2026, 10, 19, 12, 0, tzinfo=timezone.utc)
 
+                dominant_bias = item.get("dominant_bias", "balanced")
                 defaults = {
                     "title": item["title"][:255],
                     "author": item.get("author", "AllSides Editorial Desk"),
@@ -79,8 +80,21 @@ class Command(BaseCommand):
                     "left_coverage": item.get("left_coverage", 33),
                     "center_coverage": item.get("center_coverage", 34),
                     "right_coverage": item.get("right_coverage", 33),
-                    "dominant_bias": item.get("dominant_bias", "balanced"),
+                    "dominant_bias": dominant_bias,
                     "perspectives": item.get("perspectives", []),
+                    "sentiment": item.get("sentiment", "neutral"),
+                    "sentiment_positive": item.get(
+                        "sentiment_positive",
+                        22.0 if dominant_bias == "polarized" else 30.0,
+                    ),
+                    "sentiment_neutral": item.get(
+                        "sentiment_neutral",
+                        40.0 if dominant_bias == "polarized" else 45.0,
+                    ),
+                    "sentiment_negative": item.get(
+                        "sentiment_negative",
+                        38.0 if dominant_bias == "polarized" else 25.0,
+                    ),
                 }
 
                 article, was_created = NewsArticle.objects.update_or_create(

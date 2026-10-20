@@ -337,12 +337,22 @@ class LopsidedCoverageTests(NewsFixtures):
         coverage = self.client.get(f'/api/news/{first["id"]}/coverage/')
         self.assertEqual(coverage.status_code, 200)
         self.assertIn("perspectives", coverage.data)
+        self.assertIn("index_value", coverage.data)
+        self.assertTrue(coverage.data["sentiment_stats"]["neutral"] > 0)
         self.assertEqual(
             coverage.data["left_coverage"]
             + coverage.data["center_coverage"]
             + coverage.data["right_coverage"],
             100,
         )
+
+        gb_res = self.client.get("/api/news/", {"location": "gb"})
+        self.assertEqual(gb_res.status_code, 200)
+        self.assertTrue(gb_res.data["count"] >= 1)
+
+        last_day_res = self.client.get("/api/news/", {"filter": "last_day"})
+        self.assertEqual(last_day_res.status_code, 200)
+        self.assertTrue(last_day_res.data["count"] >= 1)
 
     def test_password_reset_request_endpoint(self):
         res = self.client.post(
