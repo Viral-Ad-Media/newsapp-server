@@ -139,3 +139,10 @@ GitHub.sublime-settings
 
 # GitHub workflows and templates
 .github/
+
+# Environment files (keep .env.example templates)
+.env
+.env*
+*.env
+*.env.*
+!.env.example
