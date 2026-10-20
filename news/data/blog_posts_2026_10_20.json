@@ -1,0 +1,91 @@
+[
+  {
+    "slug": "check-viral-news-before-sharing",
+    "title": "Before you forward it: five checks for a viral news story",
+    "description": "A practical reading routine for separating a shareable claim from a report you can actually verify.",
+    "categories": [
+      "Education",
+      "Technology"
+    ],
+    "reference_name": "UNESCO",
+    "reference_url": "https://www.unesco.org/en/media-information-literacy",
+    "content": "A dramatic headline in a group chat can feel urgent before it feels reliable. \n\nStart with the original\nOpen the report rather than relying on a screenshot. Look for a named publisher, author and link to the underlying announcement or document.\n\nCheck the date and place\nAn authentic report can become misleading when an old event is presented as today's news or a photograph is assigned a different location.\n\nSeparate evidence from reaction\nAsk what the article establishes directly. A quotation, prediction and confirmed outcome are different things, even when a headline puts them together.\n\nFind independent confirmation\nSeveral accounts repeating the same screenshot do not necessarily provide separate evidence. Look for reporting that explains how the information was obtained.\n\nLeave uncertainty visible\nIf you cannot establish the claim, pause before forwarding it. When sharing a correction, include the source that supports it.\n\nOriginal explainer by AbokiNews. Reference: UNESCO's Media and Information Literacy resources. This is a reading checklist, not verification of any particular viral story.",
+    "publication_date": "2026-10-20",
+    "location": "ng",
+    "tags": [
+      "explainer",
+      "blog-batch-2026-10-20"
+    ]
+  },
+  {
+    "slug": "use-ai-for-study-without-skipping-learning",
+    "title": "Using AI for study without handing over your thinking",
+    "description": "Make AI a practice partner while keeping source checks, privacy and your own reasoning in the learning process.",
+    "categories": [
+      "Education",
+      "Technology"
+    ],
+    "reference_name": "UNESCO",
+    "reference_url": "https://www.unesco.org/en/articles/guidance-generative-ai-education-and-research",
+    "content": "An AI answer can be a useful starting point for study. It should not become the point where your checking stops. UNESCO's guidance on generative AI in education argues for a human-centred approach, including attention to privacy and appropriate educational use.\n\nChoose a learning task\nAsk for a practice question, an alternative explanation or feedback on an outline you have already written. \n\nVerify before relying on it\nCheck factual claims and references against your course materials and original publications. A fluent explanation is not evidence that a citation exists or that a calculation is correct.\n\nKeep private material out\nUse a fictional example instead of uploading somebody's personal records or an unpublished document you are not authorised to share.\n\nFinish without the tool\nClose the response and explain the idea in your own words. If you cannot reconstruct the reasoning, identify the missing step and practise it again. Follow your institution's rules for disclosure and permitted assistance.\n\nOriginal explainer by AbokiNews, informed by UNESCO's guidance.",
+    "publication_date": "2026-10-20",
+    "location": "ng",
+    "tags": [
+      "explainer",
+      "blog-batch-2026-10-20"
+    ]
+  },
+  {
+    "slug": "four-habits-safer-online-accounts",
+    "title": "Four everyday habits that make your online accounts harder to steal",
+    "description": "A straightforward security checklist covering passwords, extra sign-in checks, suspicious messages and software updates.",
+    "categories": [
+      "Technology"
+    ],
+    "reference_name": "CISA",
+    "reference_url": "https://www.cisa.gov/secure-our-world",
+    "content": "Account security is easier to maintain when it becomes a routine. CISA's Secure Our World campaign groups the essentials into four behaviours: stronger passwords, multifactor authentication, phishing awareness and software updates.\n\nGive each account its own password\nA password manager can generate and store long, random passwords. Reusing one password gives an attacker another place to try it if that password is exposed.\n\nAdd another sign-in check\nTurn on multifactor authentication where it is offered. Read the service's setup instructions and keep its recovery information somewhere you can access safely if you lose your phone.\n\nPause at unexpected requests\nA message demanding immediate action deserves a second look. Open the service through your saved app or known website instead of trusting an unexpected sign-in link. Do not share verification codes with someone who contacts you.\n\nKeep software current\nInstall updates through the operating system, application or official store. \n\nStart with your main email account, then work through the others. \n\nOriginal explainer by AbokiNews. Reference: CISA's Secure Our World resources.",
+    "publication_date": "2026-10-20",
+    "location": "ng",
+    "tags": [
+      "explainer",
+      "blog-batch-2026-10-20"
+    ]
+  },
+  {
+    "slug": "understand-appliance-electricity-use",
+    "title": "Watts versus kilowatt-hours: understand what your appliances use",
+    "description": "A simple worked example explains electricity consumption without assuming a tariff or promising a particular saving.",
+    "categories": [
+      "Housing",
+      "Technology"
+    ],
+    "reference_name": "U.S. Department of Energy",
+    "reference_url": "https://www.energy.gov/energysaver/appliances-and-electronics/estimating-appliance-and-home-electronic-energy-use",
+    "content": "Watts describe power. Kilowatt-hours describe energy used over time.\n\nStart with a calculation\nThe U.S. Department of Energy explains that estimated consumption can be calculated from wattage and operating time. Multiply watts by hours, then divide by 1,000.\n\nFor an illustrative device drawing a constant 100 watts for five hours, the calculation is 100 × 5 ÷ 1,000 = 0.5 kilowatt-hours. That is a worked example, not a measurement of your appliance.\n\nAccount for real operating conditions\nA nameplate does not tell you how long a device actually runs at that power. Equipment that cycles on and off needs a more careful estimate or suitable measurement.\n\nKeep consumption separate from price\nTo estimate the energy charge, multiply kilowatt-hours by the applicable price per kilowatt-hour. Use your own provider's tariff and check whether other charges apply; a foreign example cannot establish your local bill.\n\nRecord your assumptions before comparing devices. \n\nOriginal explainer by AbokiNews. Reference: the Department of Energy's appliance-energy guide.",
+    "publication_date": "2026-10-20",
+    "location": "ng",
+    "tags": [
+      "explainer",
+      "blog-batch-2026-10-20"
+    ]
+  },
+  {
+    "slug": "what-europa-clipper-is-trying-to-find",
+    "title": "Europa Clipper explained: looking for conditions that could support life",
+    "description": "Why studying an icy moon is different from announcing a discovery of life beyond Earth.",
+    "categories": [
+      "Science",
+      "Technology"
+    ],
+    "reference_name": "NASA",
+    "reference_url": "https://science.nasa.gov/mission/europa-clipper/mission-overview/",
+    "content": "A mission to an ocean world can raise an exciting question: could something live there? NASA's Europa Clipper is designed to investigate whether places beneath Europa's surface could support life. That is a question about conditions, not an announcement that life has been found.\n\nWhy Europa matters\nEuropa is an icy moon of Jupiter. The mission's science objectives focus on its ice shell and underlying ocean, its composition and its geology. Studying those features helps researchers assess what the environment might allow.\n\nHow the spacecraft investigates\nNASA describes a spacecraft orbiting Jupiter and making dozens of close passes by Europa. Each pass can examine a different area, allowing measurements to build a broader picture of the moon.\n\nRead the question behind the headline\nEvidence about an ocean, surface materials or the ice shell addresses different parts of the scientific problem. It does not automatically establish the presence of organisms.\n\nFor readers, the useful distinction is between a potentially habitable environment and a confirmed detection of life. \n\nOriginal explainer by AbokiNews, based on NASA's mission overview.",
+    "publication_date": "2026-10-20",
+    "location": "ng",
+    "tags": [
+      "explainer",
+      "blog-batch-2026-10-20"
+    ]
+  }
+]
