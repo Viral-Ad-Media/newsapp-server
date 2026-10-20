@@ -1,0 +1,2 @@
+[tool.vercel.scripts]
+build = "python vercel_build.py"
