@@ -143,7 +143,7 @@ python manage.py seed_news --dry-run
 python manage.py seed_news
 ```
 
-The importer creates 10 articles, their sources and categories, and a `starter-batch-2026-10-19` tag. It skips existing article URLs and preserves edits on repeat runs. The batch is atomic. It does not delete existing news, call paid providers, or run automatically during app startup/builds. Run it once against the production database to make the stories appear in the live frontend; a GitHub merge alone does not populate that database. On Vercel, run the command from a trusted environment configured with the production database connection, or a controlled deployment job, rather than exposing a public seeding endpoint.
+The importer creates 10 articles, their sources and categories, and a `starter-batch-2026-10-19` tag. It skips existing article URLs and preserves edits on repeat runs. The batch is atomic. It does not delete existing news or call paid providers. The Vercel production build hook described below runs it after migrations; other environments import only when explicitly invoked. Outside the Vercel production hook, run it once against the target database to make the stories appear in the frontend. No public seeding endpoint is exposed.
 
 Source dates are preserved; midnight UTC is a normalization because exact publication times were not verified. They must not be retimed to look like newly published stories. Images are left empty instead of copying publisher photos; the frontend uses its existing fallback. Source count is one per story and no sentiment scores or bias classifications are invented. Full source links and the curated content are in `news/data/starter_news_2026_10_19.json`.
 
@@ -158,6 +158,24 @@ DEBUG=True python manage.py test
 CI runs checks and tests on Python 3.11 and 3.12. The merged repair was validated with 17 Django tests, a fresh database migration, and companion frontend integration checks. See the frontend README for the local smoke test.
 
 ## Deployment and migration
+
+### Neon on Vercel
+
+Connect the Neon integration to the **newsapp-server** Vercel project and ensure these variables are enabled for **Production**:
+
+- `DATABASE_URL`: Neon pooled PostgreSQL connection URL with SSL enabled.
+- `DATABASE_URL_UNPOOLED`: direct Neon PostgreSQL connection URL with SSL enabled; used only by the deployment build process.
+- `SECRET_KEY`: the existing random Django secret.
+- `DEBUG=False`.
+- `ALLOWED_HOSTS`: includes `newsapp-server-five.vercel.app` and any backend custom domain (hostnames only).
+- `CORS_ALLOWED_ORIGINS`: the frontend HTTPS origin.
+
+Redeploy after connecting the database or changing environment variables. `vercel.json` sets the Build Command to `python vercel_build.py`; dependencies remain in `requirements.txt`. Do not add a tool-only `pyproject.toml`: Vercel prioritizes it for dependency installation and requires a `[project]` table. Remove any dashboard Build Command override, or set it to that same command. Vercel handles `collectstatic` itself.
+
+On **production** builds, the script requires both connection variables, uses the direct URL, acquires a PostgreSQL advisory lock, runs migrations, then imports the 10 starter summaries. Existing story URLs are skipped. Concurrent production builds fail rather than running migrations together; retry after the other build finishes. Build failures stop deployment. Preview and local builds skip database changes, even if database variables are present. Preview databases must be initialized separately against their own branch.
+
+This is intended to initialize the newly connected Neon database. It does not copy data from an older database. Review the existing-database migration caveat below before pointing it at a database with earlier tables. No migrations run during request handling. After deployment, verify `/health/` and `/api/news/`; the latter should include the imported stories. A liveness response alone does not prove database readiness.
+
 
 Deploy this backend and apply its migrations before deploying the companion frontend.
 
