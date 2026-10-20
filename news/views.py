@@ -315,3 +315,44 @@ class SavedNewsStatus(APIView):
             ).values_list("id", flat=True)
         )
         return Response({"saved_ids": saved_ids})
+
+
+class PasswordResetRequestView(APIView):
+    """
+    Privacy-preserving password reset endpoint supporting username or email lookup.
+    """
+
+    def post(self, request):
+        from django.contrib.auth import get_user_model
+        from django.contrib.auth.forms import PasswordResetForm
+        from rest_framework import serializers
+
+        class ResetSerializer(serializers.Serializer):
+            identifier = serializers.CharField(max_length=254)
+
+        serializer = ResetSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        identifier = serializer.validated_data["identifier"].strip()
+
+        User = get_user_model()
+        user = (
+            User.objects.filter(
+                Q(username__iexact=identifier) | Q(email__iexact=identifier)
+            )
+            .exclude(email="")
+            .first()
+        )
+        if user and user.email:
+            form = PasswordResetForm({"email": user.email})
+            if form.is_valid():
+                form.save(request=request)
+
+        return Response(
+            {
+                "detail": (
+                    "If an account matches that username or email, "
+                    "password recovery instructions have been sent."
+                )
+            },
+            status=status.HTTP_200_OK,
+        )

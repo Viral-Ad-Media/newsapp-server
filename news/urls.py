@@ -12,6 +12,7 @@ urlpatterns = [
         name="saved-news-detail",
     ),
     path("preferences/", views.ReaderPreferences.as_view(), name="reader-preferences"),
+    path("password-reset/", views.PasswordResetRequestView.as_view(), name="password-reset"),
     path("ask/", views.AskNews.as_view(), name="ask-news"),
     path("lopsided/", views.LopsidedNewsList.as_view(), name="lopsided-news"),
     path("news/", NewsList.as_view(), name="news-list"),

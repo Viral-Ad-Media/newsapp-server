@@ -343,3 +343,10 @@ class LopsidedCoverageTests(NewsFixtures):
             + coverage.data["right_coverage"],
             100,
         )
+
+    def test_password_reset_request_endpoint(self):
+        res = self.client.post(
+            "/api/password-reset/", {"identifier": "reader@example.com"}, format="json"
+        )
+        self.assertEqual(res.status_code, 200)
+        self.assertIn("detail", res.data)
