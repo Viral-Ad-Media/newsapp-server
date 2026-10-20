@@ -45,6 +45,11 @@ class Command(BaseCommand):
                     source=source,
                     location=item["location"],
                     total_sources=1,
+                    left_coverage=item.get("left_coverage", 33),
+                    center_coverage=item.get("center_coverage", 34),
+                    right_coverage=item.get("right_coverage", 33),
+                    dominant_bias=item.get("dominant_bias", "balanced"),
+                    perspectives=item.get("perspectives", []),
                     # Source pages expose dates; midnight UTC is a documented
                     # normalization, not a claim about their publication time.
                     published_at=datetime.combine(

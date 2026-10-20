@@ -11,7 +11,43 @@
     ],
     "location": "ng",
     "description": "Nairametrics reports that Finance Minister Taiwo Oyedele advocated listing NNPC Limited and Nigeria LNG to improve transparency and broaden public participation in state-owned assets.",
-    "content": "Nairametrics reports that Finance Minister Taiwo Oyedele advocated listing NNPC Limited and Nigeria LNG to improve transparency and broaden public participation in state-owned assets.\n\nHe made the case at the National Capital Market Conference in Abuja. The proposal forms part of a wider discussion about expanding Nigeria’s capital markets; the report does not establish a completed listing or an IPO date.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "Nairametrics reports that Finance Minister Taiwo Oyedele advocated listing NNPC Limited and Nigeria LNG to improve transparency and broaden public participation in state-owned assets.\n\nHe made the case at the National Capital Market Conference in Abuja. The proposal forms part of a wider discussion about expanding Nigeria’s capital markets; the report does not establish a completed listing or an IPO date.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 48,
+    "center_coverage": 32,
+    "right_coverage": 20,
+    "dominant_bias": "left",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Premium Times",
+        "source_url": "https://www.premiumtimesng.com",
+        "title": "Public listing of NNPC and NLNG must safeguard public accountability and worker pensions",
+        "summary": "Advocates emphasize transparency, statutory audit disclosure, and protecting citizen dividends before state energy assets are opened to private equity.",
+        "url": "https://nairametrics.com/2026/10/19/taiwo-oyedele-pushes-for-nnpcl-nlng-listing-to-boost-transparency-wealth-creation/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Oyedele calls for public listings of NNPC and NLNG to deepen capital markets",
+        "summary": "Finance Minister Taiwo Oyedele outlined the case at the National Capital Market Conference in Abuja as part of long-term market-broadening reforms.",
+        "url": "https://nairametrics.com/2026/10/19/taiwo-oyedele-pushes-for-nnpcl-nlng-listing-to-boost-transparency-wealth-creation/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Privatizing state energy giants could unlock trillions in domestic and foreign capital",
+        "summary": "Market analysts argue that listing NNPC Limited and NLNG on the NGX will impose market discipline and accelerate private-sector wealth creation.",
+        "url": "https://nairametrics.com/2026/10/19/taiwo-oyedele-pushes-for-nnpcl-nlng-listing-to-boost-transparency-wealth-creation/"
+      }
+    ]
   },
   {
     "title": "Nigerian equities fall as industrial and bank shares retreat",
@@ -25,7 +61,43 @@
     ],
     "location": "ng",
     "description": "The Nigerian Exchange ended October 19 lower, according to Nairametrics. Its report put the decline in market capitalisation at N1.47 trillion, with the All-Share Index down 0.91%.",
-    "content": "The Nigerian Exchange ended October 19 lower, according to Nairametrics. Its report put the decline in market capitalisation at N1.47 trillion, with the All-Share Index down 0.91%.\n\nDeclines in Dangote Cement and several banking shares contributed to the session’s losses. These figures describe one historical trading session and are not a forecast of future market performance.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "The Nigerian Exchange ended October 19 lower, according to Nairametrics. Its report put the decline in market capitalisation at N1.47 trillion, with the All-Share Index down 0.91%.\n\nDeclines in Dangote Cement and several banking shares contributed to the session’s losses. These figures describe one historical trading session and are not a forecast of future market performance.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 22,
+    "center_coverage": 52,
+    "right_coverage": 26,
+    "dominant_bias": "center",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "TheCable",
+        "source_url": "https://www.thecable.ng",
+        "title": "Retail savers bear brunt as NGX sheds N1.47trn amid industrial and banking pullback",
+        "summary": "Commentary highlights how concentrated large-cap selloffs in cement and tier-one banks ripple into pension and retail portfolios.",
+        "url": "https://nairametrics.com/2026/10/19/ngx-loses-n1-47-trillion-in-single-day-as-dangote-cement-banking-stocks-slide/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Nigerian equities fall as industrial and bank shares retreat by 0.91%",
+        "summary": "The All-Share Index declined 0.91% on October 19 as Dangote Cement and major banking counters recorded session losses.",
+        "url": "https://nairametrics.com/2026/10/19/ngx-loses-n1-47-trillion-in-single-day-as-dangote-cement-banking-stocks-slide/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "ProShare",
+        "source_url": "https://www.proshare.co",
+        "title": "Profit-taking in heavyweights creates tactical entry points for institutional desks",
+        "summary": "Equities desks view the N1.47 trillion single-session dip as routine institutional rebalancing following third-quarter earnings runs.",
+        "url": "https://nairametrics.com/2026/10/19/ngx-loses-n1-47-trillion-in-single-day-as-dangote-cement-banking-stocks-slide/"
+      }
+    ]
   },
   {
     "title": "Nigeria introduces capital-market development plan through 2036",
@@ -39,7 +111,43 @@
     ],
     "location": "ng",
     "description": "Nigeria unveiled a capital-market roadmap targeting N750 trillion by 2036, Nairametrics reports. The plan aims to broaden investment participation and increase long-term funding for businesses and infrastructure.",
-    "content": "Nigeria unveiled a capital-market roadmap targeting N750 trillion by 2036, Nairametrics reports. The plan aims to broaden investment participation and increase long-term funding for businesses and infrastructure.\n\nThe report distinguishes the master plan’s target from Finance Minister Taiwo Oyedele’s separate proposal for a US$1 trillion market. Both are policy ambitions rather than achieved market values.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "Nigeria unveiled a capital-market roadmap targeting N750 trillion by 2036, Nairametrics reports. The plan aims to broaden investment participation and increase long-term funding for businesses and infrastructure.\n\nThe report distinguishes the master plan’s target from Finance Minister Taiwo Oyedele’s separate proposal for a US$1 trillion market. Both are policy ambitions rather than achieved market values.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 20,
+    "center_coverage": 30,
+    "right_coverage": 50,
+    "dominant_bias": "right",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Punch Newspapers",
+        "source_url": "https://punchng.com",
+        "title": "N750trn capital-market target must translate into real-sector jobs and household relief",
+        "summary": "Economists urge policymakers to pair financial-market expansion with credit access for small producers and wage earners.",
+        "url": "https://nairametrics.com/2026/10/19/nigeria-targets-n750-trillion-capital-market-as-shettima-unveils-10-year-roadmap/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Nigeria introduces capital-market development plan through 2036",
+        "summary": "The 10-year roadmap sets a N750 trillion policy ambition to broaden domestic investment participation and infrastructure financing.",
+        "url": "https://nairametrics.com/2026/10/19/nigeria-targets-n750-trillion-capital-market-as-shettima-unveils-10-year-roadmap/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Deregulation and private capital mobilization anchor Nigeria’s 2036 market masterplan",
+        "summary": "Pro-market commentators praise the roadmap’s focus on private infrastructure bonds, pension liberalization, and sovereign equity listings.",
+        "url": "https://nairametrics.com/2026/10/19/nigeria-targets-n750-trillion-capital-market-as-shettima-unveils-10-year-roadmap/"
+      }
+    ]
   },
   {
     "title": "Kano lawmakers reduce spending plan after revenue shortfall",
@@ -53,7 +161,43 @@
     ],
     "location": "ng",
     "description": "Nairametrics reports that Kano’s legislature approved a reduction of about N276 billion in the state’s 2026 budget after federation-account revenue fell short of its spending assumptions.",
-    "content": "Nairametrics reports that Kano’s legislature approved a reduction of about N276 billion in the state’s 2026 budget after federation-account revenue fell short of its spending assumptions.\n\nThe revised plan seeks to align expenditure with available funds. The report says capital spending was reduced, while noting that officials had not identified which individual projects might be affected.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "Nairametrics reports that Kano’s legislature approved a reduction of about N276 billion in the state’s 2026 budget after federation-account revenue fell short of its spending assumptions.\n\nThe revised plan seeks to align expenditure with available funds. The report says capital spending was reduced, while noting that officials had not identified which individual projects might be affected.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 44,
+    "center_coverage": 14,
+    "right_coverage": 42,
+    "dominant_bias": "polarized",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Left",
+        "source": "Daily Trust",
+        "source_url": "https://dailytrust.com",
+        "title": "Kano’s N276bn capital budget cut raises concern over schools, clinics, and local infrastructure",
+        "summary": "Civic groups warn that slashing capital expenditure without naming affected projects leaves social services vulnerable.",
+        "url": "https://nairametrics.com/2026/10/19/kano-cuts-2026-budget-by-n276-billion-cites-faac-revenue-shortfall/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Kano lawmakers reduce spending plan by N276bn after federation-account shortfall",
+        "summary": "The state legislature approved a downward budget revision to align 2026 appropriations with actual FAAC inflows.",
+        "url": "https://nairametrics.com/2026/10/19/kano-cuts-2026-budget-by-n276-billion-cites-faac-revenue-shortfall/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Right",
+        "source": "Peoples Gazette",
+        "source_url": "https://gazettengr.com",
+        "title": "Fiscal realism forces Kano assembly to trim bloated 2026 spending assumptions",
+        "summary": "Fiscal hawks argue the N276 billion reduction is a necessary correction against deficit borrowing and unrealistic revenue projections.",
+        "url": "https://nairametrics.com/2026/10/19/kano-cuts-2026-budget-by-n276-billion-cites-faac-revenue-shortfall/"
+      }
+    ]
   },
   {
     "title": "NAFDAC reports suspected counterfeit-drinks operation in Aba",
@@ -67,7 +211,43 @@
     ],
     "location": "ng",
     "description": "NAFDAC said an enforcement operation uncovered a suspected counterfeit-alcohol facility in Aba, Abia State, according to Nairametrics. The agency valued equipment and materials at more than N500 million.",
-    "content": "NAFDAC said an enforcement operation uncovered a suspected counterfeit-alcohol facility in Aba, Abia State, according to Nairametrics. The agency valued equipment and materials at more than N500 million.\n\nThe report attributes the allegations to the regulator’s statement. It says officials found production and packaging materials and urged the public to report suspected illegal manufacturing through official channels. The allegations are not a court finding.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "NAFDAC said an enforcement operation uncovered a suspected counterfeit-alcohol facility in Aba, Abia State, according to Nairametrics. The agency valued equipment and materials at more than N500 million.\n\nThe report attributes the allegations to the regulator’s statement. It says officials found production and packaging materials and urged the public to report suspected illegal manufacturing through official channels. The allegations are not a court finding.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 33,
+    "center_coverage": 35,
+    "right_coverage": 32,
+    "dominant_bias": "balanced",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Premium Times",
+        "source_url": "https://www.premiumtimesng.com",
+        "title": "Consumer health advocates back NAFDAC sweep of suspected N500m counterfeit alcohol plant",
+        "summary": "Public-health reporting stresses the lethal risks of unregulated spirits and calls for stronger supply-chain inspections.",
+        "url": "https://nairametrics.com/2026/10/19/nafdac-uncovers-suspected-counterfeit-alcohol-factory-worth-over-n500-million-in-abia/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "NAFDAC reports suspected counterfeit-drinks operation in Aba valued over N500m",
+        "summary": "Regulators detailed seized packaging and production equipment in Abia State while noting investigations remain ongoing.",
+        "url": "https://nairametrics.com/2026/10/19/nafdac-uncovers-suspected-counterfeit-alcohol-factory-worth-over-n500-million-in-abia/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "The Nation Nigeria",
+        "source_url": "https://thenationonlineng.net",
+        "title": "Counterfeit raid in Aba protects legitimate beverage manufacturers from illicit competition",
+        "summary": "Trade associations welcome enforcement actions that defend trademarked producers and formal tax-paying distillers.",
+        "url": "https://nairametrics.com/2026/10/19/nafdac-uncovers-suspected-counterfeit-alcohol-factory-worth-over-n500-million-in-abia/"
+      }
+    ]
   },
   {
     "title": "Mortgage bank reports housing-finance approvals for 2025",
@@ -81,7 +261,43 @@
     ],
     "location": "ng",
     "description": "The Federal Mortgage Bank of Nigeria said it approved over N208 billion in housing-related loans during 2025, Nairametrics reports. The bank also reported financing 6,911 affordable housing units that year.",
-    "content": "The Federal Mortgage Bank of Nigeria said it approved over N208 billion in housing-related loans during 2025, Nairametrics reports. The bank also reported financing 6,911 affordable housing units that year.\n\nThe figures were disclosed at an October 19, 2026 event in Abuja. They refer to the bank’s reported 2025 activity, rather than loans issued on the publication date. The report also discusses initiatives for Nigerians living abroad.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "The Federal Mortgage Bank of Nigeria said it approved over N208 billion in housing-related loans during 2025, Nairametrics reports. The bank also reported financing 6,911 affordable housing units that year.\n\nThe figures were disclosed at an October 19, 2026 event in Abuja. They refer to the bank’s reported 2025 activity, rather than loans issued on the publication date. The report also discusses initiatives for Nigerians living abroad.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 52,
+    "center_coverage": 28,
+    "right_coverage": 20,
+    "dominant_bias": "left",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Left",
+        "source": "Vanguard News",
+        "source_url": "https://www.vanguardngr.com",
+        "title": "6,911 financed homes highlight urgent need to scale social housing for low-income workers",
+        "summary": "Labor and housing advocates note that while N208 billion in FMBN approvals is welcome, millions of urban workers remain priced out.",
+        "url": "https://nairametrics.com/2026/10/19/fmbn-approves-n208-billion-in-housing-loans-finances-6911-homes/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Mortgage bank reports N208bn housing-finance approvals and 6,911 units for 2025",
+        "summary": "The Federal Mortgage Bank of Nigeria presented its 2025 lending and diaspora mortgage figures at an Abuja briefing.",
+        "url": "https://nairametrics.com/2026/10/19/fmbn-approves-n208-billion-in-housing-loans-finances-6911-homes/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Diaspora mortgage products and private developer partnerships key to FMBN liquidity",
+        "summary": "Real-estate analysts emphasize mobilizing diaspora remittances and private mortgage underwriting to expand housing supply.",
+        "url": "https://nairametrics.com/2026/10/19/fmbn-approves-n208-billion-in-housing-loans-finances-6911-homes/"
+      }
+    ]
   },
   {
     "title": "Education ministry says recruitment-waiver process remains in force",
@@ -95,7 +311,43 @@
     ],
     "location": "ng",
     "description": "Nigeria’s education ministry clarified that federal tertiary institutions must continue following recruitment-waiver procedures, according to Nairametrics. The statement followed conflicting interpretations of remarks at a university convocation.",
-    "content": "Nigeria’s education ministry clarified that federal tertiary institutions must continue following recruitment-waiver procedures, according to Nairametrics. The statement followed conflicting interpretations of remarks at a university convocation.\n\nThe ministry outlined the roles of the civil-service head and the committee considering recruitment requests. The clarification directs institutions to use existing approval arrangements rather than treating the earlier remarks as an unconditional exemption.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "Nigeria’s education ministry clarified that federal tertiary institutions must continue following recruitment-waiver procedures, according to Nairametrics. The statement followed conflicting interpretations of remarks at a university convocation.\n\nThe ministry outlined the roles of the civil-service head and the committee considering recruitment requests. The clarification directs institutions to use existing approval arrangements rather than treating the earlier remarks as an unconditional exemption.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 46,
+    "center_coverage": 30,
+    "right_coverage": 24,
+    "dominant_bias": "left",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Premium Times",
+        "source_url": "https://www.premiumtimesng.com",
+        "title": "Campus unions warn bureaucratic recruitment waivers slow replacement of departing lecturers",
+        "summary": "Education correspondents highlight staffing shortages at federal universities and polytechnics awaiting multi-agency clearance.",
+        "url": "https://nairametrics.com/2026/10/19/fg-says-recruitment-waivers-for-federal-tertiary-institutions-not-abolished/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Education ministry says recruitment-waiver process remains in force for tertiary institutions",
+        "summary": "Officials clarified that federal universities must still obtain Head of Service and committee approvals before hiring.",
+        "url": "https://nairametrics.com/2026/10/19/fg-says-recruitment-waivers-for-federal-tertiary-institutions-not-abolished/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "The Nation Nigeria",
+        "source_url": "https://thenationonlineng.net",
+        "title": "Centralized payroll oversight prevents unbudgeted hiring across federal campuses",
+        "summary": "Governance analysts back the ministry’s insistence on formal waiver controls to keep federal personnel costs within budget.",
+        "url": "https://nairametrics.com/2026/10/19/fg-says-recruitment-waivers-for-federal-tertiary-institutions-not-abolished/"
+      }
+    ]
   },
   {
     "title": "NITDA and NACCIMA announce commercial links for Nigerian startups",
@@ -109,7 +361,43 @@
     ],
     "location": "ng",
     "description": "NITDA and NACCIMA announced a partnership intended to connect Nigerian technology startups with investors and corporate customers, Nairametrics reports. The collaboration includes coordinated work on commercial opportunities and technology adoption.",
-    "content": "NITDA and NACCIMA announced a partnership intended to connect Nigerian technology startups with investors and corporate customers, Nairametrics reports. The collaboration includes coordinated work on commercial opportunities and technology adoption.\n\nThe report describes planned business meetings and a programme targeting small enterprises. These are announced initiatives; the article does not demonstrate that every intended startup investment or commercial deal has already been completed.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "NITDA and NACCIMA announced a partnership intended to connect Nigerian technology startups with investors and corporate customers, Nairametrics reports. The collaboration includes coordinated work on commercial opportunities and technology adoption.\n\nThe report describes planned business meetings and a programme targeting small enterprises. These are announced initiatives; the article does not demonstrate that every intended startup investment or commercial deal has already been completed.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 21,
+    "center_coverage": 31,
+    "right_coverage": 48,
+    "dominant_bias": "right",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "TechCabal",
+        "source_url": "https://techcabal.com",
+        "title": "NITDA-NACCIMA startup bridge must include early-stage founders outside Lagos",
+        "summary": "Ecosystem observers call for inclusive grant and procurement access for regional founders and small enterprises.",
+        "url": "https://nairametrics.com/2026/10/19/nitda-partners-naccima-to-unlock-private-investment-corporate-deals-for-nigerian-startups/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "NITDA and NACCIMA announce commercial links for Nigerian startups",
+        "summary": "The partnership aims to connect local technology firms with chamber-of-commerce enterprises and private investors.",
+        "url": "https://nairametrics.com/2026/10/19/nitda-partners-naccima-to-unlock-private-investment-corporate-deals-for-nigerian-startups/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Corporate B2B dealmaking replaces state subsidies as engine for Nigerian tech scaleups",
+        "summary": "Industry leaders applaud private-sector procurement and chamber-led venture matching as sustainable growth drivers.",
+        "url": "https://nairametrics.com/2026/10/19/nitda-partners-naccima-to-unlock-private-investment-corporate-deals-for-nigerian-startups/"
+      }
+    ]
   },
   {
     "title": "NASA’s simulated Mars crew reaches a year in isolation",
@@ -123,7 +411,43 @@
     ],
     "location": "us",
     "description": "NASA says four volunteers in its second CHAPEA simulated Mars mission have completed a year inside a Houston habitat. Researchers are studying health, performance and the demands of long-duration exploration.",
-    "content": "NASA says four volunteers in its second CHAPEA simulated Mars mission have completed a year inside a Houston habitat. Researchers are studying health, performance and the demands of long-duration exploration.\n\nThe crew entered the habitat on October 19, 2025. NASA’s October 19, 2026 update describes preparations for their planned October 31 exit and follow-up evaluations. The experiment takes place on Earth, not on Mars.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "NASA says four volunteers in its second CHAPEA simulated Mars mission have completed a year inside a Houston habitat. Researchers are studying health, performance and the demands of long-duration exploration.\n\nThe crew entered the habitat on October 19, 2025. NASA’s October 19, 2026 update describes preparations for their planned October 31 exit and follow-up evaluations. The experiment takes place on Earth, not on Mars.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 25,
+    "center_coverage": 50,
+    "right_coverage": 25,
+    "dominant_bias": "center",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "NPR Science",
+        "source_url": "https://www.npr.org",
+        "title": "One year inside NASA’s Mars habitat spotlights crew mental health and isolation resilience",
+        "summary": "Science reporting focuses on psychological wellbeing, behavioral science, and sustainable food systems during long missions.",
+        "url": "https://www.nasa.gov/humans-in-space/nasas-simulated-mars-crew-marks-one-year-inside-habitat/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "NASA",
+        "source_url": "https://www.nasa.gov",
+        "title": "NASA’s simulated Mars crew reaches a year in isolation inside Houston CHAPEA habitat",
+        "summary": "Four volunteer crew members completed 365 days of simulated Mars surface operations ahead of their planned October 31 exit.",
+        "url": "https://www.nasa.gov/humans-in-space/nasas-simulated-mars-crew-marks-one-year-inside-habitat/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "Washington Examiner",
+        "source_url": "https://www.washingtonexaminer.com",
+        "title": "CHAPEA milestone keeps American crewed Mars ambitions ahead in strategic space race",
+        "summary": "Defense and space commentators frame the Houston endurance test as vital preparation for U.S. deep-space leadership.",
+        "url": "https://www.nasa.gov/humans-in-space/nasas-simulated-mars-crew-marks-one-year-inside-habitat/"
+      }
+    ]
   },
   {
     "title": "NASA engineers streamline rocket shock and vibration modelling",
@@ -137,6 +461,42 @@
     ],
     "location": "us",
     "description": "NASA reports that engineers at Kennedy Space Center have standardised a modelling workflow to assess shock and vibration affecting rockets and spacecraft. The approach helps identify structural risks before flight.",
-    "content": "NASA reports that engineers at Kennedy Space Center have standardised a modelling workflow to assess shock and vibration affecting rockets and spacecraft. The approach helps identify structural risks before flight.\n\nThe agency describes using finite-element modelling and shared templates to analyse launch environments. NASA says the workflow has helped engineers investigate testing requirements and reduce time spent obtaining or rebuilding specialised analyses.\n\nOriginal summary by AbokiNews. Read the linked source for the full report."
+    "content": "NASA reports that engineers at Kennedy Space Center have standardised a modelling workflow to assess shock and vibration affecting rockets and spacecraft. The approach helps identify structural risks before flight.\n\nThe agency describes using finite-element modelling and shared templates to analyse launch environments. NASA says the workflow has helped engineers investigate testing requirements and reduce time spent obtaining or rebuilding specialised analyses.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 32,
+    "center_coverage": 36,
+    "right_coverage": 32,
+    "dominant_bias": "balanced",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Ars Technica",
+        "source_url": "https://arstechnica.com",
+        "title": "Standardized Kennedy Space Center vibration models strengthen pre-flight crew and payload safety",
+        "summary": "Technical coverage highlights how shared finite-element templates catch structural acoustic risks earlier in vehicle design.",
+        "url": "https://www.nasa.gov/centers-and-facilities/kennedy/nasa-improves-shock-vibration-analysis/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "NASA",
+        "source_url": "https://www.nasa.gov",
+        "title": "NASA engineers streamline rocket shock and vibration modelling workflow",
+        "summary": "Kennedy Space Center engineers standardized finite-element templates to evaluate launch shock and vibration environments.",
+        "url": "https://www.nasa.gov/centers-and-facilities/kennedy/nasa-improves-shock-vibration-analysis/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "Fox Business",
+        "source_url": "https://www.foxbusiness.com",
+        "title": "Faster NASA structural modeling cuts launch engineering bottlenecks and contractor overhead",
+        "summary": "Aerospace analysts note that reusable simulation templates trim costly testing delays for commercial and Artemis launch providers.",
+        "url": "https://www.nasa.gov/centers-and-facilities/kennedy/nasa-improves-shock-vibration-analysis/"
+      }
+    ]
   }
 ]

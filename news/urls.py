@@ -13,6 +13,7 @@ urlpatterns = [
     ),
     path("preferences/", views.ReaderPreferences.as_view(), name="reader-preferences"),
     path("ask/", views.AskNews.as_view(), name="ask-news"),
+    path("lopsided/", views.LopsidedNewsList.as_view(), name="lopsided-news"),
     path("news/", NewsList.as_view(), name="news-list"),
     path("news/<int:pk>/", NewsDetail.as_view(), name="news-detail"),
     path(

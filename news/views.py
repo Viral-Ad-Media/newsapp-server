@@ -47,6 +47,18 @@ class NewsList(generics.ListAPIView):
         if location:
             queryset = queryset.filter(location__icontains=location)
 
+        # Filter by bias / lopsided status
+        bias = self.request.query_params.get("bias", "").strip().lower()
+        if bias == "lopsided":
+            queryset = queryset.filter(
+                Q(dominant_bias__in=["left", "right", "polarized"])
+                | Q(left_coverage__gte=42)
+                | Q(right_coverage__gte=42)
+                | Q(center_coverage__lte=22)
+            )
+        elif bias in {"left", "center", "right", "polarized", "balanced"}:
+            queryset = queryset.filter(dominant_bias=bias)
+
         # Filter by time frame
         time_filter = self.request.query_params.get("filter")
         if time_filter == "last_day":
@@ -73,20 +85,61 @@ class NewsDetail(generics.RetrieveAPIView):
     serializer_class = NewsArticleSerializer
 
 
+class LopsidedNewsList(NewsList):
+    """
+    API view returning AllSides-inspired multi-perspective and lopsided stories.
+    """
+
+    def get_queryset(self):
+        return super().get_queryset()
+
+
 class NewsCoverageView(APIView):
     def get(self, request, article_id):
         article = get_object_or_404(NewsArticle, id=article_id)
-        coverage_data = {
-            "total_sources": article.total_sources or 1,
-            "articles": [
+        perspectives = article.perspectives if isinstance(article.perspectives, list) else []
+        articles_payload = [
+            {
+                "id": article.id,
+                "title": article.title,
+                "source": article.source.name,
+                "url": article.article_url,
+                "published_at": article.published_at,
+                "bucket": "center",
+                "label": "Primary Report",
+                "bias_rating": getattr(article.source, "bias", "Center") or "Center",
+                "summary": article.description,
+            }
+        ]
+        for idx, item in enumerate(perspectives, start=1):
+            if not isinstance(item, dict):
+                continue
+            item_url = item.get("url") or article.article_url
+            if idx == 1 and item_url == article.article_url and item.get("source") == article.source.name:
+                continue
+            articles_payload.append(
                 {
-                    "id": article.id,
-                    "title": article.title,
-                    "source": article.source.name,
-                    "url": article.article_url,
+                    "id": f"{article.id}-p{idx}",
+                    "title": item.get("title") or article.title,
+                    "source": item.get("source") or article.source.name,
+                    "source_url": item.get("source_url") or "",
+                    "url": item_url,
                     "published_at": article.published_at,
+                    "bucket": item.get("bucket") or "center",
+                    "label": item.get("label") or "Perspective",
+                    "bias_rating": item.get("bias_rating") or "Center",
+                    "summary": item.get("summary") or "",
                 }
-            ],
+            )
+        coverage_data = {
+            "total_sources": max(article.total_sources or 1, len(perspectives)),
+            "left_coverage": article.left_coverage,
+            "center_coverage": article.center_coverage,
+            "right_coverage": article.right_coverage,
+            "dominant_bias": article.dominant_bias,
+            "is_lopsided": article.is_lopsided,
+            "perspectives": perspectives,
+            "articles": articles_payload,
             "sentiment_stats": {
                 "positive": article.sentiment_positive,
                 "neutral": article.sentiment_neutral,

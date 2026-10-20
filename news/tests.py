@@ -308,3 +308,38 @@ class SavedStatusTests(ReaderFixtures):
             ],
             [],
         )
+
+
+class LopsidedCoverageTests(NewsFixtures):
+    def test_fetch_allsides_offline_and_lopsided_endpoints(self):
+        from io import StringIO
+        from django.core.management import call_command
+
+        out = StringIO()
+        call_command("fetch_allsides", offline=True, stdout=out)
+        self.assertIn("created 7", out.getvalue())
+
+        res = self.client.get("/api/lopsided/")
+        self.assertEqual(res.status_code, 200)
+        results = res.data["results"]
+        self.assertEqual(len(results), 7)
+        first = results[0]
+        self.assertIn("perspectives", first)
+        self.assertIn("left_coverage", first)
+        self.assertIn("center_coverage", first)
+        self.assertIn("right_coverage", first)
+        self.assertTrue(len(first["perspectives"]) >= 2)
+
+        polarized = self.client.get("/api/lopsided/", {"bias": "polarized"})
+        self.assertEqual(polarized.status_code, 200)
+        self.assertTrue(polarized.data["count"] >= 1)
+
+        coverage = self.client.get(f'/api/news/{first["id"]}/coverage/')
+        self.assertEqual(coverage.status_code, 200)
+        self.assertIn("perspectives", coverage.data)
+        self.assertEqual(
+            coverage.data["left_coverage"]
+            + coverage.data["center_coverage"]
+            + coverage.data["right_coverage"],
+            100,
+        )

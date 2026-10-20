@@ -10,7 +10,8 @@ class NewsSourceSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "url",
-        ]  # Removed 'bias' since it's not a field in NewsSource
+            "bias",
+        ]
 
 
 class NewsCategorySerializer(serializers.ModelSerializer):
@@ -42,6 +43,7 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     categories = NewsCategoryLiteSerializer(many=True, read_only=True)
     tags = TagListSerializerField(required=False)
     summary = serializers.CharField(source="description", read_only=True)
+    is_lopsided = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = NewsArticle
@@ -60,6 +62,12 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             "published_at",
             "source",
             "total_sources",
+            "left_coverage",
+            "center_coverage",
+            "right_coverage",
+            "dominant_bias",
+            "is_lopsided",
+            "perspectives",
             "sentiment",
             "sentiment_positive",
             "sentiment_neutral",

@@ -8,6 +8,7 @@ from taggit.managers import TaggableManager  # Import the TaggableManager for ta
 class NewsSource(models.Model):
     name = models.CharField(max_length=255)
     url = models.URLField()
+    bias = models.CharField(max_length=30, default="center", blank=True)
 
     def __str__(self):
         return self.name
@@ -37,6 +38,29 @@ class NewsArticle(models.Model):
 
     # Coverage-related fields
     total_sources = models.IntegerField(default=0)
+    left_coverage = models.IntegerField(default=33)
+    center_coverage = models.IntegerField(default=34)
+    right_coverage = models.IntegerField(default=33)
+    dominant_bias = models.CharField(
+        max_length=20,
+        choices=[
+            ("left", "Left-Leaning"),
+            ("center", "Center-Focused"),
+            ("right", "Right-Leaning"),
+            ("polarized", "Polarized / Center Blindspot"),
+            ("balanced", "Balanced"),
+        ],
+        default="balanced",
+    )
+    perspectives = models.JSONField(default=list, blank=True)
+
+    @property
+    def is_lopsided(self):
+        return (
+            self.dominant_bias in {"left", "right", "polarized"}
+            or max(self.left_coverage, self.right_coverage) >= 42
+            or min(self.left_coverage, self.center_coverage, self.right_coverage) <= 22
+        )
 
     # Sentiment-related fields
     sentiment = models.CharField(
