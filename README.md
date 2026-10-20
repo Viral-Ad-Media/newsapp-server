@@ -170,7 +170,7 @@ Connect the Neon integration to the **newsapp-server** Vercel project and ensure
 - `ALLOWED_HOSTS`: includes `newsapp-server-five.vercel.app` and any backend custom domain (hostnames only).
 - `CORS_ALLOWED_ORIGINS`: the frontend HTTPS origin.
 
-Redeploy after connecting the database or changing environment variables. `pyproject.toml` configures Vercel's Python build hook to run `python vercel_build.py` after dependency installation. Remove any dashboard Build Command override, or set it to that same command: a dashboard override takes precedence. Vercel handles `collectstatic` itself.
+Redeploy after connecting the database or changing environment variables. `vercel.json` sets the Build Command to `python vercel_build.py`; dependencies remain in `requirements.txt`. Do not add a tool-only `pyproject.toml`: Vercel prioritizes it for dependency installation and requires a `[project]` table. Remove any dashboard Build Command override, or set it to that same command. Vercel handles `collectstatic` itself.
 
 On **production** builds, the script requires both connection variables, uses the direct URL, acquires a PostgreSQL advisory lock, runs migrations, then imports the 10 starter summaries. Existing story URLs are skipped. Concurrent production builds fail rather than running migrations together; retry after the other build finishes. Build failures stop deployment. Preview and local builds skip database changes, even if database variables are present. Preview databases must be initialized separately against their own branch.
 
