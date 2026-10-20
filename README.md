@@ -52,6 +52,8 @@ The Linux dependency install includes `psycopg2-binary`. For PostgreSQL developm
 
 ## API reference
 
+`GET /` and `GET /health/` return HTTP 200 with a JSON service status and links to the news API. These public, uncached liveness endpoints also support HEAD and do not query the database or contact providers. They confirm that Django is responding; they do not verify database readiness, migrations, or provider credentials. Use `/health/` for hosting liveness checks. The reader-facing website is the companion frontend, not the backend root.
+
 All paths below are relative to `/api/`. Reader endpoints require `Authorization: Bearer <access-token>`.
 
 | Method | Path | Behavior |
