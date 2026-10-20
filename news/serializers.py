@@ -132,6 +132,18 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             "sentiment_neutral",
             "sentiment_negative",
             "tags",
+            "focus_keyword",
+            "seo_title",
+            "seo_description",
+            "canonical_url",
+            "og_title",
+            "og_description",
+            "og_image_url",
+            "image_alt",
+            "seo_noindex",
+            "seo_nofollow",
+            "schema_type",
+
         ]
 
     def get_image_url(self, obj):

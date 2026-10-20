@@ -1,3 +1,4 @@
+from .seo import SEO_FIELDS, SeoInputSerializer, analyze_seo
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -574,6 +575,8 @@ class SuperadminArticleListCreateView(APIView):
 
     def post(self, request):
         data = request.data
+        seo = SeoInputSerializer(data={key: data[key] for key in SEO_FIELDS if key in data})
+        seo.is_valid(raise_exception=True)
         title = str(data.get("title") or "").strip()[:255]
         description = str(data.get("description") or "").strip()
         content = str(data.get("content") or description).strip()
@@ -643,6 +646,7 @@ class SuperadminArticleListCreateView(APIView):
             ]
 
         article = NewsArticle.objects.create(
+            **seo.validated_data,
             title=title,
             author=author,
             description=description,
@@ -691,6 +695,10 @@ class SuperadminArticleDetailView(APIView):
     def put(self, request, article_id):
         article = get_object_or_404(NewsArticle, pk=article_id)
         data = request.data
+        seo = SeoInputSerializer(data={key: data[key] for key in SEO_FIELDS if key in data})
+        seo.is_valid(raise_exception=True)
+        for key, value in seo.validated_data.items():
+            setattr(article, key, value)
 
         if "title" in data and str(data["title"]).strip():
             article.title = str(data["title"]).strip()[:255]
@@ -915,3 +923,16 @@ class RssFeedView(APIView):
             xml_body,
             content_type="application/rss+xml; charset=utf-8",
         )
+
+
+class SuperadminSeoAnalysisView(APIView):
+    """Evaluate an unsaved draft, without writes or external provider requests."""
+
+    permission_classes = [IsSuperAdmin]
+
+    def post(self, request):
+        if len(str(request.data.get("content") or "")) > 200000:
+            return Response({"detail": "Analyze up to 200,000 characters at a time."}, status=400)
+        seo = SeoInputSerializer(data={key: request.data[key] for key in SEO_FIELDS if key in request.data})
+        seo.is_valid(raise_exception=True)
+        return Response(analyze_seo({**request.data, **seo.validated_data}))

@@ -36,6 +36,26 @@ class NewsArticle(models.Model):
     article_url = models.URLField(max_length=2000, blank=True)
     remote_image_url = models.URLField(max_length=2000, blank=True)
 
+    focus_keyword = models.CharField(max_length=100, blank=True)
+    seo_title = models.CharField(max_length=120, blank=True)
+    seo_description = models.CharField(max_length=320, blank=True)
+    canonical_url = models.URLField(max_length=2000, blank=True)
+    og_title = models.CharField(max_length=120, blank=True)
+    og_description = models.CharField(max_length=320, blank=True)
+    og_image_url = models.URLField(max_length=2000, blank=True)
+    image_alt = models.CharField(max_length=255, blank=True)
+    seo_noindex = models.BooleanField(default=False)
+    seo_nofollow = models.BooleanField(default=False)
+    schema_type = models.CharField(
+        max_length=20,
+        default="NewsArticle",
+        choices=[
+            ("Article", "Article"),
+            ("NewsArticle", "NewsArticle"),
+            ("BlogPosting", "BlogPosting"),
+        ],
+    )
+
     # Coverage-related fields
     total_sources = models.IntegerField(default=0)
     left_coverage = models.IntegerField(default=33)
