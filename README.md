@@ -132,6 +132,21 @@ The default country is `ng`. Set `NEWS_API_KEY`, `NEWS_DATA_IO_API_KEY`, or both
 
 Missing credentials or provider errors produce a nonzero exit code without logging credential-bearing URLs. If one provider fails, stories imported from another provider can still be saved. Scheduling is external: configure a cron job or hosting scheduler to invoke the command at an interval allowed by your provider plan.
 
+## Load 10 real starter stories
+
+The repository includes eight Nigerian reports from Nairametrics and two NASA updates, all published October 19, 2026. They cover business, markets, politics, health, housing, education, technology, and science. These are short original AbokiNews summaries, with direct links to the publishers; they are not copied full articles or fictional demo stories.
+
+After migrations, preview and import them into the database configured for the command:
+
+```bash
+python manage.py seed_news --dry-run
+python manage.py seed_news
+```
+
+The importer creates 10 articles, their sources and categories, and a `starter-batch-2026-10-19` tag. It skips existing article URLs and preserves edits on repeat runs. The batch is atomic. It does not delete existing news, call paid providers, or run automatically during app startup/builds. Run it once against the production database to make the stories appear in the live frontend; a GitHub merge alone does not populate that database. On Vercel, run the command from a trusted environment configured with the production database connection, or a controlled deployment job, rather than exposing a public seeding endpoint.
+
+Source dates are preserved; midnight UTC is a normalization because exact publication times were not verified. They must not be retimed to look like newly published stories. Images are left empty instead of copying publisher photos; the frontend uses its existing fallback. Source count is one per story and no sentiment scores or bias classifications are invented. Full source links and the curated content are in `news/data/starter_news_2026_10_19.json`.
+
 ## Validation
 
 ```bash
