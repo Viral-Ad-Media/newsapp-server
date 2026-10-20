@@ -214,7 +214,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 SITE_ID = 1
 
 # Authentication settings
-REST_AUTH = {"USE_JWT": True, "SESSION_LOGIN": False}
+REST_AUTH = {
+    "USE_JWT": True,
+    "SESSION_LOGIN": False,
+    "USER_DETAILS_SERIALIZER": "news.serializers.CustomUserDetailsSerializer",
+}
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGIN_METHODS = {"username"}
 ACCOUNT_SIGNUP_FIELDS = ["email", "username*", "password1*", "password2*"]

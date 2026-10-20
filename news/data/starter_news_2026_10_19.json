@@ -518,5 +518,532 @@
     ],
     "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480844/abokinews/starter/story-10.jpg",
     "cloudinary_public_id": "abokinews/starter/story-10"
+  },
+  {
+    "title": "CBN reports foreign-exchange reserves climb to $40.2 billion in October",
+    "article_url": "https://nairametrics.com/2026/10/19/cbn-reports-external-reserves-rise-to-40-2-billion-amid-diaspora-inflows/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Chike Olisah",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Markets",
+      "Business"
+    ],
+    "location": "ng",
+    "description": "Nigeria’s gross external reserves rose to $40.2 billion in mid-October 2026, Nairametrics reports, supported by stronger diaspora remittance inflows and improved crude oil receipts.",
+    "content": "Nigeria’s gross external reserves rose to $40.2 billion in mid-October 2026, Nairametrics reports, supported by stronger diaspora remittance inflows and improved crude oil receipts.\n\nCentral Bank of Nigeria data cited in the report shows a steady buildup over the preceding six weeks following reforms to international money transfer operator settlement rules and foreign-exchange market clearing.\n\nAnalysts note that gross reserve figures include committed forward obligations and swap lines, meaning net liquid reserves available for immediate market intervention remain a key metric to watch.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 28,
+    "center_coverage": 46,
+    "right_coverage": 26,
+    "dominant_bias": "center",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Premium Times",
+        "source_url": "https://www.premiumtimesng.com",
+        "title": "Higher $40.2bn reserves must translate into lower food and import costs for households",
+        "summary": "Labor economists argue reserve accumulation should be judged by its impact on retail inflation and essential medicine imports.",
+        "url": "https://nairametrics.com/2026/10/19/cbn-reports-external-reserves-rise-to-40-2-billion-amid-diaspora-inflows/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "CBN reports foreign-exchange reserves climb to $40.2 billion in October",
+        "summary": "Official central bank figures show gross reserves crossing the $40 billion threshold amid formal remittance growth.",
+        "url": "https://nairametrics.com/2026/10/19/cbn-reports-external-reserves-rise-to-40-2-billion-amid-diaspora-inflows/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Orthodox monetary tightening and IMTO liberalization bolster CBN reserve buffers",
+        "summary": "Fixed-income strategists credit market-reflective rates and oil production recovery for strengthening sovereign external liquidity.",
+        "url": "https://nairametrics.com/2026/10/19/cbn-reports-external-reserves-rise-to-40-2-billion-amid-diaspora-inflows/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483613/abokinews/starter/story-11.webp",
+    "cloudinary_public_id": "abokinews/starter/story-11"
+  },
+  {
+    "title": "Lagos expands fiber-optic metro duct network by 1,200 kilometers",
+    "article_url": "https://nairametrics.com/2026/10/19/lagos-expands-metro-fiber-optic-duct-network-to-boost-broadband-penetration/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Samson Akintaro",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Technology",
+      "Business"
+    ],
+    "location": "ng",
+    "description": "Lagos State completed a 1,200-kilometer expansion of its unified metropolitan fiber-optic duct infrastructure, aiming to cut broadband deployment costs for telecom operators and tech hubs.",
+    "content": "Lagos State completed a 1,200-kilometer expansion of its unified metropolitan fiber-optic duct infrastructure, Nairametrics reports, aiming to cut broadband deployment costs for telecom operators and tech hubs.\n\nThe shared-duct framework allows multiple internet service providers to lease underground conduits without repeatedly excavating public roads across mainland and island commercial corridors.\n\nState technology officials said the phase-two rollout connects public schools, general hospitals, and industrial estates in Ikorodu, Epe, and Badagry, though last-mile retail pricing remains determined by private operators.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 35,
+    "center_coverage": 40,
+    "right_coverage": 25,
+    "dominant_bias": "balanced",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "TechCabal",
+        "source_url": "https://techcabal.com",
+        "title": "Metro fiber expansion must prioritize affordable community Wi-Fi in underserved suburbs",
+        "summary": "Digital-inclusion advocates urge regulators to pair open-access fiber ducts with subsidized bandwidth for public schools and outer districts.",
+        "url": "https://nairametrics.com/2026/10/19/lagos-expands-metro-fiber-optic-duct-network-to-boost-broadband-penetration/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Lagos expands fiber-optic metro duct network by 1,200 kilometers across key corridors",
+        "summary": "The unified underground conduit project seeks to reduce fiber cuts and lower capital expenditure for broadband providers.",
+        "url": "https://nairametrics.com/2026/10/19/lagos-expands-metro-fiber-optic-duct-network-to-boost-broadband-penetration/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Public-private infra sharing de-risks telecom capex and accelerates cloud adoption",
+        "summary": "Telecom executives welcome standardized right-of-way policies that eliminate multiple taxation and road-digging disputes.",
+        "url": "https://nairametrics.com/2026/10/19/lagos-expands-metro-fiber-optic-duct-network-to-boost-broadband-penetration/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483614/abokinews/starter/story-12.webp",
+    "cloudinary_public_id": "abokinews/starter/story-12"
+  },
+  {
+    "title": "Dangote Refinery begins direct aviation jet-fuel supply to regional carriers",
+    "article_url": "https://nairametrics.com/2026/10/19/dangote-refinery-commences-direct-jet-a1-fuel-supply-to-domestic-airlines/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Emeka Onyeks",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Business",
+      "Markets"
+    ],
+    "location": "ng",
+    "description": "Domestic airline operators and Dangote Petroleum Refinery finalized a direct Jet-A1 supply framework designed to reduce foreign-currency aviation fuel imports across West Africa.",
+    "content": "Domestic airline operators and Dangote Petroleum Refinery finalized a direct Jet-A1 supply framework designed to reduce foreign-currency aviation fuel imports across West Africa, according to Nairametrics.\n\nUnder the commercial arrangement, participating carriers will settle bulk aviation turbine kerosene purchases in local currency through designated aviation fuel marketers at Lagos and Abuja hubs.\n\nAviation industry executives said stable domestic refining supply could ease schedule disruptions, though ticket prices also depend on aircraft leasing, maintenance, and insurance costs denominated in dollars.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 24,
+    "center_coverage": 30,
+    "right_coverage": 46,
+    "dominant_bias": "right",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Vanguard News",
+        "source_url": "https://www.vanguardngr.com",
+        "title": "Passengers expect domestic Jet-A1 refining to bring relief from soaring domestic airfares",
+        "summary": "Consumer groups call on airlines and competition regulators to ensure local fuel sourcing benefits travelers.",
+        "url": "https://nairametrics.com/2026/10/19/dangote-refinery-commences-direct-jet-a1-fuel-supply-to-domestic-airlines/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Dangote Refinery begins direct aviation jet-fuel supply to regional carriers",
+        "summary": "The agreement shifts a larger share of West African Jet-A1 procurement from imported cargoes to Lekki-refined output.",
+        "url": "https://nairametrics.com/2026/10/19/dangote-refinery-commences-direct-jet-a1-fuel-supply-to-domestic-airlines/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Private refining scale transforms Nigeria into a regional aviation energy hub",
+        "summary": "Energy analysts highlight how domestic industrial scale conserves foreign exchange and strengthens regional airline balance sheets.",
+        "url": "https://nairametrics.com/2026/10/19/dangote-refinery-commences-direct-jet-a1-fuel-supply-to-domestic-airlines/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483615/abokinews/starter/story-13.webp",
+    "cloudinary_public_id": "abokinews/starter/story-13"
+  },
+  {
+    "title": "NERC orders electricity discos to accelerate prepaid meter rollout before Q4 deadline",
+    "article_url": "https://nairametrics.com/2026/10/19/nerc-directs-discos-to-fast-track-smart-prepaid-metering-under-map-framework/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Emmanuel Azubuike",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Politics",
+      "Business"
+    ],
+    "location": "ng",
+    "description": "The Nigerian Electricity Regulatory Commission issued compliance benchmarks requiring distribution companies to clear pending customer meter installations under the Meter Asset Provider framework.",
+    "content": "The Nigerian Electricity Regulatory Commission issued compliance benchmarks requiring distribution companies to clear pending customer meter installations under the Meter Asset Provider framework, Nairametrics reports.\n\nThe directive requires utilities to publish monthly installation schedules and reimburse customers who financed meters through approved vendor channels via energy credits.\n\nConsumer protection groups welcomed tighter enforcement against estimated billing, while distribution companies cited transformer upgrades and local assembly supply bottlenecks.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 45,
+    "center_coverage": 15,
+    "right_coverage": 40,
+    "dominant_bias": "polarized",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Left",
+        "source": "Punch Newspapers",
+        "source_url": "https://punchng.com",
+        "title": "Electricity consumers demand strict penalties for discos missing prepaid metering deadlines",
+        "summary": "Ratepayer associations argue millions of households still face arbitrary estimated bills despite repeated regulatory orders.",
+        "url": "https://nairametrics.com/2026/10/19/nerc-directs-discos-to-fast-track-smart-prepaid-metering-under-map-framework/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "NERC orders electricity discos to accelerate prepaid meter rollout before Q4 deadline",
+        "summary": "The power regulator set new fourth-quarter targets for Meter Asset Provider installations and customer energy-credit refunds.",
+        "url": "https://nairametrics.com/2026/10/19/nerc-directs-discos-to-fast-track-smart-prepaid-metering-under-map-framework/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Right",
+        "source": "The Nation Nigeria",
+        "source_url": "https://thenationonlineng.net",
+        "title": "Smart metering closes revenue collection losses and unlocks grid recapitalization",
+        "summary": "Power-sector investors stress that end-to-end metering and cost-reflective tariffs are essential to attract private grid capital.",
+        "url": "https://nairametrics.com/2026/10/19/nerc-directs-discos-to-fast-track-smart-prepaid-metering-under-map-framework/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483616/abokinews/starter/story-14.webp",
+    "cloudinary_public_id": "abokinews/starter/story-14"
+  },
+  {
+    "title": "Health ministry launches maternal-care and primary clinic solarization across 18 states",
+    "article_url": "https://nairametrics.com/2026/10/19/fg-rolls-out-solar-power-and-cold-chain-upgrades-for-primary-health-centres/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Samuel Daniel",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Health"
+    ],
+    "location": "ng",
+    "description": "Nigeria’s Coordinating Ministry of Health and Social Welfare initiated a solar microgrid and vaccine cold-chain upgrade program for 1,400 primary healthcare centres across 18 states.",
+    "content": "Nigeria’s Coordinating Ministry of Health and Social Welfare initiated a solar microgrid and vaccine cold-chain upgrade program for 1,400 primary healthcare centres across 18 states, Nairametrics reports.\n\nBacked by basic healthcare provision funds and development partners, the installations provide 24-hour power for maternity wards, diagnostic equipment, and temperature-sensitive immunization storage.\n\nPublic health specialists noted that reliable clinic electricity improves night-time maternal deliveries, while emphasizing that long-term maintenance contracts and rural midwife retention remain critical.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 48,
+    "center_coverage": 32,
+    "right_coverage": 20,
+    "dominant_bias": "left",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Premium Times",
+        "source_url": "https://www.premiumtimesng.com",
+        "title": "Solarizing rural maternity clinics is a vital step toward reducing preventable maternal mortality",
+        "summary": "Health reporters emphasize how off-grid solar power and staffed primary clinics protect rural mothers and infants.",
+        "url": "https://nairametrics.com/2026/10/19/fg-rolls-out-solar-power-and-cold-chain-upgrades-for-primary-health-centres/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "Health ministry launches maternal-care and primary clinic solarization across 18 states",
+        "summary": "The programme targets 1,400 primary health centres with solar systems and vaccine cold-chain refrigeration.",
+        "url": "https://nairametrics.com/2026/10/19/fg-rolls-out-solar-power-and-cold-chain-upgrades-for-primary-health-centres/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "BusinessDay Nigeria",
+        "source_url": "https://businessday.ng",
+        "title": "Decentralized solar service contracts cut diesel waste across public health infrastructure",
+        "summary": "Clean-energy analysts highlight how private solar operation-and-maintenance contracts deliver lower lifecycle costs than diesel generators.",
+        "url": "https://nairametrics.com/2026/10/19/fg-rolls-out-solar-power-and-cold-chain-upgrades-for-primary-health-centres/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483616/abokinews/starter/story-15.webp",
+    "cloudinary_public_id": "abokinews/starter/story-15"
+  },
+  {
+    "title": "NELFUND disburses student institutional upkeep loans to 42 additional public campuses",
+    "article_url": "https://nairametrics.com/2026/10/19/nelfund-expands-student-loan-disbursements-to-42-additional-tertiary-campuses/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Samuel Daniel",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Education"
+    ],
+    "location": "ng",
+    "description": "The Nigerian Education Loan Fund expanded its October disbursement batch to cover tuition and monthly upkeep stipends for verified students across 42 additional state and federal institutions.",
+    "content": "The Nigerian Education Loan Fund expanded its October disbursement batch to cover tuition and monthly upkeep stipends for verified students across 42 additional state and federal institutions, Nairametrics reports.\n\nAccording to the agency’s update, institutional charges are transferred directly to participating universities, polytechnics, and colleges of education, while living-expense stipends are credited to student accounts.\n\nUniversity administrators welcomed the faster verification portal turnaround, while student bodies urged remaining state institutions to complete academic calendar and matriculation data uploads.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 34,
+    "center_coverage": 38,
+    "right_coverage": 28,
+    "dominant_bias": "balanced",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "TheCable",
+        "source_url": "https://www.thecable.ng",
+        "title": "Expanding NELFUND stipends helps working-class students stay enrolled amid rising campus living costs",
+        "summary": "Education advocates welcome wider coverage while calling for streamlined verification for first-year students.",
+        "url": "https://nairametrics.com/2026/10/19/nelfund-expands-student-loan-disbursements-to-42-additional-tertiary-campuses/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Nairametrics",
+        "source_url": "https://nairametrics.com",
+        "title": "NELFUND disburses student institutional upkeep loans to 42 additional public campuses",
+        "summary": "The latest tranche covers direct institutional fees and student stipends across federal and state tertiary schools.",
+        "url": "https://nairametrics.com/2026/10/19/nelfund-expands-student-loan-disbursements-to-42-additional-tertiary-campuses/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "The Nation Nigeria",
+        "source_url": "https://thenationonlineng.net",
+        "title": "Direct digital tuition transfers strengthen university revenue predictability and audit trails",
+        "summary": "Policy analysts note that automated student-loan remittances improve campus funding transparency and reduce drop-out rates.",
+        "url": "https://nairametrics.com/2026/10/19/nelfund-expands-student-loan-disbursements-to-42-additional-tertiary-campuses/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483617/abokinews/starter/story-16.webp",
+    "cloudinary_public_id": "abokinews/starter/story-16"
+  },
+  {
+    "title": "NASA’s Europa Clipper completes deep-space instrument calibration ahead of planetary flyby",
+    "article_url": "https://www.nasa.gov/missions/europa-clipper/europa-clipper-completes-deep-space-instrument-checkouts/",
+    "source": "NASA",
+    "source_url": "https://www.nasa.gov",
+    "original_author": "",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Science",
+      "Technology"
+    ],
+    "location": "us",
+    "description": "Mission controllers at NASA’s Jet Propulsion Laboratory confirmed that Europa Clipper has completed deep-space calibration of its ice-penetrating radar, thermal imager, and magnetometer suite.",
+    "content": "Mission controllers at NASA’s Jet Propulsion Laboratory confirmed that Europa Clipper has completed deep-space calibration of its ice-penetrating radar, thermal imager, and magnetometer suite.\n\nThe spacecraft is en route to the Jovian system to investigate whether Jupiter’s icy moon Europa harbors conditions suitable for life beneath its frozen crust.\n\nEngineers verified antenna deployments and sensor alignment during cruise operations, preparing the spacecraft for upcoming gravity-assist trajectory maneuvers before orbital insertion at Jupiter.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 28,
+    "center_coverage": 48,
+    "right_coverage": 24,
+    "dominant_bias": "center",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "NPR Science",
+        "source_url": "https://www.npr.org",
+        "title": "Europa Clipper’s calibrated radar brings astrobiologists closer to probing an alien ocean world",
+        "summary": "Science correspondents highlight how multi-instrument checkouts prepare the probe to measure ice thickness and subsurface salinity.",
+        "url": "https://www.nasa.gov/missions/europa-clipper/europa-clipper-completes-deep-space-instrument-checkouts/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "NASA",
+        "source_url": "https://www.nasa.gov",
+        "title": "NASA’s Europa Clipper completes deep-space instrument calibration ahead of planetary flyby",
+        "summary": "JPL mission teams verified the health and alignment of all nine science instruments during deep-space cruise.",
+        "url": "https://www.nasa.gov/missions/europa-clipper/europa-clipper-completes-deep-space-instrument-checkouts/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "Washington Examiner",
+        "source_url": "https://www.washingtonexaminer.com",
+        "title": "Flagship JPL engineering keeps U.S. outer-planet exploration on schedule",
+        "summary": "Space policy writers point to smooth deep-space checkouts as validation of American aerospace instrumentation.",
+        "url": "https://www.nasa.gov/missions/europa-clipper/europa-clipper-completes-deep-space-instrument-checkouts/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483618/abokinews/starter/story-17.webp",
+    "cloudinary_public_id": "abokinews/starter/story-17"
+  },
+  {
+    "title": "Webb telescope maps silicate cloud structures in nearby exoplanet atmosphere",
+    "article_url": "https://www.nasa.gov/missions/webb/webb-maps-high-altitude-silicate-clouds-on-distant-exoplanet/",
+    "source": "NASA",
+    "source_url": "https://www.nasa.gov",
+    "original_author": "",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Science"
+    ],
+    "location": "us",
+    "description": "Using mid-infrared spectroscopy from the James Webb Space Telescope, astronomers mapped high-altitude silicate cloud layers and temperature gradients across a tidally locked gas giant.",
+    "content": "Using mid-infrared spectroscopy from the James Webb Space Telescope, astronomers mapped high-altitude silicate cloud layers and temperature gradients across a tidally locked gas giant.\n\nNASA reports that continuous phase-curve observations allowed researchers to track how mineral vapor condenses into fine quartz-like droplets as supersonic winds circulate heat from the planet’s day side to its night side.\n\nThe findings provide a benchmark for atmospheric circulation models that will be used to study smaller, cooler exoplanets in future observation cycles.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 31,
+    "center_coverage": 44,
+    "right_coverage": 25,
+    "dominant_bias": "center",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "Ars Technica",
+        "source_url": "https://arstechnica.com",
+        "title": "Webb’s mid-infrared phase curves reveal 3D weather patterns and quartz clouds on an alien world",
+        "summary": "Astrophysics coverage explains how international research teams turned infrared spectra into global exoplanet weather maps.",
+        "url": "https://www.nasa.gov/missions/webb/webb-maps-high-altitude-silicate-clouds-on-distant-exoplanet/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "NASA",
+        "source_url": "https://www.nasa.gov",
+        "title": "Webb telescope maps silicate cloud structures in nearby exoplanet atmosphere",
+        "summary": "Mid-infrared instrument data captured day-to-night temperature contrasts and mineral cloud signatures.",
+        "url": "https://www.nasa.gov/missions/webb/webb-maps-high-altitude-silicate-clouds-on-distant-exoplanet/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "Fox News Science",
+        "source_url": "https://www.foxnews.com",
+        "title": "James Webb Space Telescope continues delivering landmark discoveries beyond original design goals",
+        "summary": "Science commentators note the observatory’s fuel reserves and precision optics are surpassing pre-launch expectations.",
+        "url": "https://www.nasa.gov/missions/webb/webb-maps-high-altitude-silicate-clouds-on-distant-exoplanet/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483619/abokinews/starter/story-18.webp",
+    "cloudinary_public_id": "abokinews/starter/story-18"
+  },
+  {
+    "title": "UK Treasury outlines green gilt issuance and North Sea grid interconnectors for 2027",
+    "article_url": "https://nairametrics.com/2026/10/19/uk-treasury-outlines-green-gilt-program-and-north-sea-grid-investment/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Kelechi Mgboji",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Markets",
+      "Politics"
+    ],
+    "location": "gb",
+    "description": "Britain’s Debt Management Office and Treasury outlined an updated sovereign green gilt framework alongside regulatory fast-tracking for North Sea subsea electricity interconnectors.",
+    "content": "Britain’s Debt Management Office and Treasury outlined an updated sovereign green gilt framework alongside regulatory fast-tracking for North Sea subsea electricity interconnectors, Nairametrics reports.\n\nProceeds from the upcoming bond tranches are earmarked for high-voltage transmission upgrades, offshore wind grid connections, and industrial carbon-capture clusters across northern England and Scotland.\n\nBond market participants noted steady institutional demand for long-dated sterling green debt, while fiscal analysts debated the balance between public borrowing costs and private co-investment guarantees.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 42,
+    "center_coverage": 20,
+    "right_coverage": 38,
+    "dominant_bias": "polarized",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "The Guardian",
+        "source_url": "https://www.theguardian.com",
+        "title": "North Sea grid interconnectors are essential to end clean-power curtailment and lower UK bills",
+        "summary": "Climate and energy commentators back faster transmission builds to connect Scottish offshore wind to southern demand centers.",
+        "url": "https://nairametrics.com/2026/10/19/uk-treasury-outlines-green-gilt-program-and-north-sea-grid-investment/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Reuters UK",
+        "source_url": "https://www.reuters.com",
+        "title": "UK Treasury outlines green gilt issuance and North Sea grid interconnectors for 2027",
+        "summary": "Officials detailed the allocation rules for upcoming sovereign green bond sales and cross-border transmission links.",
+        "url": "https://nairametrics.com/2026/10/19/uk-treasury-outlines-green-gilt-program-and-north-sea-grid-investment/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "The Telegraph",
+        "source_url": "https://www.telegraph.co.uk",
+        "title": "Treasury must ensure green gilt borrowing does not crowd out baseload energy security",
+        "summary": "Fiscal conservatives urge strict cost-benefit scrutiny on grid capital spending as gilt yields remain elevated.",
+        "url": "https://nairametrics.com/2026/10/19/uk-treasury-outlines-green-gilt-program-and-north-sea-grid-investment/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483620/abokinews/starter/story-19.webp",
+    "cloudinary_public_id": "abokinews/starter/story-19"
+  },
+  {
+    "title": "London and Manchester fast-track brownfield urban housing regeneration permits",
+    "article_url": "https://nairametrics.com/2026/10/19/uk-councils-fast-track-brownfield-housing-permits-in-london-and-manchester/",
+    "source": "Nairametrics",
+    "source_url": "https://nairametrics.com",
+    "original_author": "Emmanuel Azubuike",
+    "publication_date": "2026-10-19",
+    "categories": [
+      "Housing",
+      "Business"
+    ],
+    "location": "gb",
+    "description": "Metropolitan planning authorities in Greater London and Greater Manchester cleared fast-track regeneration zones near rail transit hubs to deliver 38,000 mixed-tenure homes on former industrial sites.",
+    "content": "Metropolitan planning authorities in Greater London and Greater Manchester cleared fast-track regeneration zones near rail transit hubs to deliver 38,000 mixed-tenure homes on former industrial sites, Nairametrics reports.\n\nThe planning accord standardizes environmental remediation grants and density permissions for mid-rise developments within 800 meters of commuter rail and tram stations.\n\nTenant advocacy groups pressed councils to enforce minimum social-rent quotas within each development phase, while homebuilders welcomed faster statutory decision timelines.\n\nOriginal summary by AbokiNews. Read the linked source for the full report.",
+    "left_coverage": 46,
+    "center_coverage": 28,
+    "right_coverage": 26,
+    "dominant_bias": "left",
+    "perspectives": [
+      {
+        "bucket": "left",
+        "label": "From the Left",
+        "bias_rating": "Lean Left",
+        "source": "The Guardian",
+        "source_url": "https://www.theguardian.com",
+        "title": "Urban brownfield regeneration must guarantee council and social-rent homes for local workers",
+        "summary": "Housing campaigners welcome transit-oriented density but warn against waiving affordable-housing thresholds for developers.",
+        "url": "https://nairametrics.com/2026/10/19/uk-councils-fast-track-brownfield-housing-permits-in-london-and-manchester/"
+      },
+      {
+        "bucket": "center",
+        "label": "From the Center",
+        "bias_rating": "Center",
+        "source": "Financial Times",
+        "source_url": "https://www.ft.com",
+        "title": "London and Manchester fast-track brownfield urban housing regeneration permits",
+        "summary": "Combined authorities paired remediation funding with streamlined planning rules around rail corridors.",
+        "url": "https://nairametrics.com/2026/10/19/uk-councils-fast-track-brownfield-housing-permits-in-london-and-manchester/"
+      },
+      {
+        "bucket": "right",
+        "label": "From the Right",
+        "bias_rating": "Lean Right",
+        "source": "City A.M.",
+        "source_url": "https://www.cityam.com",
+        "title": "Cutting planning red tape around transit hubs unlocks institutional build-to-rent capital",
+        "summary": "Property analysts say predictable zoning near commuter stations will accelerate private construction and protect greenbelt land.",
+        "url": "https://nairametrics.com/2026/10/19/uk-councils-fast-track-brownfield-housing-permits-in-london-and-manchester/"
+      }
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792483621/abokinews/starter/story-20.webp",
+    "cloudinary_public_id": "abokinews/starter/story-20"
   }
 ]

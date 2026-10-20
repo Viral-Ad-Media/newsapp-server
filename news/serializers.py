@@ -1,7 +1,30 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField, TaggitSerializer
 from .models import NewsSource, NewsCategory, NewsArticle
+
+
+class CustomUserDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = [
+            "pk",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "is_staff",
+            "is_superuser",
+            "date_joined",
+        ]
+        read_only_fields = [
+            "pk",
+            "email",
+            "is_staff",
+            "is_superuser",
+            "date_joined",
+        ]
 
 
 def resolve_cloudinary_asset_url(image_field, fallback_url=""):

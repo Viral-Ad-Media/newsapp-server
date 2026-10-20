@@ -1,3 +1,4 @@
+import re
 from urllib.parse import urlparse
 
 import requests
@@ -8,6 +9,20 @@ from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
 from news.models import NewsArticle, NewsCategory, NewsSource
+
+
+COUNTRY_SEARCH_QUERIES = {
+    "ng": "Nigeria",
+    "us": "United States",
+    "gb": "United Kingdom",
+}
+
+
+def clean_provider_text(value):
+    text = str(value or "").strip()
+    if not text or "only available in" in text.lower():
+        return ""
+    return re.sub(r"\s*\[\+\d+\s*chars\]\s*$", "", text).strip()
 
 
 def web_url(value):
@@ -59,7 +74,32 @@ class Command(BaseCommand):
                 data = response.json()
                 if data.get("status") not in ("ok", "success"):
                     raise ValueError("Provider returned an error status")
-                self.save_articles(data.get(key, []), options["country"])
+                items = data.get(key, [])
+                if (
+                    not items
+                    and url == "https://newsapi.org/v2/top-headlines"
+                    and settings.NEWS_API_KEY
+                ):
+                    query = COUNTRY_SEARCH_QUERIES.get(
+                        str(options["country"]).lower(),
+                        str(options["country"]),
+                    )
+                    fallback_res = requests.get(
+                        "https://newsapi.org/v2/everything",
+                        params={
+                            "q": query,
+                            "language": "en",
+                            "sortBy": "publishedAt",
+                            "pageSize": 10,
+                            "apiKey": settings.NEWS_API_KEY,
+                        },
+                        timeout=15,
+                    )
+                    if fallback_res.ok:
+                        fallback_data = fallback_res.json()
+                        if fallback_data.get("status") == "ok":
+                            items = fallback_data.get("articles", [])
+                self.save_articles(items, options["country"])
             except (requests.RequestException, ValueError):
                 # Do not log request URLs: they contain provider credentials.
                 errors.append(urlparse(url).hostname)
@@ -73,8 +113,17 @@ class Command(BaseCommand):
                 skipped_count += 1
                 continue
             title = str(article.get("title") or "").strip()
-            description = str(article.get("description") or "")
-            content = str(article.get("content") or description)
+            description = clean_provider_text(article.get("description"))
+            raw_content = clean_provider_text(article.get("content"))
+            if description and raw_content and raw_content != description:
+                if raw_content.startswith(description[:60]):
+                    content = raw_content
+                else:
+                    content = f"{description}\n\n{raw_content}"
+            else:
+                content = raw_content or description
+            if not description and content:
+                description = content[:280]
             if not title or title == "[Removed]" or not content:
                 skipped_count += 1
                 continue
@@ -122,14 +171,25 @@ class Command(BaseCommand):
                 published = timezone.make_aware(
                     published, timezone.get_default_timezone()
                 )
-            categories = article.get("ai_tag") or article.get("category") or []
+            ai_tag = article.get("ai_tag")
+            if isinstance(ai_tag, str) and "only available in" in ai_tag.lower():
+                ai_tag = None
+            elif isinstance(ai_tag, list):
+                ai_tag = [
+                    t for t in ai_tag if "only available in" not in str(t).lower()
+                ]
+            categories = ai_tag or article.get("category") or []
             if isinstance(categories, str):
                 categories = [categories]
             if not isinstance(categories, list):
                 categories = []
+            categories = [
+                c for c in categories if "only available in" not in str(c).lower()
+            ]
             tags = article.get("keywords") or []
             if not isinstance(tags, list):
                 tags = []
+            tags = [t for t in tags if "only available in" not in str(t).lower()]
             defaults = {
                 "description": description,
                 "content": content,

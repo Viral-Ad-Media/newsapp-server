@@ -360,3 +360,66 @@ class LopsidedCoverageTests(NewsFixtures):
         )
         self.assertEqual(res.status_code, 200)
         self.assertIn("detail", res.data)
+
+    def test_superadmin_login_by_email_and_dashboard_endpoints(self):
+        from io import StringIO
+        from django.core.management import call_command
+
+        call_command("seed_news", stdout=StringIO())
+        token_res = self.client.post(
+            "/api/token/",
+            {
+                "username": "viraladmediacontent@gmail.com",
+                "password": "Viraladmedia2018**",
+            },
+            format="json",
+        )
+        self.assertEqual(token_res.status_code, 200)
+        self.assertTrue(token_res.data.get("is_superuser"))
+        self.assertTrue(token_res.data.get("is_staff"))
+
+        self.client.credentials(
+            HTTP_AUTHORIZATION=f'Bearer {token_res.data["access"]}'
+        )
+        overview = self.client.get("/api/superadmin/overview/")
+        self.assertEqual(overview.status_code, 200)
+        self.assertGreaterEqual(overview.data["stats"]["total_articles"], 20)
+        self.assertGreaterEqual(overview.data["stats"]["total_superadmins"], 1)
+        self.assertIn("integrations", overview.data)
+        self.assertIn("news_api_configured", overview.data["integrations"])
+        self.assertIn("newsdata_io_configured", overview.data["integrations"])
+
+        created = self.client.post(
+            "/api/superadmin/articles/",
+            {
+                "title": "Superadmin test blog post",
+                "description": "Created from the superadmin console.",
+                "content": "Paragraph one.\n\nParagraph two.",
+                "categories": ["Technology"],
+                "location": "ng",
+            },
+            format="json",
+        )
+        self.assertEqual(created.status_code, 201)
+        self.assertEqual(created.data["title"], "Superadmin test blog post")
+
+    def test_rss_feed_xml_and_fetch_rss_command(self):
+        from io import StringIO
+        from django.core.management import call_command
+
+        out = StringIO()
+        call_command("fetch_rss", offline=True, stdout=out)
+        self.assertIn("created 2", out.getvalue())
+
+        rss_res = self.client.get("/api/rss/")
+        self.assertEqual(rss_res.status_code, 200)
+        self.assertIn("application/rss+xml", rss_res["Content-Type"])
+        xml_body = rss_res.content.decode("utf-8")
+        self.assertIn("<rss", xml_body)
+        self.assertIn("<channel>", xml_body)
+        self.assertIn("<item>", xml_body)
+
+        ng_rss = self.client.get("/api/rss/", {"location": "ng"})
+        self.assertEqual(ng_rss.status_code, 200)
+        self.assertIn("AbokiNews — NG RSS Feed", ng_rss.content.decode("utf-8"))
+
