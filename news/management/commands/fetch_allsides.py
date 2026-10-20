@@ -75,6 +75,7 @@ class Command(BaseCommand):
                     "source": source,
                     "location": item.get("location", "us"),
                     "remote_image_url": item.get("remote_image_url", ""),
+                    "image": item.get("cloudinary_public_id") or None,
                     "published_at": published_at,
                     "total_sources": item.get("total_sources", 3),
                     "left_coverage": item.get("left_coverage", 33),

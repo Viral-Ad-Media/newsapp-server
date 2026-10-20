@@ -26,7 +26,19 @@ class Command(BaseCommand):
         with transaction.atomic():
             created = skipped = 0
             for item in articles:
-                if NewsArticle.objects.filter(article_url=item["article_url"]).exists():
+                existing = NewsArticle.objects.filter(
+                    article_url=item["article_url"]
+                ).first()
+                if existing:
+                    if (
+                        not options["dry_run"]
+                        and not existing.remote_image_url
+                        and item.get("remote_image_url")
+                    ):
+                        existing.remote_image_url = item["remote_image_url"]
+                        if item.get("cloudinary_public_id") and not existing.image:
+                            existing.image = item["cloudinary_public_id"]
+                        existing.save(update_fields=["remote_image_url", "image"])
                     skipped += 1
                     continue
                 if options["dry_run"]:
@@ -43,6 +55,8 @@ class Command(BaseCommand):
                     description=item["description"],
                     content=item["content"],
                     article_url=item["article_url"],
+                    remote_image_url=item.get("remote_image_url", ""),
+                    image=item.get("cloudinary_public_id") or None,
                     source=source,
                     location=item["location"],
                     total_sources=1,

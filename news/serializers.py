@@ -1,6 +1,42 @@
+from django.conf import settings
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField, TaggitSerializer
 from .models import NewsSource, NewsCategory, NewsArticle
+
+
+def resolve_cloudinary_asset_url(image_field, fallback_url=""):
+    """
+    Safely resolve a CloudinaryField or remote image URL into a full https:// URL.
+    """
+    if fallback_url and str(fallback_url).startswith(("http://", "https://")):
+        url_str = str(fallback_url)
+        if url_str.startswith("http://res.cloudinary.com/"):
+            return "https://" + url_str[len("http://") :]
+        return url_str
+
+    if image_field:
+        try:
+            field_url = getattr(image_field, "url", None)
+            if field_url and str(field_url).startswith(("http://", "https://")):
+                url_str = str(field_url)
+                if url_str.startswith("http://res.cloudinary.com/"):
+                    return "https://" + url_str[len("http://") :]
+                return url_str
+        except Exception:
+            pass
+
+        raw = str(image_field).strip().lstrip("/")
+        if raw and raw != "None":
+            if raw.startswith(("http://", "https://")):
+                return raw
+            cloud_name = (
+                getattr(settings, "CLOUDINARY_CLOUD_NAME", "") or "dz58pgz41"
+            )
+            if raw.startswith("image/upload/"):
+                return f"https://res.cloudinary.com/{cloud_name}/{raw}"
+            return f"https://res.cloudinary.com/{cloud_name}/image/upload/{raw}"
+
+    return fallback_url or None
 
 
 class NewsSourceSerializer(serializers.ModelSerializer):
@@ -23,7 +59,7 @@ class NewsCategorySerializer(serializers.ModelSerializer):
         fields = ["id", "name", "image", "image_url", "article_count"]
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
+        return resolve_cloudinary_asset_url(obj.image)
 
 
 class NewsCategoryLiteSerializer(serializers.ModelSerializer):
@@ -34,7 +70,7 @@ class NewsCategoryLiteSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "image_url"]
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else None
+        return resolve_cloudinary_asset_url(obj.image)
 
 
 class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
@@ -76,4 +112,4 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
         ]
 
     def get_image_url(self, obj):
-        return obj.image.url if obj.image else (obj.remote_image_url or None)
+        return resolve_cloudinary_asset_url(obj.image, obj.remote_image_url)

@@ -47,7 +47,9 @@
         "summary": "Market analysts argue that listing NNPC Limited and NLNG on the NGX will impose market discipline and accelerate private-sector wealth creation.",
         "url": "https://nairametrics.com/2026/10/19/taiwo-oyedele-pushes-for-nnpcl-nlng-listing-to-boost-transparency-wealth-creation/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480242/abokinews/starter/story-1.webp",
+    "cloudinary_public_id": "abokinews/starter/story-1"
   },
   {
     "title": "Nigerian equities fall as industrial and bank shares retreat",
@@ -97,7 +99,9 @@
         "summary": "Equities desks view the N1.47 trillion single-session dip as routine institutional rebalancing following third-quarter earnings runs.",
         "url": "https://nairametrics.com/2026/10/19/ngx-loses-n1-47-trillion-in-single-day-as-dangote-cement-banking-stocks-slide/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480243/abokinews/starter/story-2.webp",
+    "cloudinary_public_id": "abokinews/starter/story-2"
   },
   {
     "title": "Nigeria introduces capital-market development plan through 2036",
@@ -147,7 +151,9 @@
         "summary": "Pro-market commentators praise the roadmap’s focus on private infrastructure bonds, pension liberalization, and sovereign equity listings.",
         "url": "https://nairametrics.com/2026/10/19/nigeria-targets-n750-trillion-capital-market-as-shettima-unveils-10-year-roadmap/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480243/abokinews/starter/story-3.webp",
+    "cloudinary_public_id": "abokinews/starter/story-3"
   },
   {
     "title": "Kano lawmakers reduce spending plan after revenue shortfall",
@@ -197,7 +203,9 @@
         "summary": "Fiscal hawks argue the N276 billion reduction is a necessary correction against deficit borrowing and unrealistic revenue projections.",
         "url": "https://nairametrics.com/2026/10/19/kano-cuts-2026-budget-by-n276-billion-cites-faac-revenue-shortfall/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480244/abokinews/starter/story-4.webp",
+    "cloudinary_public_id": "abokinews/starter/story-4"
   },
   {
     "title": "NAFDAC reports suspected counterfeit-drinks operation in Aba",
@@ -247,7 +255,9 @@
         "summary": "Trade associations welcome enforcement actions that defend trademarked producers and formal tax-paying distillers.",
         "url": "https://nairametrics.com/2026/10/19/nafdac-uncovers-suspected-counterfeit-alcohol-factory-worth-over-n500-million-in-abia/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480245/abokinews/starter/story-5.webp",
+    "cloudinary_public_id": "abokinews/starter/story-5"
   },
   {
     "title": "Mortgage bank reports housing-finance approvals for 2025",
@@ -297,7 +307,9 @@
         "summary": "Real-estate analysts emphasize mobilizing diaspora remittances and private mortgage underwriting to expand housing supply.",
         "url": "https://nairametrics.com/2026/10/19/fmbn-approves-n208-billion-in-housing-loans-finances-6911-homes/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480245/abokinews/starter/story-6.webp",
+    "cloudinary_public_id": "abokinews/starter/story-6"
   },
   {
     "title": "Education ministry says recruitment-waiver process remains in force",
@@ -347,7 +359,9 @@
         "summary": "Governance analysts back the ministry’s insistence on formal waiver controls to keep federal personnel costs within budget.",
         "url": "https://nairametrics.com/2026/10/19/fg-says-recruitment-waivers-for-federal-tertiary-institutions-not-abolished/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480246/abokinews/starter/story-7.webp",
+    "cloudinary_public_id": "abokinews/starter/story-7"
   },
   {
     "title": "NITDA and NACCIMA announce commercial links for Nigerian startups",
@@ -397,7 +411,9 @@
         "summary": "Industry leaders applaud private-sector procurement and chamber-led venture matching as sustainable growth drivers.",
         "url": "https://nairametrics.com/2026/10/19/nitda-partners-naccima-to-unlock-private-investment-corporate-deals-for-nigerian-startups/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480247/abokinews/starter/story-8.webp",
+    "cloudinary_public_id": "abokinews/starter/story-8"
   },
   {
     "title": "NASA’s simulated Mars crew reaches a year in isolation",
@@ -447,7 +463,9 @@
         "summary": "Defense and space commentators frame the Houston endurance test as vital preparation for U.S. deep-space leadership.",
         "url": "https://www.nasa.gov/humans-in-space/nasas-simulated-mars-crew-marks-one-year-inside-habitat/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480248/abokinews/starter/story-9.jpg",
+    "cloudinary_public_id": "abokinews/starter/story-9"
   },
   {
     "title": "NASA engineers streamline rocket shock and vibration modelling",
@@ -497,6 +515,8 @@
         "summary": "Aerospace analysts note that reusable simulation templates trim costly testing delays for commercial and Artemis launch providers.",
         "url": "https://www.nasa.gov/centers-and-facilities/kennedy/nasa-improves-shock-vibration-analysis/"
       }
-    ]
+    ],
+    "remote_image_url": "https://res.cloudinary.com/dz58pgz41/image/upload/v1792480844/abokinews/starter/story-10.jpg",
+    "cloudinary_public_id": "abokinews/starter/story-10"
   }
 ]

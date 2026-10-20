@@ -252,15 +252,19 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 # Cloudinary Configuration
-CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="")
+CLOUDINARY_CLOUD_NAME = config("CLOUDINARY_CLOUD_NAME", default="dz58pgz41")
 CLOUDINARY_API_KEY = config("CLOUDINARY_API_KEY", default="")
 CLOUDINARY_API_SECRET = config("CLOUDINARY_API_SECRET", default="")
+
+MEDIA_URL = f"https://res.cloudinary.com/{CLOUDINARY_CLOUD_NAME or 'dz58pgz41'}/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
     cloudinary.config(
         cloud_name=CLOUDINARY_CLOUD_NAME,
         api_key=CLOUDINARY_API_KEY,
         api_secret=CLOUDINARY_API_SECRET,
+        secure=True,
     )
     # Use Cloudinary for media file storage
     STORAGES = {
@@ -269,3 +273,8 @@ if CLOUDINARY_CLOUD_NAME and CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
         },
     }
+else:
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME or "dz58pgz41",
+        secure=True,
+    )
