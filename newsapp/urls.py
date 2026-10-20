@@ -18,8 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
+from .views import service_status
 from rest_framework.routers import DefaultRouter
-from news.views import NewsCategoryViewSet, related_news, NewsCoverageView  
+from news.views import NewsCategoryViewSet, related_news, NewsCoverageView
 
 
 router = DefaultRouter()
@@ -33,6 +34,8 @@ from rest_framework_simplejwt.views import (
 
 
 urlpatterns = [
+    path('', service_status, name='service-status'),
+    path('health/', service_status, name='health'),
     path('admin/', admin.site.urls),
     path('api/', include('news.urls')),
     path('api/', include(router.urls)),
