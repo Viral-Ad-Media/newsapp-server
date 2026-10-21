@@ -3,6 +3,7 @@ from .views import NewsList, NewsDetail
 from . import views
 
 urlpatterns = [
+    path("superadmin/seo/analyze/", views.SuperadminSeoAnalysisView.as_view(), name="superadmin-seo-analysis"),
     path("saved-status/", views.SavedNewsStatus.as_view(), name="saved-status"),
     path("feed/", views.PersonalizedNewsList.as_view(), name="reader-feed"),
     path("saved/", views.SavedNewsList.as_view(), name="saved-news"),
