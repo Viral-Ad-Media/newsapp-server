@@ -611,39 +611,11 @@ class SuperadminArticleListCreateView(APIView):
         author = str(data.get("author") or request.user.get_username()).strip()[:150]
 
         perspectives = data.get("perspectives")
-        if not isinstance(perspectives, list) or not perspectives:
-            perspectives = [
-                {
-                    "bucket": "left",
-                    "label": "From the Left",
-                    "bias_rating": "Lean Left",
-                    "source": "Progressive Desk",
-                    "source_url": source_url,
-                    "title": f"{title} — public accountability & social impact focus",
-                    "summary": description,
-                    "url": article_url or source_url,
-                },
-                {
-                    "bucket": "center",
-                    "label": "From the Center",
-                    "bias_rating": "Center",
-                    "source": source_name,
-                    "source_url": source_url,
-                    "title": title,
-                    "summary": description,
-                    "url": article_url or source_url,
-                },
-                {
-                    "bucket": "right",
-                    "label": "From the Right",
-                    "bias_rating": "Lean Right",
-                    "source": "Market & Enterprise Desk",
-                    "source_url": source_url,
-                    "title": f"{title} — fiscal & private-sector perspective",
-                    "summary": description,
-                    "url": article_url or source_url,
-                },
-            ]
+        if not isinstance(perspectives, list):
+            perspectives = []
+        # A new editorial post has one source unless actual perspectives are
+        # supplied. Never manufacture publisher names or quotations on publish.
+
 
         article = NewsArticle.objects.create(
             **seo.validated_data,
@@ -663,9 +635,9 @@ class SuperadminArticleListCreateView(APIView):
             dominant_bias=dominant_bias,
             perspectives=perspectives,
             sentiment="neutral",
-            sentiment_positive=34.0,
-            sentiment_neutral=46.0,
-            sentiment_negative=20.0,
+            sentiment_positive=0.0,
+            sentiment_neutral=0.0,
+            sentiment_negative=0.0,
         )
 
         raw_categories = data.get("categories") or ["Business"]

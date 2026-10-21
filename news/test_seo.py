@@ -99,6 +99,9 @@ class SeoApiTests(TestCase):
         self.client.force_authenticate(self.editor)
         res = self.client.post("/api/superadmin/articles/", self.payload, format="json")
         self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.data["perspectives"], [])
+        self.assertEqual(res.data["total_sources"], 1)
+        self.assertEqual(res.data["sentiment_positive"], 0)
         article_id = res.data["id"]
         self.assertEqual(res.data["seo_title"], self.payload["seo_title"])
         self.assertTrue(res.data["seo_noindex"])
