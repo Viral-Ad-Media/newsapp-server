@@ -132,6 +132,17 @@ The default country is `ng`. Set `NEWS_API_KEY`, `NEWS_DATA_IO_API_KEY`, or both
 
 Missing credentials or provider errors produce a nonzero exit code without logging credential-bearing URLs. If one provider fails, stories imported from another provider can still be saved. Scheduling is external: configure a cron job or hosting scheduler to invoke the command at an interval allowed by your provider plan.
 
+## Post SEO metadata and draft analysis
+
+The superadmin post endpoints accept optional focus keyword, search title and
+meta description, canonical URL, social title/description/image, image alternative,
+robots flags and Article-family schema type. Authenticated staff can analyze an
+unsaved draft at `POST /api/superadmin/seo/analyze/`. This is a transparent local
+editorial checklist, not a Google ranking or a third-party plugin score. See
+[the SEO editor guide](docs/seo-editor.md) for field names, score weights,
+limitations and the backend-first deployment order. Apply migrations before
+using the frontend editor.
+
 ## Load 10 real starter stories
 
 The repository includes eight Nigerian reports from Nairametrics and two NASA updates, all published October 19, 2026. They cover business, markets, politics, health, housing, education, technology, and science. These are short original AbokiNews summaries, with direct links to the publishers; they are not copied full articles or fictional demo stories.
