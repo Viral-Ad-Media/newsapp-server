@@ -40,6 +40,7 @@ def main():
     try:
         call_command("migrate", interactive=False)
         call_command("seed_news")
+        call_command("seed_blog_posts")
     finally:
         with connection.cursor() as cursor:
             cursor.execute("SELECT pg_advisory_unlock(%s)", [DEPLOY_LOCK])
