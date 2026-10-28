@@ -60,7 +60,10 @@ def plain_text(value):
 
 
 def words(value):
-    return re.findall(r"[^\W_]+(?:['’-][^\W_]+)*", plain_text(value), flags=re.UNICODE)
+    normalized = plain_text(value).translate(
+        str.maketrans({"’": "'", "‘": "'", "‐": "-", "‑": "-"})
+    )
+    return re.findall(r"[^\W_]+(?:['-][^\W_]+)*", normalized, flags=re.UNICODE)
 
 
 def contains_phrase(text, phrase):

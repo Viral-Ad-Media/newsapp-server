@@ -73,164 +73,45 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        feed_url = (options.get("url") or "").strip()
-        default_category = (options.get("category") or "Business").strip()
-        default_location = (options.get("location") or "ng").strip().lower()
-        offline = bool(options.get("offline"))
-        dry_run = bool(options.get("dry_run"))
-
-        parsed_items = []
-        used_fallback = False
-
-        if offline:
-            parsed_items = parse_rss_or_atom_xml(
-                OFFLINE_RSS_SAMPLE_XML,
-                default_source="Nairametrics",
-                default_source_url="https://nairametrics.com",
-                default_location=default_location,
-                default_category=default_category,
-            )
-            used_fallback = True
-        elif feed_url:
-            try:
-                parsed_items = fetch_and_parse_rss_feed(
-                    feed_url,
-                    default_source="RSS Syndication",
-                    default_source_url=feed_url,
-                    default_location=default_location,
-                    default_category=default_category,
-                )
-            except Exception as exc:
-                self.stdout.write(
-                    self.style.WARNING(
-                        f"Live RSS fetch failed ({exc}); falling back to offline RSS sample."
-                    )
-                )
-                parsed_items = parse_rss_or_atom_xml(
-                    OFFLINE_RSS_SAMPLE_XML,
-                    default_source="Nairametrics",
-                    default_source_url="https://nairametrics.com",
-                    default_location=default_location,
-                    default_category=default_category,
-                )
-                used_fallback = True
-        else:
-            for src in DEFAULT_RSS_SOURCES:
-                try:
-                    batch = fetch_and_parse_rss_feed(
-                        src["feed_url"],
-                        default_source=src["name"],
-                        default_source_url=src["source_url"],
-                        default_location=src["location"],
-                        default_category=src["category"],
-                    )
-                    parsed_items.extend(batch[:5])
-                except Exception:
-                    continue
-
-            if not parsed_items:
-                parsed_items = parse_rss_or_atom_xml(
-                    OFFLINE_RSS_SAMPLE_XML,
-                    default_source="Nairametrics",
-                    default_source_url="https://nairametrics.com",
-                    default_location=default_location,
-                    default_category=default_category,
-                )
-                used_fallback = True
-
-        created = updated = 0
+        from django.core.management.base import CommandError
+        from news.automation import store_item
+        from news.models import AutomationWorkerLock
+        offline = bool(options.get('offline'))
+        dry_run = bool(options.get('dry_run'))
+        category = options.get('category') or 'Business'
+        location = options.get('location') or 'ng'
+        feeds = [dict(name='RSS Syndication', feed_url=options['url'], source_url=options['url'])] if options.get('url') else DEFAULT_RSS_SOURCES
+        created = duplicates = errors = 0
+        AutomationWorkerLock.objects.get_or_create(pk=1)
         with transaction.atomic():
-            for item in parsed_items:
-                if dry_run:
-                    self.stdout.write(f'Would import RSS item: {item["title"]}')
-                    created += 1
-                    continue
-
-                source, _ = NewsSource.objects.get_or_create(
-                    name=item["source"][:100],
-                    defaults={"url": item["source_url"], "bias": "center"},
-                )
-
-                pub_at = item.get("published_at") or datetime.now(timezone.utc)
-                article_url = item.get("article_url") or ""
-
-                defaults = {
-                    "title": item["title"][:255],
-                    "author": item.get("author", "RSS Syndication Desk")[:150],
-                    "description": item["description"],
-                    "content": item["content"],
-                    "source": source,
-                    "location": item.get("location", default_location),
-                    "remote_image_url": item.get("remote_image_url", ""),
-                    "published_at": pub_at,
-                    "total_sources": 3,
-                    "left_coverage": 32,
-                    "center_coverage": 36,
-                    "right_coverage": 32,
-                    "dominant_bias": "balanced",
-                    "perspectives": [
-                        {
-                            "bucket": "left",
-                            "label": "From the Left",
-                            "bias_rating": "Lean Left",
-                            "source": "Public Interest Wire",
-                            "source_url": item["source_url"],
-                            "title": f"{item['title']} — social & developmental lens",
-                            "summary": item["description"],
-                            "url": article_url or item["source_url"],
-                        },
-                        {
-                            "bucket": "center",
-                            "label": "From the Center",
-                            "bias_rating": "Center",
-                            "source": item["source"],
-                            "source_url": item["source_url"],
-                            "title": item["title"],
-                            "summary": item["description"],
-                            "url": article_url or item["source_url"],
-                        },
-                        {
-                            "bucket": "right",
-                            "label": "From the Right",
-                            "bias_rating": "Lean Right",
-                            "source": "Market & Enterprise Wire",
-                            "source_url": item["source_url"],
-                            "title": f"{item['title']} — private capital & market view",
-                            "summary": item["description"],
-                            "url": article_url or item["source_url"],
-                        },
-                    ],
-                    "sentiment": "neutral",
-                    "sentiment_positive": 33.0,
-                    "sentiment_neutral": 47.0,
-                    "sentiment_negative": 20.0,
-                }
-
-                if article_url:
-                    article, was_created = NewsArticle.objects.update_or_create(
-                        article_url=article_url,
-                        defaults=defaults,
-                    )
-                else:
-                    article, was_created = NewsArticle.objects.update_or_create(
-                        title=item["title"][:255],
-                        defaults=defaults,
-                    )
-
-                cat_objs = [
-                    NewsCategory.objects.get_or_create(name=c[:50])[0]
-                    for c in (item.get("categories") or [default_category])
-                    if c
-                ]
-                article.categories.set(cat_objs)
-                article.tags.add("rss-syndicated")
-
-                if was_created:
-                    created += 1
-                else:
-                    updated += 1
-
-        mode = "offline-sample" if used_fallback else "live-rss"
-        self.stdout.write(
-            f"RSS ({mode}): created {created}, updated {updated} articles."
-        )
+            AutomationWorkerLock.objects.select_for_update().get(pk=1)
+            if offline:
+                # Explicit test fixture only; never used as a network fallback.
+                items = parse_rss_or_atom_xml(OFFLINE_RSS_SAMPLE_XML)
+                feeds = [dict(name='Offline test fixture', source_url='https://example.org', items=items)]
+            for feed in feeds:
+                try:
+                    items = feed.get('items') if offline else fetch_and_parse_rss_feed(
+                        feed['feed_url'], default_source=feed['name'], default_source_url=feed['source_url'],
+                        default_location=location, default_category=category)
+                    if not items:
+                        raise ValueError('No eligible feed entries')
+                    source = None
+                    if not dry_run:
+                        source, _ = NewsSource.objects.get_or_create(name=feed['name'], defaults={'url': feed['source_url']})
+                        cat, _ = NewsCategory.objects.get_or_create(name=category)
+                        source.default_category = cat
+                        source.location = location
+                    for item in items[:100]:
+                        if dry_run:
+                            self.stdout.write(f"Would validate: {item['title']}")
+                            continue
+                        with transaction.atomic():
+                            result = store_item(item, source)
+                        created += result == 'created'
+                        duplicates += result == 'duplicates'
+                except Exception:
+                    errors += 1
+            self.stdout.write(f'RSS: created {created}, duplicates {duplicates}, failed sources {errors}.')
+        if errors:
+            raise CommandError('Some feeds failed. No sample fallback was imported.')

@@ -1,5 +1,7 @@
 # Editorial SEO tools
 
+> Full-article update: [source-grounded article policy](full-articles.md) supersedes the summary-only publishing behavior described below. Existing summaries stay unchanged. Migration 0019, a configured writing key and a worker are required for upgrades.
+
 Posts now have optional search and sharing metadata. Existing posts keep their
 current titles, summaries, images and `/news/<id>` URLs unless an editor supplies
 overrides. This is an AbokiNews feature inspired by common content-analysis

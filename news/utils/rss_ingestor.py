@@ -10,6 +10,7 @@ import xml.etree.ElementTree as ET
 from xml.sax.saxutils import escape
 
 import requests
+from news.images import is_placeholder_image
 from django.utils.dateparse import parse_datetime
 
 DEFAULT_RSS_SOURCES = [
@@ -77,6 +78,7 @@ def parse_rss_or_atom_xml(
     default_source_url: str = "https://nairametrics.com",
     default_location: str = "ng",
     default_category: str = "Business",
+    strict: bool = False,
 ) -> list[dict]:
     """
     Parse either an RSS 2.0 (<rss><channel><item>) or Atom (<feed><entry>) XML document
@@ -174,15 +176,25 @@ def parse_rss_or_atom_xml(
                     image_url = media_url
 
         if not title or not (description or content):
+            if strict:
+                items.append({})
+            continue
+        if strict and (not pub_date or not link):
+            items.append({})
             continue
 
+        if strict:
+            try:
+                try:
+                    parsedate_to_datetime(pub_date)
+                except (ValueError, TypeError):
+                    if parse_datetime(pub_date) is None:
+                        raise ValueError()
+            except (ValueError, TypeError):
+                items.append({})
+                continue
         summary_text = description or content[:320]
         full_content = content if len(content) > len(summary_text) else summary_text
-        if "Original summary by AbokiNews" not in full_content:
-            full_content = (
-                f"{full_content}\n\n"
-                f"Syndicated via RSS from {channel_title}. Read the linked source for the full report."
-            )
 
         items.append(
             {
@@ -190,9 +202,10 @@ def parse_rss_or_atom_xml(
                 "article_url": link or channel_link,
                 "source": channel_title[:100],
                 "source_url": channel_link,
-                "author": author[:150] or f"{channel_title} RSS Desk",
+                "author": author[:150] if strict else author[:150] or f"{channel_title} RSS Desk",
                 "description": summary_text,
                 "content": full_content,
+                "source_text": content or description,
                 "published_at": parse_rss_date(pub_date),
                 "remote_image_url": image_url,
                 "location": default_location,
@@ -211,21 +224,11 @@ def fetch_and_parse_rss_feed(
     default_category: str = "Business",
     timeout: int = 12,
 ) -> list[dict]:
-    response = requests.get(
-        feed_url,
-        headers={
-            "User-Agent": "AbokiNews-RSS-Reader/1.0 (+https://abokinews.com)",
-            "Accept": "application/rss+xml, application/atom+xml, application/xml, text/xml",
-        },
-        timeout=timeout,
-    )
-    response.raise_for_status()
+    from news.safe_fetch import fetch_xml
     return parse_rss_or_atom_xml(
-        response.text,
-        default_source=default_source,
-        default_source_url=default_source_url,
-        default_location=default_location,
-        default_category=default_category,
+        fetch_xml(feed_url, timeout), default_source=default_source,
+        default_source_url=default_source_url, default_location=default_location,
+        default_category=default_category, strict=True,
     )
 
 
@@ -284,7 +287,7 @@ def build_rss_20_xml(
             for cat in article.categories.all():
                 lines.append(f"      <category>{escape(str(cat.name))}</category>")
 
-        if img_url and str(img_url).startswith(("http://", "https://")):
+        if img_url and not is_placeholder_image(img_url) and str(img_url).startswith(("http://", "https://")):
             mime = "image/webp" if str(img_url).endswith(".webp") else "image/jpeg"
             lines.append(
                 f'      <enclosure url="{escape(str(img_url))}" length="0" type="{mime}" />'

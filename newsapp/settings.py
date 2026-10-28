@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import os
 from datetime import timedelta
 from pathlib import Path
 
@@ -130,22 +129,24 @@ WSGI_APPLICATION = "newsapp.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-
-if os.getenv("DATABASE_URL") and dj_database_url is not None:
+# Read from Vercel's environment or the local .env file. Environment values
+# take precedence, including the direct URL selected by vercel_build.py.
+DATABASE_URL = config("DATABASE_URL", default="").strip()
+if DATABASE_URL:
+    if dj_database_url is None:
+        raise ImproperlyConfigured("Install dj-database-url to use DATABASE_URL.")
     DATABASES = {
-        "default": dj_database_url.config(
-            default=os.getenv("DATABASE_URL"),
+        "default": dj_database_url.parse(
+            DATABASE_URL,
             conn_max_age=600,
-            ssl_require=not DEBUG,
+            conn_health_checks=True,
+            ssl_require=True,
         )
     }
+    # Neon uses transaction pooling, which cannot retain server-side cursors
+    # across transactions.
+    if DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
+        DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 else:
     DATABASES = {
         "default": {
@@ -153,14 +154,6 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
-
-# we only need the engine name, as heroku takes care of the rest
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#     }
-# }
 
 
 # Password validation
@@ -219,6 +212,17 @@ REST_AUTH = {
     "SESSION_LOGIN": False,
     "USER_DETAILS_SERIALIZER": "news.serializers.CustomUserDetailsSerializer",
 }
+# Use the same web OAuth client on the Next.js host and Django host.
+GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID", default="")
+GOOGLE_CLIENT_SECRET = config("GOOGLE_CLIENT_SECRET", default="")
+if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+    SOCIALACCOUNT_PROVIDERS = {
+        "google": {
+            "APP": {"client_id": GOOGLE_CLIENT_ID, "secret": GOOGLE_CLIENT_SECRET, "key": ""},
+            "SCOPE": ["profile", "email"],
+        }
+    }
+
 ACCOUNT_EMAIL_VERIFICATION = "none"
 ACCOUNT_LOGIN_METHODS = {"username"}
 ACCOUNT_SIGNUP_FIELDS = ["email", "username*", "password1*", "password2*"]
@@ -231,7 +235,7 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
-    "DEFAULT_THROTTLE_RATES": {"anon": "120/min", "user": "240/min", "ask": "10/min"},
+    "DEFAULT_THROTTLE_RATES": {"anon": "120/min", "user": "240/min", "ask": "10/min", "login": "5/min", "password_reset": "10/hour", "password_confirm": "20/hour"},
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # Use JWT
     ],
@@ -245,7 +249,7 @@ SIMPLE_JWT = {
 
 EMAIL_BACKEND = config(
     "EMAIL_BACKEND",
-    default="django.core.mail.backends.console.EmailBackend",
+    default="django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend",
 )
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="noreply@abokinews.com")
 
@@ -282,3 +286,29 @@ else:
         cloud_name=CLOUDINARY_CLOUD_NAME or "dz58pgz41",
         secure=True,
     )
+
+# Canonical public origin for the automatic news sitemap.
+PUBLISHING_SITE_URL = config("PUBLISHING_SITE_URL", default="https://my-news-app-blond-six.vercel.app")
+
+# Transactional password recovery. Never derive reset links from a request Host.
+PASSWORD_RESET_FRONTEND_URL = config("PASSWORD_RESET_FRONTEND_URL", default="http://localhost:3000" if DEBUG else PUBLISHING_SITE_URL)
+PASSWORD_RESET_TIMEOUT = 3600
+EMAIL_HOST = config("EMAIL_HOST", default="")
+EMAIL_PORT = config("EMAIL_PORT", default=587, cast=int)
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = config("EMAIL_USE_TLS", default=True, cast=bool)
+EMAIL_USE_SSL = config("EMAIL_USE_SSL", default=False, cast=bool)
+EMAIL_TIMEOUT = 10
+# JWTs issued before this setting was enabled require a fresh sign-in.
+# Afterwards both refresh and access tokens cease to work following a password reset.
+SIMPLE_JWT["CHECK_REVOKE_TOKEN"] = True
+
+# Full article preparation uses the existing server-only OpenAI credential.
+ARTICLE_WRITING_MODEL = config("ARTICLE_WRITING_MODEL", default="gpt-4o-mini")
+ARTICLE_GENERATION_PER_RUN = 2
+
+# Use a separate verifier so the small drafting model does not grade its own prose.
+ARTICLE_REVIEW_MODEL = config("ARTICLE_REVIEW_MODEL", default="gpt-4.1-mini")
+
+ARTICLE_REVISION_MODEL = config("ARTICLE_REVISION_MODEL", default=ARTICLE_REVIEW_MODEL)

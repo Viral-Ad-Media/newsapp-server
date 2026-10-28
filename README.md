@@ -11,6 +11,10 @@ Companion frontend: [Viral-Ad-Media/my-news-app](https://github.com/Viral-Ad-Med
 - SQLite for local development; a durable PostgreSQL database for production
 - At least one news-provider key to ingest stories
 
+## Automatic news publishing
+
+Crawled news publishes immediately using its existing structure. Missing search/social metadata is prepared automatically from the source headline and summary. No draft state, manual approval, keyword-density gate or long-form writing requirements apply. See [publishing-workflow.md](docs/publishing-workflow.md) for the adapted improvements and correction migration `0016_automatic_news_publishing`.
+
 ## Local setup
 
 From the repository root:
@@ -40,7 +44,7 @@ Use `.env` for local values and environment variables on the production host. Ke
 | `SECRET_KEY` | Long random Django secret; required when `DEBUG=False`. |
 | `ALLOWED_HOSTS` | Comma-separated backend hostnames, without schemes or paths. |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated frontend origins including scheme and port, such as `http://localhost:3000` or your HTTPS domain. Also used for trusted CSRF origins. |
-| `DATABASE_URL` | PostgreSQL connection URL. Set as a runtime environment variable; current settings read it through `os.getenv`, rather than loading this value from `.env`. Without it, SQLite is used. |
+| `DATABASE_URL` | Neon pooled PostgreSQL connection URL. Read from runtime environment variables or local `.env`; runtime values take precedence. SSL is required. Without it, SQLite is used. |
 | `NEWS_API_KEY` | NewsAPI credential; enables this ingestion provider. |
 | `NEWS_DATA_IO_API_KEY` | NewsData credential; enables this ingestion provider. |
 | `OPENAI_API_KEY` | Optional; enables generated answers using stored excerpts. |
@@ -48,7 +52,7 @@ Use `.env` for local values and environment variables on the production host. Ke
 | `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Optional media configuration; all three are needed to enable Cloudinary storage. |
 | `SECURE_SSL_REDIRECT` | Defaults to enabled outside debug mode. Configure HTTPS proxy forwarding correctly. |
 
-The Linux dependency install includes `psycopg2-binary`. For PostgreSQL development on another platform, install a compatible PostgreSQL driver separately; SQLite needs no additional driver.
+The dependency install includes `psycopg2-binary` on Linux, macOS, and Windows so local development can use the same Neon database as Vercel. SQLite needs no additional driver.
 
 ## API reference
 
@@ -154,7 +158,7 @@ python manage.py seed_news --dry-run
 python manage.py seed_news
 ```
 
-The importer creates 10 articles, their sources and categories, and a `starter-batch-2026-10-19` tag. It skips existing article URLs and preserves edits on repeat runs. The batch is atomic. It does not delete existing news or call paid providers. The Vercel production build hook described below runs it after migrations; other environments import only when explicitly invoked. Outside the Vercel production hook, run it once against the target database to make the stories appear in the frontend. No public seeding endpoint is exposed.
+The importer creates 10 articles, their sources and categories, and a `starter-batch-2026-10-19` tag. It skips existing article URLs and preserves edits on repeat runs. The batch is atomic. It does not delete existing news or call paid providers. The Vercel production build hook described below runs it after migrations; other environments import only when explicitly invoked. Outside the Vercel production hook, run it once against the target database to make the stories appear in the frontend automatically. No public seeding endpoint is exposed.
 
 Source dates are preserved; midnight UTC is a normalization because exact publication times were not verified. They must not be retimed to look like newly published stories. Images are left empty instead of copying publisher photos; the frontend uses its existing fallback. Source count is one per story and no sentiment scores or bias classifications are invented. Full source links and the curated content are in `news/data/starter_news_2026_10_19.json`.
 
@@ -185,7 +189,7 @@ Redeploy after connecting the database or changing environment variables. `verce
 
 On **production** builds, the script requires both connection variables, uses the direct URL, acquires a PostgreSQL advisory lock, runs migrations, then imports the 10 starter summaries. Existing story URLs are skipped. Concurrent production builds fail rather than running migrations together; retry after the other build finishes. Build failures stop deployment. Preview and local builds skip database changes, even if database variables are present. Preview databases must be initialized separately against their own branch.
 
-This is intended to initialize the newly connected Neon database. It does not copy data from an older database. Review the existing-database migration caveat below before pointing it at a database with earlier tables. No migrations run during request handling. After deployment, verify `/health/` and `/api/news/`; the latter should include the imported stories. A liveness response alone does not prove database readiness.
+This is intended to initialize the newly connected Neon database. It does not copy data from an older database. Review the existing-database migration caveat below before pointing it at a database with earlier tables. No migrations run during request handling. After deployment, verify `/health/` and `/api/news/`; the latter should include the imported stories automatically. A liveness response alone does not prove database readiness.
 
 
 Deploy this backend and apply its migrations before deploying the companion frontend.
@@ -248,3 +252,31 @@ It inserts five posts on the first run and skips existing reference URLs on late
 runs, preserving editorial changes. It does not change user accounts or existing
 stories. Posts use the existing news model/API and appear in the reader's latest
 stories and matching category feeds after the production deployment completes.
+
+### Google reader authentication
+
+Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env` locally or the backend's runtime environment in production. Use the same web OAuth client as the frontend. `POST /api/auth/google/` accepts Google access and signed identity tokens, verifies identity with allauth, and returns the reader JWT pair. An unconfigured provider returns 503. Provider settings come from these variables; do not also create a duplicate Google SocialApp in the admin. Existing email/password accounts are not silently linked by matching email. The frontend README documents consent-screen and redirect-URI configuration.
+
+Country editions now match complete country tags (including aliases and multi-country records) across public/private feeds, related stories, RSS, categories, and AI context. The UK edition excludes the `world` desk. Provider country-name normalization and the fetch action accept the expanded country list. No country filter falls back to another region when an edition is empty. Legacy generated starter image cards are omitted from serialized image URLs and outbound RSS; genuine source photographs remain available. The frontend supplies labelled local subject photography when a source photo is unavailable. These changes do not introduce drafts, approval, or publication gates.
+
+### Member live feed
+
+Authenticated readers can request `/api/live/?location=us` for the latest published news across every category, independently of their followed categories. The optional `category` filter supports the category directory, including Games/Gaming aliases. Responses are private and uncached; anonymous requests receive HTTP 401. The frontend polls this endpoint through its session proxy every 30 seconds. Polling reads published articles and does not trigger ingestion, add approval steps, or alter publication dates.
+
+## Private administration and hourly RSS automation
+
+The companion frontend now has `/admin/login` and six private admin sections.
+See [admin-panel.md](docs/admin-panel.md) for configuration, permissions, endpoints,
+non-destructive migration review, worker deployment, safe testing and limitations.
+The durable worker command is `python manage.py run_news_worker`. Automation is
+disabled until explicitly configured; the frontend does not run the scheduler.
+
+## Reader navigation, strict timelines, AI and account recovery
+
+See [reader-experience.md](docs/reader-experience.md) for the updated reader flows,
+Ask Aboki response contract, SMTP password reset setup, session invalidation and
+verification details. No additional schema migration is required for these changes.
+
+For a real RSS import that cannot touch Neon, see
+[local-feed-test.md](docs/local-feed-test.md). Use the opt-in
+`--settings=newsapp.local_settings` profile for **every** local test command.

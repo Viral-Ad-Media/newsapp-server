@@ -1,3 +1,4 @@
+from .article_test_data import FULL_ARTICLE
 from django.contrib.auth import get_user_model
 from django.test import TestCase, SimpleTestCase
 from rest_framework.test import APIClient
@@ -62,7 +63,7 @@ class SeoApiTests(TestCase):
         self.payload = {
             "title": "A new editorial article",
             "description": "A useful summary",
-            "content": "A useful body",
+            "content": FULL_ARTICLE,
             "seo_title": "Distinct search title",
             "focus_keyword": "editorial",
             "seo_description": "Custom search description",
@@ -111,7 +112,7 @@ class SeoApiTests(TestCase):
             format="json",
         )
         self.assertEqual(res.status_code, 200)
-        self.assertEqual(res.data["seo_title"], "")
+        self.assertEqual(res.data["seo_title"], self.payload["title"])
         self.assertFalse(res.data["seo_noindex"])
         self.client.force_authenticate(None)
         public = self.client.get(f"/api/news/{article_id}/")
@@ -131,3 +132,18 @@ class SeoApiTests(TestCase):
             )
             self.assertEqual(res.status_code, 400)
         self.assertFalse(NewsArticle.objects.exists())
+
+
+class TypographicKeywordTests(SimpleTestCase):
+    def test_typographic_apostrophes_match_without_matching_different_phrases(self):
+        from .seo import contains_phrase
+
+        self.assertTrue(
+            contains_phrase("NASA’s simulated Mars crew", "NASA's simulated Mars")
+        )
+        self.assertTrue(
+            contains_phrase("NASA's simulated Mars crew", "NASA’s simulated Mars")
+        )
+        self.assertFalse(
+            contains_phrase("NASA's Mars spacecraft", "NASA’s simulated Mars")
+        )

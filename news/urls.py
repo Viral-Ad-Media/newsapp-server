@@ -1,10 +1,18 @@
 from django.urls import path
 from .views import NewsList, NewsDetail
 from . import views
+from .admin_api import AdminAPI
+from .ask import AskNews
+from .recovery import PasswordResetRequestView, PasswordResetConfirmView
 
 urlpatterns = [
+    path("admin/<str:resource>/", AdminAPI.as_view()),
+    path("admin/<str:resource>/<int:pk>/", AdminAPI.as_view()),
+    path("admin/<str:resource>/<int:pk>/<str:action>/", AdminAPI.as_view()),
+    path("sitemap/", views.PublicSitemapView.as_view(), name="public-sitemap"),
     path("superadmin/seo/analyze/", views.SuperadminSeoAnalysisView.as_view(), name="superadmin-seo-analysis"),
     path("saved-status/", views.SavedNewsStatus.as_view(), name="saved-status"),
+    path("live/", views.LiveNewsList.as_view(), name="live-news"),
     path("feed/", views.PersonalizedNewsList.as_view(), name="reader-feed"),
     path("saved/", views.SavedNewsList.as_view(), name="saved-news"),
     path(
@@ -13,8 +21,9 @@ urlpatterns = [
         name="saved-news-detail",
     ),
     path("preferences/", views.ReaderPreferences.as_view(), name="reader-preferences"),
-    path("password-reset/", views.PasswordResetRequestView.as_view(), name="password-reset"),
-    path("ask/", views.AskNews.as_view(), name="ask-news"),
+    path("password-reset/confirm/", PasswordResetConfirmView.as_view(), name="password-reset-confirm"),
+    path("password-reset/", PasswordResetRequestView.as_view(), name="password-reset"),
+    path("ask/", AskNews.as_view(), name="ask-news"),
     path("lopsided/", views.LopsidedNewsList.as_view(), name="lopsided-news"),
     path("superadmin/overview/", views.SuperadminOverviewView.as_view(), name="superadmin-overview"),
     path("superadmin/articles/", views.SuperadminArticleListCreateView.as_view(), name="superadmin-articles"),
