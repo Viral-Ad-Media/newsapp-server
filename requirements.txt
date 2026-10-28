@@ -27,10 +27,8 @@ whitenoise>=6.4.0
 
 # Deployment
 gunicorn>=20.1.0
-# PostgreSQL driver:
-# - Installed by default on Linux (typical production/runtime target)
-# - Skipped on macOS/Windows local installs to avoid pg_config build failures
-psycopg2-binary>=2.9.6; platform_system == "Linux"
+# PostgreSQL driver for Neon in local development and production
+psycopg2-binary>=2.9.6
 
 # Security helpers
 PyJWT>=2.6.0

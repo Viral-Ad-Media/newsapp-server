@@ -35,11 +35,11 @@ class Command(BaseCommand):
             except Exception as exc:
                 self.stdout.write(
                     self.style.WARNING(
-                        f"Live AllSides fetch unavailable ({exc}); using curated AllSides snapshot."
+                        "Live AllSides fetch unavailable; stopping without publishing fallback content."
                     )
                 )
-                stories = load_fallback_allsides_roundups()
-                used_fallback = True
+                from django.core.management.base import CommandError
+                raise CommandError("AllSides source unavailable; no snapshot was published as live news.") from None
         else:
             stories = load_fallback_allsides_roundups()
             used_fallback = True
@@ -98,6 +98,20 @@ class Command(BaseCommand):
                     ),
                 }
 
+                previous = NewsArticle.all_objects.filter(article_url=item["article_url"]).first()
+                if previous and (previous.archived or previous.revision > 1):
+                    continue
+                if not options.get("offline"):
+                    from news.article_writing import prepare_article, source_evidence, ArticlePreparationError
+                    try:
+                        evidence = source_evidence(item["article_url"], source.url)
+                        prepared = prepare_article(title=item["title"], summary=defaults["description"], evidence=evidence, source_name=source.name, source_url=item["article_url"])
+                    except ArticlePreparationError as exc:
+                        self.stderr.write(f"Full article blocked: {exc}")
+                        continue
+                    defaults.update({key: prepared[key] for key in ("content", "focus_keyword", "seo_title", "seo_description")})
+                    defaults["imported"] = True
+
                 article, was_created = NewsArticle.objects.update_or_create(
                     article_url=item["article_url"],
                     defaults=defaults,
@@ -109,6 +123,8 @@ class Command(BaseCommand):
                 article.categories.set(categories)
                 tags = item.get("tags") or ["allsides-roundup"]
                 article.tags.add(*tags)
+                if not options.get('offline'):
+                    article.tags.add('ai-assisted-source-article')
 
                 if was_created:
                     created += 1

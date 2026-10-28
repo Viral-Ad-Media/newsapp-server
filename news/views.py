@@ -1,3 +1,5 @@
+from .category_filters import filter_category
+from .regions import filter_country, country_query, COUNTRY_NAMES
 from .seo import SEO_FIELDS, SeoInputSerializer, analyze_seo
 from django.conf import settings
 from django.shortcuts import get_object_or_404
@@ -32,6 +34,9 @@ class EmailOrUsernameTokenObtainPairView(TokenObtainPairView):
     Allow signing in with either a username or an email address (e.g.
     viraladmediacontent@gmail.com) and return role flags alongside JWT tokens.
     """
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "login"
 
     def post(self, request, *args, **kwargs):
         from django.contrib.auth import get_user_model
@@ -89,23 +94,9 @@ class NewsList(generics.ListAPIView):
                 Q(title__icontains=search) | Q(description__icontains=search)
             )
 
-        # Filter by category
-        category = self.request.query_params.get("category")
-        if category:
-            queryset = queryset.filter(categories__name__icontains=category).distinct()
+        queryset = filter_category(queryset, self.request.query_params.get("category"))
 
-        # Filter by location
-        location = self.request.query_params.get("location")
-        if location:
-            loc_clean = location.strip().lower()
-            if loc_clean == "gb":
-                queryset = queryset.filter(
-                    Q(location__icontains="gb")
-                    | Q(location__icontains="uk")
-                    | Q(location__icontains="world")
-                )
-            else:
-                queryset = queryset.filter(location__icontains=location)
+        queryset = filter_country(queryset, self.request.query_params.get("location"))
 
         # Filter by bias / lopsided status
         bias = self.request.query_params.get("bias", "").strip().lower()
@@ -125,17 +116,7 @@ class NewsList(generics.ListAPIView):
             days_map = {"last_day": 1, "last_week": 7, "last_month": 30}
             delta = timedelta(days=days_map[time_filter])
             cutoff = timezone.now() - delta
-            filtered = queryset.filter(published_at__gte=cutoff)
-            if filtered.exists():
-                queryset = filtered
-            else:
-                latest_pub = (
-                    queryset.order_by("-published_at")
-                    .values_list("published_at", flat=True)
-                    .first()
-                )
-                if latest_pub:
-                    queryset = queryset.filter(published_at__gte=latest_pub - delta)
+            queryset = queryset.filter(published_at__gte=cutoff, published_at__lte=timezone.now())
 
         return queryset
 
@@ -253,10 +234,18 @@ class NewsCategoryViewSet(viewsets.ReadOnlyModelViewSet):
     API view set for retrieving categories and their related articles.
     """
 
-    queryset = NewsCategory.objects.annotate(article_count=Count("articles")).order_by(
+    queryset = NewsCategory.objects.annotate(article_count=Count("articles", filter=Q(articles__archived=False))).order_by(
         "name", "id"
     )
     serializer_class = NewsCategorySerializer
+
+    def get_queryset(self):
+        location = self.request.query_params.get("location")
+        if not location:
+            return super().get_queryset()
+        return NewsCategory.objects.annotate(
+            article_count=Count("articles", filter=country_query(location, "articles__location") & Q(articles__archived=False))
+        ).filter(article_count__gt=0).order_by("name", "id")
 
 
 @api_view(["GET"])
@@ -265,7 +254,7 @@ def category_detail(request, category_id):
     API endpoint to retrieve details of a specific category by its ID.
     """
     category = get_object_or_404(
-        NewsCategory.objects.annotate(article_count=Count("articles")), id=category_id
+        NewsCategory.objects.annotate(article_count=Count("articles", filter=Q(articles__archived=False))), id=category_id
     )
     serializer = NewsCategorySerializer(category)
     return Response(serializer.data, status=status.HTTP_200_OK)
@@ -286,6 +275,7 @@ def related_news(request, article_id):
         .exclude(id=main_article.id)
         .order_by("-published_at", "-id")
     )
+    base_queryset = filter_country(base_queryset, request.query_params.get("location") or main_article.location)
     related_queryset = base_queryset.filter(
         categories__in=main_article.categories.all()
     ).distinct()
@@ -308,6 +298,16 @@ class PersonalizedNewsList(NewsList):
                 categories__in=profile.categories.all()
             ).distinct()
         return queryset
+
+
+class LiveNewsList(NewsList):
+    """All published categories for members, independent of topic subscriptions."""
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        response["Cache-Control"] = "private, no-store"
+        return response
 
 
 class SavedNewsList(NewsList):
@@ -363,38 +363,6 @@ class ReaderPreferences(APIView):
         return self.get(request)
 
 
-class AskNews(APIView):
-    throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "ask"
-
-    def post(self, request):
-        from rest_framework import serializers
-        from .utils.ai_summarizer import answer_question
-
-        class QuestionSerializer(serializers.Serializer):
-            question = serializers.CharField(max_length=500)
-
-        serializer = QuestionSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        question = serializer.validated_data["question"]
-        queryset = NewsArticle.objects.select_related("source").order_by(
-            "-published_at", "-id"
-        )
-        # Prefer matching stories, otherwise provide the latest available headlines.
-        terms = [term.strip(".,?!") for term in question.split() if len(term) > 3][:12]
-        query = Q()
-        for term in terms:
-            query |= Q(title__icontains=term) | Q(description__icontains=term)
-        matching = queryset.filter(query) if terms else queryset.none()
-        articles = list((matching if matching.exists() else queryset)[:5])
-        return Response(
-            {
-                "answer": answer_question(question, articles),
-                "sources": [{"id": a.id, "title": a.title} for a in articles],
-            }
-        )
-
-
 class SavedNewsStatus(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -415,47 +383,6 @@ class SavedNewsStatus(APIView):
         return Response({"saved_ids": saved_ids})
 
 
-class PasswordResetRequestView(APIView):
-    """
-    Privacy-preserving password reset endpoint supporting username or email lookup.
-    """
-
-    def post(self, request):
-        from django.contrib.auth import get_user_model
-        from django.contrib.auth.forms import PasswordResetForm
-        from rest_framework import serializers
-
-        class ResetSerializer(serializers.Serializer):
-            identifier = serializers.CharField(max_length=254)
-
-        serializer = ResetSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        identifier = serializer.validated_data["identifier"].strip()
-
-        User = get_user_model()
-        user = (
-            User.objects.filter(
-                Q(username__iexact=identifier) | Q(email__iexact=identifier)
-            )
-            .exclude(email="")
-            .first()
-        )
-        if user and user.email:
-            form = PasswordResetForm({"email": user.email})
-            if form.is_valid():
-                form.save(request=request)
-
-        return Response(
-            {
-                "detail": (
-                    "If an account matches that username or email, "
-                    "password recovery instructions have been sent."
-                )
-            },
-            status=status.HTTP_200_OK,
-        )
-
-
 class SuperadminOverviewView(APIView):
     """
     Return comprehensive metrics, articles, categories, sources, and users
@@ -474,7 +401,7 @@ class SuperadminOverviewView(APIView):
             .order_by("-published_at", "-id")
         )
         categories_qs = NewsCategory.objects.annotate(
-            article_count=Count("articles")
+            article_count=Count("articles", filter=Q(articles__archived=False))
         ).order_by("name", "id")
         sources_qs = NewsSource.objects.annotate(
             article_count=Count("newsarticle")
@@ -587,6 +514,11 @@ class SuperadminArticleListCreateView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
+        from .article_writing import article_quality
+        quality = article_quality(content)
+        if not quality["passed"]:
+            return Response({"content": quality["errors"]}, status=400)
+
         source_name = str(data.get("source_name") or "AbokiNews Editorial").strip()[:100]
         source_url = str(data.get("source_url") or "https://nairametrics.com").strip()
         source_bias = str(data.get("source_bias") or "center").strip().lower()
@@ -653,6 +585,8 @@ class SuperadminArticleListCreateView(APIView):
         if cat_objs:
             article.categories.set(cat_objs)
 
+        from .automation import event
+        event("audit", f"Created article #{article.pk}", actor=request.user)
         return Response(
             NewsArticleSerializer(article).data,
             status=status.HTTP_201_CREATED,
@@ -666,6 +600,9 @@ class SuperadminArticleDetailView(APIView):
 
     def put(self, request, article_id):
         article = get_object_or_404(NewsArticle, pk=article_id)
+        if article.imported and set(request.data) & {"title", "description", "author", "source", "article_url", "published_at"}:
+            return Response({"detail": "Imported source fields are read-only."}, status=400)
+        article.revision += 1
         data = request.data
         seo = SeoInputSerializer(data={key: data[key] for key in SEO_FIELDS if key in data})
         seo.is_valid(raise_exception=True)
@@ -695,7 +632,14 @@ class SuperadminArticleDetailView(APIView):
             article.center_coverage = c_cov
             article.right_coverage = max(0, 100 - l_cov - c_cov)
 
+        if "content" in data:
+            from .article_writing import article_quality
+            quality = article_quality(article.content)
+            if not quality["passed"]:
+                return Response({"content": quality["errors"]}, status=400)
         article.save()
+        from .automation import event
+        event("audit", f"Updated article #{article.pk}", actor=request.user)
 
         if "categories" in data:
             raw_cats = data["categories"]
@@ -714,6 +658,10 @@ class SuperadminArticleDetailView(APIView):
 
     def delete(self, request, article_id):
         article = get_object_or_404(NewsArticle, pk=article_id)
+        if not request.user.is_superuser:
+            return Response({"detail": "Only a superuser may delete articles."}, status=403)
+        from .automation import event
+        event("audit", f"Deleted article #{article.pk}", actor=request.user)
         article.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -724,20 +672,18 @@ class SuperadminCategoryListCreateView(APIView):
     permission_classes = [IsSuperAdmin]
 
     def post(self, request):
-        name = str(request.data.get("name") or "").strip()[:50]
-        if not name:
-            return Response(
-                {"detail": "Category name is required."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        cat, _ = NewsCategory.objects.get_or_create(name=name)
-        annotated = NewsCategory.objects.annotate(
-            article_count=Count("articles")
-        ).get(pk=cat.pk)
-        return Response(
-            NewsCategorySerializer(annotated).data,
-            status=status.HTTP_201_CREATED,
-        )
+        from django.db import transaction
+        from .admin_api import CategoryInput
+        from .automation import config, event
+        from .models import AutomationSettings
+        with transaction.atomic():
+            config()
+            AutomationSettings.objects.select_for_update().get(pk=1)
+            serial = CategoryInput(data=request.data)
+            serial.is_valid(raise_exception=True)
+            cat = serial.save()
+            event("audit", f"Created category #{cat.pk}", actor=request.user)
+        return Response(NewsCategorySerializer(cat).data, status=201)
 
 
 class SuperadminCategoryDetailView(APIView):
@@ -747,6 +693,12 @@ class SuperadminCategoryDetailView(APIView):
 
     def delete(self, request, category_id):
         cat = get_object_or_404(NewsCategory, pk=category_id)
+        if not request.user.is_superuser:
+            return Response({"detail": "Only a superuser may delete categories."}, status=403)
+        if NewsArticle.all_objects.filter(categories=cat).exists():
+            return Response({"detail": "Reassign associated articles first."}, status=409)
+        from .automation import event
+        event("audit", f"Deleted category #{cat.pk}", actor=request.user)
         cat.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -760,16 +712,21 @@ class SuperadminUserDetailView(APIView):
         from django.contrib.auth import get_user_model
 
         User = get_user_model()
+        if not request.user.is_superuser:
+            return Response({"detail": "Only a superuser may manage roles."}, status=403)
         target_user = get_object_or_404(User, pk=user_id)
         data = request.data
 
+        from rest_framework import serializers
         if "is_staff" in data:
-            target_user.is_staff = bool(data["is_staff"])
+            target_user.is_staff = serializers.BooleanField().run_validation(data["is_staff"])
         if "is_superuser" in data:
-            target_user.is_superuser = bool(data["is_superuser"])
+            target_user.is_superuser = serializers.BooleanField().run_validation(data["is_superuser"])
         if "is_active" in data:
-            target_user.is_active = bool(data["is_active"])
+            target_user.is_active = serializers.BooleanField().run_validation(data["is_active"])
         target_user.save()
+        from .automation import event
+        event("audit", f"Updated roles for user #{target_user.pk}", actor=request.user)
 
         return Response(
             {
@@ -790,45 +747,14 @@ class SuperadminActionView(APIView):
     permission_classes = [IsSuperAdmin]
 
     def post(self, request):
-        from io import StringIO
-        from django.core.management import call_command
-
-        action = str(request.data.get("action") or "").strip()
-        out = StringIO()
-
-        if action == "seed_news":
-            call_command("seed_news", stdout=out)
-        elif action == "fetch_allsides":
-            call_command("fetch_allsides", offline=True, stdout=out)
-        elif action == "fetch_news":
-            country = str(request.data.get("country") or "ng").strip().lower()
-            if country not in {"ng", "us", "gb"}:
-                country = "ng"
-            call_command("fetch_news", country=country, stdout=out)
-        elif action == "fetch_rss":
-            rss_url = str(
-                request.data.get("url") or request.data.get("rss_url") or ""
-            ).strip()
-            category = str(request.data.get("category") or "Business").strip()
-            location = str(request.data.get("location") or "ng").strip()
-            call_command(
-                "fetch_rss",
-                url=rss_url,
-                category=category,
-                location=location,
-                offline=not bool(rss_url),
-                stdout=out,
-            )
-        else:
-            return Response(
-                {"detail": "Unsupported action."},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        return Response(
-            {"action": action, "output": out.getvalue().strip()},
-            status=status.HTTP_200_OK,
-        )
+        from .automation import queue_run, Busy
+        if request.data.get("action") not in {"fetch_rss", "fetch_news"}:
+            return Response({"detail": "Use configured feeds and the durable crawler. Sample import commands are CLI-only."}, status=400)
+        try:
+            run = queue_run(actor=request.user)
+        except Busy as exc:
+            return Response({"detail": str(exc)}, status=409)
+        return Response({"run_id": run.pk, "output": f"Run #{run.pk} queued; inspect /admin/logs. A worker must be running."}, status=202)
 
 
 class RssFeedView(APIView):
@@ -849,18 +775,10 @@ class RssFeedView(APIView):
 
         category = request.query_params.get("category", "").strip()
         if category:
-            queryset = queryset.filter(categories__name__icontains=category).distinct()
+            queryset = filter_category(queryset, category)
 
         location = request.query_params.get("location", "").strip().lower()
-        if location:
-            if location == "gb":
-                queryset = queryset.filter(
-                    Q(location__icontains="gb")
-                    | Q(location__icontains="uk")
-                    | Q(location__icontains="world")
-                )
-            else:
-                queryset = queryset.filter(location__icontains=location)
+        queryset = filter_country(queryset, location)
 
         bias = request.query_params.get("bias", "").strip().lower()
         if bias == "lopsided":
@@ -908,3 +826,24 @@ class SuperadminSeoAnalysisView(APIView):
         seo = SeoInputSerializer(data={key: request.data[key] for key in SEO_FIELDS if key in request.data})
         seo.is_valid(raise_exception=True)
         return Response(analyze_seo({**request.data, **seo.validated_data}))
+
+
+class PublicSitemapView(APIView):
+    """News is immediately public; omit only explicitly noindexed canonicals."""
+
+    def get(self, request):
+        from django.http import HttpResponse
+        from xml.etree.ElementTree import Element, SubElement, tostring
+        from urllib.parse import urlsplit
+
+        origin = settings.PUBLISHING_SITE_URL.rstrip("/")
+        root = Element("urlset", xmlns="http://www.sitemaps.org/schemas/sitemap/0.9")
+        for article in NewsArticle.objects.filter(seo_noindex=False).order_by("id").iterator(chunk_size=500):
+            canonical = article.canonical_url or f"{origin}/news/{article.pk}"
+            if urlsplit(canonical).netloc.casefold() != urlsplit(origin).netloc.casefold():
+                continue
+            row = SubElement(root, "url")
+            SubElement(row, "loc").text = canonical
+        response = HttpResponse(tostring(root, encoding="utf-8", xml_declaration=True), content_type="application/xml")
+        response["Cache-Control"] = "no-store"
+        return response

@@ -1,4 +1,7 @@
+from .article_test_data import FULL_ARTICLE, PREPARED
+from unittest.mock import patch
 from django.urls import reverse
+from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -211,7 +214,8 @@ class ReaderWorkflowTests(ReaderFixtures):
             )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data["sources"]), 1)
-        self.assertIn("unavailable", response.data["answer"])
+        self.assertEqual(response.data["kind"], "news")
+        self.assertEqual(response.data["answer"], "")
 
 
 class NewsIngestionTests(NewsFixtures):
@@ -244,11 +248,12 @@ class NewsIngestionTests(NewsFixtures):
             },
         ]
         command = Command()
-        self.assertEqual(command.save_articles(articles), (2, 0))
-        self.assertEqual(command.save_articles(articles), (0, 2))
+        with patch('news.article_writing.prepare_article', return_value=PREPARED), patch('news.article_writing.source_evidence', return_value=FULL_ARTICLE):
+            self.assertEqual(command.save_articles(articles), (2, 0))
+            self.assertEqual(command.save_articles(articles), (0, 2))
         imported = NewsArticle.objects.get(title="Imported")
         self.assertEqual(imported.published_at, parse_datetime("2024-10-01T10:00:00Z"))
-        self.assertEqual(imported.content, "Body")
+        self.assertEqual(imported.content, PREPARED["content"])
         self.assertEqual(imported.location, "ng")
         data = NewsArticle.objects.get(title="NewsData")
         self.assertEqual(data.location, "ng")
@@ -348,12 +353,14 @@ class LopsidedCoverageTests(NewsFixtures):
 
         gb_res = self.client.get("/api/news/", {"location": "gb"})
         self.assertEqual(gb_res.status_code, 200)
-        self.assertTrue(gb_res.data["count"] >= 1)
+        # The AllSides fixture has US/world stories, not UK reporting.
+        self.assertEqual(gb_res.data["count"], 0)
 
         last_day_res = self.client.get("/api/news/", {"filter": "last_day"})
         self.assertEqual(last_day_res.status_code, 200)
-        self.assertTrue(last_day_res.data["count"] >= 1)
+        self.assertEqual(last_day_res.data["count"], 0)
 
+    @override_settings(DEBUG=True, EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
     def test_password_reset_request_endpoint(self):
         res = self.client.post(
             "/api/password-reset/", {"identifier": "reader@example.com"}, format="json"
@@ -394,7 +401,7 @@ class LopsidedCoverageTests(NewsFixtures):
             {
                 "title": "Superadmin test blog post",
                 "description": "Created from the superadmin console.",
-                "content": "Paragraph one.\n\nParagraph two.",
+                "content": FULL_ARTICLE,
                 "categories": ["Technology"],
                 "location": "ng",
             },
@@ -408,7 +415,8 @@ class LopsidedCoverageTests(NewsFixtures):
         from django.core.management import call_command
 
         out = StringIO()
-        call_command("fetch_rss", offline=True, stdout=out)
+        with patch('news.article_writing.prepare_article', return_value=PREPARED), patch('news.article_writing.source_evidence', return_value=FULL_ARTICLE), patch('news.utils.ai_summarizer.client', object()):
+            call_command("fetch_rss", offline=True, stdout=out)
         self.assertIn("created 2", out.getvalue())
 
         rss_res = self.client.get("/api/rss/")

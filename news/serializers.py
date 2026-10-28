@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from taggit.serializers import TagListSerializerField, TaggitSerializer
+from .images import is_placeholder_image
 from .models import NewsSource, NewsCategory, NewsArticle
 
 
@@ -79,7 +80,7 @@ class NewsCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NewsCategory
-        fields = ["id", "name", "image", "image_url", "article_count"]
+        fields = ["id", "name", "slug", "description", "image", "image_url", "article_count"]
 
     def get_image_url(self, obj):
         return resolve_cloudinary_asset_url(obj.image)
@@ -97,6 +98,11 @@ class NewsCategoryLiteSerializer(serializers.ModelSerializer):
 
 
 class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
+    article_prepared = serializers.SerializerMethodField()
+
+    def get_article_prepared(self, obj):
+        return any(tag.name == 'ai-assisted-source-article' for tag in obj.tags.all())
+
     image_url = serializers.SerializerMethodField()
     source = NewsSourceSerializer(read_only=True)
     categories = NewsCategoryLiteSerializer(many=True, read_only=True)
@@ -114,8 +120,10 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             "summary",
             "article_url",
             "content",
+            "article_prepared",
             "image",
             "image_url",
+            "remote_image_url",
             "categories",
             "location",
             "published_at",
@@ -147,4 +155,8 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
         ]
 
     def get_image_url(self, obj):
-        return resolve_cloudinary_asset_url(obj.image, obj.remote_image_url)
+        for fallback in (obj.remote_image_url, ""):
+            resolved = resolve_cloudinary_asset_url(obj.image, fallback)
+            if resolved and not is_placeholder_image(resolved):
+                return resolved
+        return ""

@@ -146,3 +146,6 @@ GitHub.sublime-settings
 *.env
 *.env.*
 !.env.example
+
+# Isolated local admin database and development secret
+/.local/

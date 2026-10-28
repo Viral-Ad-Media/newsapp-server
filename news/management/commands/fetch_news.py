@@ -5,17 +5,15 @@ import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.dateparse import parse_datetime
 
+from news.regions import COUNTRY_ALIASES, COUNTRY_NAMES
 from news.models import NewsArticle, NewsCategory, NewsSource
 
 
-COUNTRY_SEARCH_QUERIES = {
-    "ng": "Nigeria",
-    "us": "United States",
-    "gb": "United Kingdom",
-}
+COUNTRY_SEARCH_QUERIES = COUNTRY_NAMES
 
 
 def clean_provider_text(value):
@@ -150,12 +148,7 @@ class Command(BaseCommand):
             )
             locations = article.get("country") or country
             location_values = locations if isinstance(locations, list) else [locations]
-            country_codes = {
-                "nigeria": "ng",
-                "united states of america": "us",
-                "united states": "us",
-                "united kingdom": "gb",
-            }
+            country_codes = {alias: code for code, aliases in COUNTRY_ALIASES.items() for alias in aliases}
             location = ", ".join(
                 country_codes.get(str(x).lower(), str(x).lower())
                 for x in location_values
@@ -200,6 +193,21 @@ class Command(BaseCommand):
                     article.get("urlToImage") or article.get("image_url")
                 )[:2000],
             }
+            existing = NewsArticle.all_objects.filter(Q(article_url=article_url) if article_url else Q(title=title[:255], source__name=source_name)).first()
+            if existing:
+                # Feed repeats never replace an editor upgrade or the stored summary.
+                updated_count += 1
+                continue
+            from news.article_writing import prepare_article, source_evidence, ArticlePreparationError
+            from news.seo import words
+            try:
+                evidence = content if len(words(content)) >= 400 else source_evidence(article_url, source_url)
+                prepared = prepare_article(title=title, summary=description, evidence=evidence, source_name=source_name, source_url=article_url)
+            except ArticlePreparationError as exc:
+                skipped_count += 1
+                self.stderr.write(f"Article preparation blocked: {exc}")
+                continue
+            defaults.update({key: prepared[key] for key in ("content", "focus_keyword", "seo_title", "seo_description")})
             if published:
                 defaults["published_at"] = published
             stats = article.get("sentiment_stats")
@@ -217,6 +225,11 @@ class Command(BaseCommand):
                 source, _ = NewsSource.objects.get_or_create(
                     name=source_name, defaults={"url": source_url}
                 )
+                previous = NewsArticle.all_objects.filter(Q(article_url=article_url) if article_url else Q(title=title[:255], source=source)).first()
+                if previous:
+                    updated_count += 1
+                    continue
+                defaults['imported'] = True
                 obj, created = NewsArticle.objects.update_or_create(
                     title=title[:255],
                     source=source,
@@ -232,8 +245,7 @@ class Command(BaseCommand):
                             if name
                         ]
                     )
-                if tags:
-                    obj.tags.set([str(t) for t in tags if t])
+                obj.tags.set([str(t) for t in tags if t] + ['ai-assisted-source-article'])
             created_count += int(created)
             updated_count += int(not created)
         self.stdout.write(
