@@ -224,6 +224,34 @@ WhiteNoise serves collected static files. The proxy must supply the correct `X-F
 - **Provider failures:** check configured keys, quotas, supported country, and network access. Credentials are intentionally excluded from error output.
 - **Migration failure on an existing database:** inspect the schema/history caveat above before changing migration state.
 
+## Five editorial blog posts — October 20, 2026
+
+`news/data/blog_posts_2026_10_20.json` adds five original AbokiNews explainers:
+
+- Before you forward it: five checks for a viral news story
+- Using AI for study without handing over your thinking
+- Four everyday habits that make your online accounts harder to steal
+- Watts versus kilowatt-hours: understand what your appliances use
+- Europa Clipper explained: looking for conditions that could support life
+
+These are background articles, not claims of new breaking events. Each names its
+reference (UNESCO, CISA, the U.S. Department of Energy or NASA), links to it in the
+body and records AbokiNews as the editorial author. The publication day is our
+editorial date, not the reference page's date. No publisher images, fabricated
+perspectives or sentiment assessments are supplied by this importer.
+
+Preview or import against the configured database:
+
+```bash
+python manage.py seed_blog_posts --dry-run
+python manage.py seed_blog_posts
+```
+
+Production Vercel builds run this command after migrations and `seed_news`.
+It inserts five posts on the first run and skips existing reference URLs on later
+runs, preserving editorial changes. It does not change user accounts or existing
+stories. Posts use the existing news model/API and appear in the reader's latest
+stories and matching category feeds after the production deployment completes.
 
 ### Google reader authentication
 
