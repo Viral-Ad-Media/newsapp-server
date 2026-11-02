@@ -14,7 +14,9 @@ def filter_category(queryset, category):
     category = str(category or "").strip()[:100]
     if not category:
         return queryset
-    aliases = ALIASES.get(category.lower())
+    from .category_taxonomy import CATEGORIES, canonical_category
+    canonical = canonical_category(category)
+    aliases = [canonical, *CATEGORIES[canonical]] if canonical else ALIASES.get(category.lower())
     if aliases:
         pattern = (
             r"(^|[^a-z0-9])("

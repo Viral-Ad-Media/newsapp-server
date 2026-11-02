@@ -5,6 +5,8 @@ from .serializers import NewsArticleSerializer
 
 class CountryEditionTests(APITestCase):
     def setUp(self):
+        self.rss_client = self.client_class()
+        self.rss_client.force_authenticate(get_user_model().objects.create_user('rss-regions', is_staff=True))
         self.source = NewsSource.objects.create(name="Region fixture", url="https://example.org")
         self.category = NewsCategory.objects.create(name="Regional fixture")
         self.articles = {}
@@ -54,7 +56,7 @@ class CountryEditionTests(APITestCase):
         response = self.client.get("/api/categories/", {"location": "ca"})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data["results"][0]["article_count"], 1)
-        response = self.client.get("/api/rss/", {"location": "ca"})
+        response = self.rss_client.get("/api/rss/", {"location": "ca"})
         self.assertContains(response, "Fixture ca")
         self.assertNotContains(response, "Fixture ng")
         self.assertNotContains(response, "Fixture world")
@@ -65,7 +67,7 @@ class CountryEditionTests(APITestCase):
         article.remote_image_url = base + "story-13.webp"
         self.assertEqual(NewsArticleSerializer(article).data["image_url"], "")
         article.save(update_fields=["remote_image_url"])
-        rss = self.client.get("/api/rss/", {"location": "ng"})
+        rss = self.rss_client.get("/api/rss/", {"location": "ng"})
         self.assertNotContains(rss, "story-13.webp")
         article.remote_image_url = base + "story-4.webp"
         self.assertEqual(NewsArticleSerializer(article).data["image_url"], article.remote_image_url)

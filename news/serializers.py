@@ -64,6 +64,12 @@ def resolve_cloudinary_asset_url(image_field, fallback_url=""):
 
 
 class NewsSourceSerializer(serializers.ModelSerializer):
+    bias = serializers.SerializerMethodField()
+
+    def get_bias(self, obj):
+        # Historic labels have no documented rating methodology.
+        return "Unrated"
+
     class Meta:
         model = NewsSource
         fields = [
@@ -71,6 +77,7 @@ class NewsSourceSerializer(serializers.ModelSerializer):
             "name",
             "url",
             "bias",
+            "description", "review_notes", "review_evidence_url", "reviewed_at", "review_status", "publisher_group",
         ]
 
 
@@ -99,6 +106,32 @@ class NewsCategoryLiteSerializer(serializers.ModelSerializer):
 
 class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
     article_prepared = serializers.SerializerMethodField()
+    developing_story = serializers.SerializerMethodField()
+    corrections = serializers.SerializerMethodField()
+    recommendation_reason = serializers.SerializerMethodField()
+
+    def get_developing_story(self, obj):
+        story = obj.story
+        if story and story.published:
+            from .editorial import filter_location
+            if filter_location(obj.location, story.location):
+                return {"id": story.pk, "title": story.title, "updated_at": story.updated_at}
+        return None
+
+    def get_corrections(self, obj):
+        return [{"id": c.pk, "note": c.note, "created_at": c.created_at} for c in obj.corrections.all()]
+
+    def get_recommendation_reason(self, obj):
+        preferences = self.context.get("feed_preferences")
+        if preferences is None:
+            return None
+        if obj.story_id in preferences["stories"]:
+            return "You follow this developing story."
+        if obj.source_id in preferences["sources"]:
+            return "You follow this publisher."
+        if any(c.pk in preferences["categories"] for c in obj.categories.all()):
+            return "You follow a category in this report."
+        return "Latest reporting in your selected edition."
 
     def get_article_prepared(self, obj):
         return any(tag.name == 'ai-assisted-source-article' for tag in obj.tags.all())
@@ -114,6 +147,7 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
         model = NewsArticle
         fields = [
             "id",
+            "editorial_type", "why_matters", "context_source_url", "image_credit", "updated_at", "developing_story", "corrections", "recommendation_reason",
             "title",
             "author",
             "description",
@@ -160,3 +194,12 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             if resolved and not is_placeholder_image(resolved):
                 return resolved
         return ""
+
+
+class NewsArticleCardSerializer(NewsArticleSerializer):
+    """Public lists do not need to download every full article body."""
+    class Meta(NewsArticleSerializer.Meta):
+        fields = [field for field in NewsArticleSerializer.Meta.fields if field not in {
+            "content", "corrections", "tags", "image", "perspectives", "left_coverage", "center_coverage",
+            "right_coverage", "sentiment", "sentiment_positive", "sentiment_neutral", "sentiment_negative",
+        }]

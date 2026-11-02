@@ -117,7 +117,11 @@ python manage.py run_news_worker
 It services the RSS queue and one article preparation per tick, using the existing
 singleton DB lock. A crash rolls back to the queued job; revision and original
 content checks protect intervening edits. RSS generation is capped at two new
-writing attempts per run and defers further candidates. Use PostgreSQL in
+writing attempts per bounded batch. With migration `0020`, persistent continuation
+batches can fulfill configured per-source/category limits of 1–100 new stories
+within intervals of 1–1000 minutes. Quotas survive retries and manual runs; only
+matching stories with sufficient evidence publish. See the publishing rules in
+[admin-panel.md](admin-panel.md). Use PostgreSQL in
 production, one worker for local SQLite, and a generous transaction/hosting timeout
 (at least 15 minutes for the configured bounds). Restart/deploy the worker when
 applying these code changes. The work here did not provision or deploy a worker

@@ -45,7 +45,9 @@ these terminal processes with Ctrl+C when finished.
 - Django admin: `http://127.0.0.1:8001/admin/`
 - Published US feed: `http://127.0.0.1:8001/api/news/?location=us`
 - First imported article: `http://127.0.0.1:8001/api/news/1/`
-- Outbound RSS: `http://127.0.0.1:8001/api/rss/?location=us`
+- Outbound RSS: `http://127.0.0.1:8001/api/rss/?location=us` now requires a staff
+  bearer session. When the frontend points at this backend, use `/admin/rss` to
+  inspect and export RSS with the existing HttpOnly admin session.
 
 The frontend at `http://localhost:3000` has been restored to its original backend
 at `http://localhost:8000` through `.env.development.local`. The isolated demo

@@ -1,4 +1,5 @@
 import xml.etree.ElementTree as ET
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from rest_framework.test import APIClient
 from .models import NewsArticle, NewsCategory, NewsSource
@@ -7,6 +8,8 @@ from .models import NewsArticle, NewsCategory, NewsSource
 class CategoryRssTests(TestCase):
     def setUp(self):
         self.client = APIClient()
+        self.rss_client = APIClient()
+        self.rss_client.force_authenticate(get_user_model().objects.create_user('rss-operator', is_staff=True))
         source = NewsSource.objects.create(name="Publisher", url="https://example.org")
         for index, name in enumerate(
             [
@@ -45,7 +48,7 @@ class CategoryRssTests(TestCase):
                     "/api/news/", {"category": category, "location": "ng"}
                 )
                 self.assertEqual([a["title"] for a in news.data["results"]], [expected])
-                rss = self.client.get(
+                rss = self.rss_client.get(
                     "/api/rss/", {"category": category, "location": "ng"}
                 )
                 self.assertEqual(rss.status_code, 200)
@@ -60,7 +63,7 @@ class CategoryRssTests(TestCase):
         article.archived = True
         article.save()
         for category in ["Entertainment", "Food"]:
-            response = self.client.get("/api/rss/", {"category": category})
+            response = self.rss_client.get("/api/rss/", {"category": category})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(
                 ET.fromstring(response.content).findall("./channel/item"), []

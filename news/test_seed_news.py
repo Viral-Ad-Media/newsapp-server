@@ -2,11 +2,31 @@ from io import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 from news.models import NewsArticle, NewsCategory, NewsSource
 
 
 class SeedNewsTests(TestCase):
+    def test_content_seed_never_provisions_or_changes_privileged_accounts(self):
+        User = get_user_model()
+        self.assertEqual(User.objects.count(), 0)
+        call_command("seed_news", stdout=StringIO())
+        self.assertEqual(User.objects.count(), 0)
+        user = User.objects.create_user(
+            "seed-protection",
+            email="viraladmediacontent@gmail.com",
+            password="isolated-test-password-only",
+            is_active=False,
+        )
+        original_password = user.password
+        call_command("seed_news", stdout=StringIO())
+        user.refresh_from_db()
+        self.assertEqual(user.password, original_password)
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        self.assertFalse(user.is_active)
+
     def test_import_populates_ten_source_linked_stories_and_categories(self):
         call_command("seed_news", stdout=StringIO())
         self.assertEqual(NewsArticle.objects.count(), 20)

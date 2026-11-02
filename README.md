@@ -268,8 +268,19 @@ Authenticated readers can request `/api/live/?location=us` for the latest publis
 The companion frontend now has `/admin/login` and six private admin sections.
 See [admin-panel.md](docs/admin-panel.md) for configuration, permissions, endpoints,
 non-destructive migration review, worker deployment, safe testing and limitations.
-The durable worker command is `python manage.py run_news_worker`. Automation is
-disabled until explicitly configured; the frontend does not run the scheduler.
+The durable worker command is `python manage.py run_news_worker`. The backend
+`vercel.json` runs it as one Vercel Daemon using `Dockerfile.worker`; see the guide
+for environment, region and production rollout details. Automation is disabled
+until explicitly configured; the frontend does not run the scheduler.
+
+RSS management and exports are staff-only at `/admin/rss`; public RSS navigation
+and autodiscovery are removed. Public category menus use the same saved category
+records as admin. `configure_news_sources` adds missing standard categories and
+91 checked feeds (new feeds disabled), preserving existing configuration. It runs
+at the end of the Vercel production build, or can be previewed manually with
+`python manage.py configure_news_sources --dry-run`. The checked catalogue spans
+17 standard topics and all 61 country editions; admin shows remaining
+regional/topic gaps. See the admin guide for verification and activation.
 
 ## Reader navigation, strict timelines, AI and account recovery
 
@@ -280,3 +291,7 @@ verification details. No additional schema migration is required for these chang
 For a real RSS import that cannot touch Neon, see
 [local-feed-test.md](docs/local-feed-test.md). Use the opt-in
 `--settings=newsapp.local_settings` profile for **every** local test command.
+
+## Public readiness review
+
+See [public-readiness.md](docs/public-readiness.md) for the November 2, 2026 validation, security fix and production launch gates. Content seeds no longer create or reset administrator accounts; provision administrators interactively. Any administrator credential set by the old seed must be rotated after deploying the fix.

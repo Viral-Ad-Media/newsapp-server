@@ -45,6 +45,7 @@ class VercelBuildTests(SimpleTestCase):
                 call("migrate", interactive=False),
                 call("seed_news"),
                 call("seed_blog_posts"),
+                call('configure_news_sources'),
             ],
         )
         cursor.execute.assert_any_call(

@@ -15,6 +15,24 @@ for _code, _name in COUNTRY_NAMES.items():
     if _name.lower() not in COUNTRY_ALIASES[_code]:
         COUNTRY_ALIASES[_code].append(_name.lower())
 
+def normalize_country(value):
+    value = str(value or '').strip().casefold()
+    if value == 'world':
+        return value
+    for code, aliases in COUNTRY_ALIASES.items():
+        if value == code or value in aliases:
+            return code
+    return ''
+
+def item_location(labels, fallback='world'):
+    """Only explicit publisher country tags can refine the saved feed edition."""
+    codes = []
+    for label in labels or []:
+        code = normalize_country(label)
+        if code and code != 'world' and code not in codes:
+            codes.append(code)
+    return ', '.join(codes) if codes else fallback
+
 def country_query(location, field="location"):
     location = str(location or "").strip().lower()
     for code, aliases in COUNTRY_ALIASES.items():

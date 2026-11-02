@@ -1,11 +1,18 @@
 from django.conf import settings
 from django.utils import timezone
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 from cloudinary.models import CloudinaryField
 from taggit.managers import TaggableManager  # Import the TaggableManager for tagging
 
 
 class NewsSource(models.Model):
+    description = models.TextField(blank=True)
+    review_notes = models.TextField(blank=True)
+    review_evidence_url = models.URLField(max_length=2000, blank=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    review_status = models.CharField(max_length=20, default="unreviewed", choices=[("unreviewed", "Unreviewed"), ("reviewed", "Reviewed")])
+    publisher_group = models.CharField(max_length=255, blank=True, help_text="Shared ownership or syndication group; not proof of independent reporting.")
     feed_url = models.URLField(max_length=2000, blank=True, null=True, unique=True)
     enabled = models.BooleanField(default=False)
     location = models.CharField(max_length=100, default="ng")
@@ -40,6 +47,12 @@ class PublishedArticles(models.Manager):
 
 
 class NewsArticle(models.Model):
+    story = models.ForeignKey("DevelopingStory", null=True, blank=True, on_delete=models.SET_NULL, related_name="reports")
+    editorial_type = models.CharField(max_length=20, default="news", choices=[("news", "News"), ("analysis", "Analysis"), ("opinion", "Opinion"), ("explainer", "Explainer"), ("review", "Review"), ("interview", "Interview")])
+    why_matters = models.TextField(blank=True)
+    context_source_url = models.URLField(max_length=2000, blank=True)
+    image_credit = models.CharField(max_length=500, blank=True)
+    updated_at = models.DateTimeField(null=True, blank=True)
     objects = PublishedArticles()
     all_objects = models.Manager()
     archived = models.BooleanField(default=False, db_index=True)
@@ -144,6 +157,9 @@ class NewsArticle(models.Model):
 
         previous = type(self).objects.filter(pk=self.pk).first() if self.pk else None
         changed = populate_news_metadata(self, previous)
+        if previous and any(getattr(previous, field) != getattr(self, field) for field in ["title", "description", "content", "why_matters", "image_credit", "editorial_type"]):
+            self.updated_at = timezone.now()
+            changed.append("updated_at")
         if kwargs.get("update_fields") is not None:
             kwargs["update_fields"] = set(kwargs["update_fields"]) | set(changed)
         super().save(*args, **kwargs)
@@ -177,13 +193,81 @@ class ReaderProfile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     categories = models.ManyToManyField(NewsCategory, blank=True)
     saved_articles = models.ManyToManyField(NewsArticle, blank=True)
+    followed_sources = models.ManyToManyField(NewsSource, blank=True, related_name="followers")
+    muted_sources = models.ManyToManyField(NewsSource, blank=True, related_name="muted_by")
+    followed_stories = models.ManyToManyField("DevelopingStory", blank=True, related_name="followers")
+
+
+class DevelopingStory(models.Model):
+    """Editor-maintained event; broad category similarity is not event evidence."""
+    title = models.CharField(max_length=255)
+    location = models.CharField(max_length=100, default="ng")
+    overview = models.TextField(blank=True)
+    uncertainty = models.TextField(blank=True)
+    agreements = models.TextField(blank=True)
+    differences = models.TextField(blank=True)
+    published = models.BooleanField(default=False)
+    revision = models.PositiveIntegerField(default=1)
+    updated_at = models.DateTimeField(default=timezone.now)
+
+
+class StoryUpdate(models.Model):
+    story = models.ForeignKey(DevelopingStory, on_delete=models.CASCADE, related_name="updates")
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
+    summary = models.TextField()
+    occurred_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ["-occurred_at", "-id"]
+
+
+class ArticleCorrection(models.Model):
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE, related_name="corrections")
+    note = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+
+class ArticleReport(models.Model):
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    message = models.TextField()
+    status = models.CharField(max_length=20, default="open", choices=[("open", "Open"), ("reviewed", "Reviewed"), ("resolved", "Resolved")])
+    created_at = models.DateTimeField(default=timezone.now)
+
+
+class HomepagePlacement(models.Model):
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
+    location = models.CharField(max_length=100, default="ng")
+    slot = models.CharField(max_length=20, choices=[("lead", "Lead"), ("supporting", "Supporting"), ("feature", "Feature")])
+    rank = models.PositiveIntegerField(default=0)
+    starts_at = models.DateTimeField(default=timezone.now)
+    ends_at = models.DateTimeField()
+
+
+class HomepageSection(models.Model):
+    title = models.CharField(max_length=100)
+    location = models.CharField(max_length=100, default="ng")
+    category = models.ForeignKey(NewsCategory, on_delete=models.CASCADE)
+    rank = models.PositiveIntegerField(default=0)
+    enabled = models.BooleanField(default=True)
+
+
+class ReadingHistory(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
+    viewed_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "article"], name="unique_reader_history")]
 
 
 class AutomationSettings(models.Model):
     # A singleton is shared by web requests and any number of workers.
     enabled = models.BooleanField(default=False)
-    interval_minutes = models.PositiveIntegerField(default=60)
+    interval_minutes = models.PositiveIntegerField(default=60, validators=[MinValueValidator(1), MaxValueValidator(1000)])
     max_per_source = models.PositiveIntegerField(default=20)
+    publish_per_source = models.PositiveIntegerField(default=2, validators=[MinValueValidator(1), MaxValueValidator(100)])
+    publishing_rules = models.JSONField(default=list, blank=True)
     timeout_seconds = models.PositiveIntegerField(default=10)
     next_run = models.DateTimeField(default=timezone.now)
     worker_seen = models.DateTimeField(null=True)
@@ -201,6 +285,9 @@ class CrawlRun(models.Model):
     counts = models.JSONField(default=dict)
     error = models.CharField(max_length=300, blank=True)
     dry_run = models.BooleanField(default=False)
+    cycle_started_at = models.DateTimeField(null=True, blank=True)
+    pending_sources = models.JSONField(null=True, blank=True, default=None)
+    parent = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='continuations')
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["status"], condition=models.Q(status="queued"), name="one_queued_crawl")]
@@ -222,6 +309,14 @@ class AdminEvent(models.Model):
 class AutomationWorkerLock(models.Model):
     """Separate lock row keeps settings editable during bounded network work."""
     pass
+
+
+class SourcePublishingWindow(models.Model):
+    """Durable quotas shared by scheduled runs, continuations and manual retries."""
+    source = models.OneToOneField(NewsSource, on_delete=models.CASCADE, related_name='publishing_window')
+    started_at = models.DateTimeField(default=timezone.now)
+    counts = models.JSONField(default=dict)
+    attempted = models.JSONField(default=list)
 
 
 class ArticlePreparation(models.Model):

@@ -240,6 +240,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",  # Use JWT
     ],
 }
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["article_report"] = "10/hour"
 
 # Optional: JWT Settings
 SIMPLE_JWT = {
