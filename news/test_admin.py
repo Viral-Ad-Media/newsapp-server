@@ -333,7 +333,7 @@ class AdminTests(TestCase):
         self.assertEqual(
             self.client.put(
                 "/api/admin/settings/",
-                {"revision": cfg.revision, "interval_minutes": 1},
+                {"revision": cfg.revision, "interval_minutes": 0},
                 format="json",
             ).status_code,
             400,

@@ -1,0 +1,142 @@
+{
+  "checked_on": "2026-11-02",
+  "decision": "Not signed off for full public launch; deployment and production configuration remain unverified/incomplete.",
+  "backend_tests": {
+    "passed": 173,
+    "last_full_run_seconds": 26.796
+  },
+  "frontend_unit_tests": {
+    "passed": 17
+  },
+  "public_browser_tests": {
+    "cases": 51,
+    "latest_full_run_passed": 50,
+    "latest_full_run_failed": 1,
+    "last_failure": "Ambiguous heading selector in test; corrected to level 1.",
+    "focused_recheck_passed": 10,
+    "focused_recheck_covers": "Both affected public test files, including the corrected heading selector. Other 41 cases passed the preceding full run."
+  },
+  "real_backend_browser_tests": {
+    "cases": 6,
+    "passed": 6,
+    "last_full_run": "6 passed (53.9s)",
+    "real_reader_flow": [
+      "registration",
+      "HttpOnly login",
+      "reader denied admin",
+      "category and article reads",
+      "save and unsave",
+      "topic preferences",
+      "personal feed",
+      "member live feed",
+      "logout"
+    ],
+    "fixture_note": "The disposable shared-loopback browser harness uses 100 logins/minute; a separate backend security test verifies the production shared 5/minute budget across password endpoints."
+  },
+  "frontend_build": "passed",
+  "frontend_lint": "passed; Next 15 next lint deprecation notice only",
+  "npm_production_advisories": 0,
+  "python_osv": {
+    "provider": "OSV",
+    "packages_checked": 58,
+    "findings": []
+  },
+  "python_runtime_checked": "3.14.3; Python 3.12 worker image not built locally",
+  "pip_dependency_consistency": "No broken requirements found",
+  "migration_consistency": "No changes detected",
+  "production_style_django_checks": [
+    "SECURE_HSTS_SECONDS not configured in application defaults; deployed provider responses do include HSTS"
+  ],
+  "live_anonymous_http": [
+    {
+      "url": "https://my-news-app-blond-six.vercel.app/",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8",
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "hsts": true
+    },
+    {
+      "url": "https://my-news-app-blond-six.vercel.app/robots.txt",
+      "status": 200,
+      "content_type": "text/plain",
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "hsts": true
+    },
+    {
+      "url": "https://newsapp-server-five.vercel.app/health/",
+      "status": 200,
+      "content_type": "application/json",
+      "location": null,
+      "cache_control": "no-store",
+      "hsts": true,
+      "json_keys": [
+        "service",
+        "status",
+        "links"
+      ]
+    },
+    {
+      "url": "https://newsapp-server-five.vercel.app/api/news/?location=ng&page_size=1",
+      "status": 200,
+      "content_type": "application/json",
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "hsts": true,
+      "json_keys": [
+        "count",
+        "next",
+        "previous",
+        "results"
+      ],
+      "article_count": 19
+    },
+    {
+      "url": "https://newsapp-server-five.vercel.app/api/admin/me/",
+      "status": 401,
+      "content_type": "application/json",
+      "location": null,
+      "cache_control": "public, max-age=0, must-revalidate",
+      "hsts": true,
+      "json_keys": [
+        "detail"
+      ]
+    }
+  ],
+  "production_configuration_observed": {
+    "debug": false,
+    "frontend_api_host": "newsapp-server-five.vercel.app",
+    "frontend_origin_allowed_by_backend": true,
+    "project_env_inventory_missing_backend": [
+      "OPENAI_API_KEY",
+      "EMAIL_HOST",
+      "EMAIL_HOST_USER",
+      "EMAIL_HOST_PASSWORD",
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET"
+    ],
+    "project_env_inventory_missing_frontend": [
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET"
+    ],
+    "note": "Inventory had hiddenProductionEnvCount=0. Missing inventory is a deployment configuration finding, not a live provider execution test."
+  },
+  "fixed_locally": [
+    "Removed automatic privileged account creation, privilege changes and fixed password reset from seed_news",
+    "Added seed account-preservation regression test",
+    "Updated stale reader browser fixtures for private RSS and saved category IDs",
+    "Added real public-reader integration browser test",
+    "Removed frontend unit test dependency on sibling backend checkout; added unit tests to frontend CI",
+    "Applied shared login-scoped throttling to the alternate REST password login endpoint; added cross-endpoint throttle and role regression tests"
+  ],
+  "not_performed": [
+    "Production deployment or environment changes",
+    "Production account password rotation",
+    "Live paid AI calls",
+    "Live SMTP email or Google sign-in",
+    "Live worker/Neon multi-process verification",
+    "Container build",
+    "Traffic load testing"
+  ]
+}

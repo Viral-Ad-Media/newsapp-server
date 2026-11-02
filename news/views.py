@@ -78,8 +78,8 @@ class NewsList(generics.ListAPIView):
 
     def get_queryset(self):
         queryset = (
-            NewsArticle.objects.select_related("source")
-            .prefetch_related("categories", "tags")
+            NewsArticle.objects.select_related("source", "story")
+            .prefetch_related("categories", "tags", "corrections")
             .order_by("-published_at", "-id")
         )
 
@@ -126,8 +126,8 @@ class NewsDetail(generics.RetrieveAPIView):
     API view to retrieve details of a specific news article by its ID.
     """
 
-    queryset = NewsArticle.objects.select_related("source").prefetch_related(
-        "categories", "tags"
+    queryset = NewsArticle.objects.select_related("source", "story").prefetch_related(
+        "categories", "tags", "corrections"
     )
     serializer_class = NewsArticleSerializer
 
@@ -154,14 +154,14 @@ class NewsCoverageView(APIView):
                 "published_at": article.published_at,
                 "bucket": "center",
                 "label": "Primary Report",
-                "bias_rating": getattr(article.source, "bias", "Center") or "Center",
+                "bias_rating": "Unrated",
                 "summary": article.description,
             }
         ]
         for idx, item in enumerate(perspectives, start=1):
             if not isinstance(item, dict):
                 continue
-            item_url = item.get("url") or article.article_url
+            item_url = item.get("url") or ""
             if idx == 1 and item_url == article.article_url and item.get("source") == article.source.name:
                 continue
             articles_payload.append(
@@ -174,7 +174,7 @@ class NewsCoverageView(APIView):
                     "published_at": article.published_at,
                     "bucket": item.get("bucket") or "center",
                     "label": item.get("label") or "Perspective",
-                    "bias_rating": item.get("bias_rating") or "Center",
+                    "bias_rating": item.get("bias_rating") or "Unrated",
                     "summary": item.get("summary") or "",
                 }
             )
@@ -184,33 +184,14 @@ class NewsCoverageView(APIView):
         sentiment_label = getattr(article, "sentiment", "neutral") or "neutral"
 
         if pos == 0.0 and neu == 0.0 and neg == 0.0:
-            if article.dominant_bias == "polarized" or article.is_lopsided:
-                pos, neu, neg = 22.0, 40.0, 38.0
-                if sentiment_label in {"neutral", "Unknown"}:
-                    sentiment_label = "contested"
-            elif article.dominant_bias in {"left", "right"}:
-                pos, neu, neg = 28.0, 44.0, 28.0
-                if sentiment_label in {"neutral", "Unknown"}:
-                    sentiment_label = "analytical"
-            else:
-                pos, neu, neg = 34.0, 48.0, 18.0
-                if sentiment_label in {"neutral", "Unknown"}:
-                    sentiment_label = "balanced"
-
-        index_value = max(
-            15,
-            min(
-                95,
-                round(
-                    50
-                    + (pos - neg) * 0.45
-                    + ((article.center_coverage or 34) - 33) * 0.35
-                ),
-            ),
-        )
+            sentiment_label = "unavailable"
+        # No documented measurement supports the historical synthetic index.
+        index_value = None
 
         coverage_data = {
-            "total_sources": max(article.total_sources or 1, len(perspectives)),
+            "total_sources": len({row["url"] for row in articles_payload if row.get("url")}) or 1,
+            "coverage_verified": False,
+            "coverage_note": "Historical coverage labels are not independently verified bias measurements.",
             "left_coverage": article.left_coverage,
             "center_coverage": article.center_coverage,
             "right_coverage": article.right_coverage,
@@ -290,14 +271,23 @@ def related_news(request, article_id):
 class PersonalizedNewsList(NewsList):
     permission_classes = [IsAuthenticated]
 
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        from .editorial import preference_payload
+        context["feed_preferences"] = preference_payload(ReaderProfile.objects.get_or_create(user=self.request.user)[0])
+        return context
+
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        response["Cache-Control"] = "private, no-store"
+        return response
+
     def get_queryset(self):
         profile, _ = ReaderProfile.objects.get_or_create(user=self.request.user)
         queryset = super().get_queryset()
-        if profile.categories.exists():
-            queryset = queryset.filter(
-                categories__in=profile.categories.all()
-            ).distinct()
-        return queryset
+        if profile.categories.exists() or profile.followed_sources.exists() or profile.followed_stories.filter(published=True).exists():
+            queryset = queryset.filter(Q(categories__in=profile.categories.all()) | Q(source__in=profile.followed_sources.all()) | Q(story__in=profile.followed_stories.filter(published=True))).distinct()
+        return queryset.exclude(source__in=profile.muted_sources.all())
 
 
 class LiveNewsList(NewsList):
@@ -762,6 +752,14 @@ class RssFeedView(APIView):
     Serve an RSS 2.0 XML syndication feed of the latest news articles,
     supporting optional ?category=, ?location=, and ?bias= query filters.
     """
+
+    permission_classes = [IsSuperAdmin]
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response['Cache-Control'] = 'private, no-store'
+        response['X-Robots-Tag'] = 'noindex, nofollow'
+        return response
 
     def get(self, request):
         from django.http import HttpResponse

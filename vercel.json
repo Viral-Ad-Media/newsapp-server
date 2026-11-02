@@ -1,4 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "python vercel_build.py"
+  "buildCommand": "python vercel_build.py",
+  "daemons": {
+    "news-worker": {
+      "root": ".",
+      "entrypoint": "Dockerfile.worker",
+      "instances": { "iad1": 1 },
+      "terminationGracePeriodSeconds": 3600
+    }
+  }
 }

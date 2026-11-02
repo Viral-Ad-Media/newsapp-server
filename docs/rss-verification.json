@@ -1,0 +1,1905 @@
+{
+  "checked_on": "2026-11-02",
+  "method": "Existing safe_fetch, strict RSS parser, and source_evidence checks. No AI generation or publishing. At most two article samples per feed. Stop on rate limits; no bypass. One paced follow-up after cooldown recovered rate-limited country feeds; stop on any new rate limit.",
+  "checks": [
+    {
+      "url": "https://www.theguardian.com/uk/sport/rss",
+      "entries": 48,
+      "sample": "https://www.theguardian.com/sport/2026/nov/01/kimi-antonelli-world-champion-mexican-grand-prix-lando-norris-lewis-hamilton-max-verstappen",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/sport/2026/nov/01/kimi-antonelli-world-champion-mexican-grand-prix-lando-norris-lewis-hamilton-max-verstappen",
+          "words": 877
+        },
+        {
+          "url": "https://www.theguardian.com/football/2026/nov/02/premier-league-10-talking-points-from-the-weekends-action",
+          "words": 1757
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/culture/rss",
+      "entries": 64,
+      "sample": "https://www.theguardian.com/tv-and-radio/2026/nov/01/philomena-cunk-on-cinema-charlie-brooker-diane-morgan-interview",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/tv-and-radio/2026/nov/01/philomena-cunk-on-cinema-charlie-brooker-diane-morgan-interview",
+          "words": 2542
+        },
+        {
+          "url": "https://www.theguardian.com/film/2026/nov/01/baz-luhrmann-romeo-and-juliet-turns-30",
+          "words": 1083
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/business/rss",
+      "entries": 40,
+      "sample": "https://www.theguardian.com/business/live/2026/nov/02/crypto-scam-binance-billion-hack-business-live-latest-updates-news",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/business/live/2026/nov/02/crypto-scam-binance-billion-hack-business-live-latest-updates-news",
+          "words": 855
+        },
+        {
+          "url": "https://www.theguardian.com/business/2026/nov/02/nine-of-world-biggest-oil-firms-95bn-profit-third-quarter-iran-war",
+          "words": 826
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/money/rss",
+      "entries": 26,
+      "sample": "https://www.theguardian.com/money/2026/nov/02/buying-smart-lock-uk-worth-it-affect-insurance",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/money/2026/nov/02/buying-smart-lock-uk-worth-it-affect-insurance",
+          "words": 877
+        },
+        {
+          "url": "https://www.theguardian.com/money/2026/nov/02/mortgage-payments-rise-2027-interest-rates",
+          "words": 733
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/technology/rss",
+      "entries": 32,
+      "sample": "https://www.theguardian.com/business/2026/oct/29/binance-crypto-exchange-hack",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/business/2026/oct/29/binance-crypto-exchange-hack",
+          "words": 1164
+        },
+        {
+          "url": "https://www.theguardian.com/global/video/2026/oct/30/anthropic-92-page-risk-factor-document-ipo-filing-video-explainer",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/environment/rss",
+      "entries": 25,
+      "sample": "https://www.theguardian.com/environment/2026/oct/31/cop17-reforms-fails-to-deliver-targets",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/environment/2026/oct/31/cop17-reforms-fails-to-deliver-targets",
+          "words": 943
+        },
+        {
+          "url": "https://www.theguardian.com/environment/2026/oct/30/twice-as-many-plants-and-animals-sold-in-wildlife-trade-as-previously-thought-says-report",
+          "words": 847
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/travel/rss",
+      "entries": 22,
+      "sample": "https://www.theguardian.com/travel/2026/nov/02/dark-winter-holiday-swedish-lapland",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/travel/2026/nov/02/dark-winter-holiday-swedish-lapland",
+          "words": 1363
+        },
+        {
+          "url": "https://www.theguardian.com/travel/2026/nov/01/its-snow-time-the-best-winter-activity-holidays-in-europe-for-non-skiers",
+          "words": 2500
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/lifeandstyle/rss",
+      "entries": 48,
+      "sample": "https://www.theguardian.com/lifeandstyle/2026/nov/02/a-new-start-after-60-at-26-i-saw-my-dream-porsche-at-68-i-built-one-from-scratch",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/lifeandstyle/2026/nov/02/a-new-start-after-60-at-26-i-saw-my-dream-porsche-at-68-i-built-one-from-scratch",
+          "words": 758
+        },
+        {
+          "url": "https://www.theguardian.com/lifeandstyle/gallery/2026/nov/02/heidi-klum-celebrity-halloween-outfits-2026-pictures",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk/film/rss",
+      "entries": 32,
+      "sample": "https://www.theguardian.com/film/2026/nov/02/rhys-ifans-laura-linney-onwards-sideways-film-interview-parkinsons-paul-mayhew-archer",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/film/2026/nov/02/rhys-ifans-laura-linney-onwards-sideways-film-interview-parkinsons-paul-mayhew-archer",
+          "words": 1812
+        },
+        {
+          "url": "https://www.theguardian.com/film/2026/nov/02/i-died-review-moving-portrait-of-tzotzil-women-confronting-patriarchal-violence-in-the-mexican-highlands",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://punchng.com/feed",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.capitalfm.co.ke/news/feed",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.rnz.co.nz/rss/sport.xml",
+      "entries": 13,
+      "sample": "https://www.rnz.co.nz/news/sport/2302596/why-netball-nz-pulled-the-plug-on-mowbray-williams-deal",
+      "article_samples": [
+        {
+          "url": "https://www.rnz.co.nz/news/sport/2302596/why-netball-nz-pulled-the-plug-on-mowbray-williams-deal",
+          "words": 1710
+        },
+        {
+          "url": "https://www.rnz.co.nz/news/sport/2302310/kiwi-liam-lawson-profits-from-f1-post-race-penalties",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://feeds.bbci.co.uk/sport/rss.xml",
+      "entries": 68,
+      "sample": "https://www.bbc.co.uk/sport/formula1/articles/c6m2dj7ze9v2o?at_medium=RSS&at_campaign=rss",
+      "article_samples": [
+        {
+          "url": "https://www.bbc.co.uk/sport/formula1/articles/c6m2dj7ze9v2o?at_medium=RSS&at_campaign=rss",
+          "words": 1353
+        },
+        {
+          "url": "https://www.bbc.co.uk/sport/formula1/articles/cmwy7dl879gzo?at_medium=RSS&at_campaign=rss",
+          "words": 893
+        }
+      ]
+    },
+    {
+      "url": "https://www.smithsonianmag.com/rss/latest_articles/",
+      "entries": 10,
+      "sample": "https://www.smithsonianmag.com/sponsored/tired-of-the-winter-blues-the-unique-festival-of-lights-zagreb-marks-the-much-anticipated-arrival-of-spring-180989751/",
+      "article_samples": [
+        {
+          "url": "https://www.smithsonianmag.com/sponsored/tired-of-the-winter-blues-the-unique-festival-of-lights-zagreb-marks-the-much-anticipated-arrival-of-spring-180989751/",
+          "words": 1204
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/crafted-from-bone-this-2800-year-old-flute-unearthed-in-troy-may-have-been-played-around-the-time-that-homer-composed-the-iliad-and-the-odyssey-180989792/",
+          "words": 854
+        }
+      ]
+    },
+    {
+      "url": "https://www.sciencedaily.com/rss/all.xml",
+      "entries": 60,
+      "sample": "https://www.sciencedaily.com/releases/2026/10/261031221203.htm",
+      "article_samples": [
+        {
+          "url": "https://www.sciencedaily.com/releases/2026/10/261031221203.htm",
+          "words": 1082
+        },
+        {
+          "url": "https://www.sciencedaily.com/releases/2026/10/261031221201.htm",
+          "words": 981
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/world/canada/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/30/canada-european-union-alliance",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/30/canada-european-union-alliance",
+          "words": 873
+        },
+        {
+          "url": "https://www.theguardian.com/tv-and-radio/2026/oct/30/sctv-greatest-show-you-never-heard-of-netflix-comedy-sketch-show-documentary",
+          "words": 1336
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/world/africa/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/anger-over-johannesburgs-run-down-infrastructure-elections",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/anger-over-johannesburgs-run-down-infrastructure-elections",
+          "words": 1044
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/30/roy-moxham-obituary",
+          "words": 583
+        }
+      ]
+    },
+    {
+      "url": "https://www.premiumtimesng.com/feed",
+      "entries": 15,
+      "sample": "https://www.premiumtimesng.com/news/more-news/922017-2027-inec-lists-35-candidates-for-taraba-senate-elections.html",
+      "article_samples": [
+        {
+          "url": "https://www.premiumtimesng.com/news/more-news/922017-2027-inec-lists-35-candidates-for-taraba-senate-elections.html",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.premiumtimesng.com/opinion/922007-the-draft-nigeria-economic-policy-framework-and-the-necessity-of-fiscal-discipline-by-uddin-ifeanyi.html",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://punchng.com/feed/",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://nairametrics.com/feed/",
+      "entries": 20,
+      "sample": "https://nairametrics.com/2026/11/02/ebola-death-rate-exceeds-50-in-dr-congo-as-us-tightens-travel-restrictions/",
+      "article_samples": [
+        {
+          "url": "https://nairametrics.com/2026/11/02/ebola-death-rate-exceeds-50-in-dr-congo-as-us-tightens-travel-restrictions/",
+          "words": 576
+        },
+        {
+          "url": "https://nairametrics.com/2026/11/02/aradel-seeks-earn-out-review-as-n529-1-billion-payout-to-spdc-weighs-on-profit/",
+          "words": 756
+        }
+      ]
+    },
+    {
+      "url": "https://www.thecable.ng/feed/",
+      "error": "DocumentHTTPError: Source returned HTTP 403; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.channelstv.com/feed/",
+      "entries": 10,
+      "sample": "https://www.channelstv.com/2026/11/02/iran-warns-new-war-could-last-longer-after-trump-threatens-strikes-2/",
+      "article_samples": [
+        {
+          "url": "https://www.channelstv.com/2026/11/02/iran-warns-new-war-could-last-longer-after-trump-threatens-strikes-2/",
+          "words": 822
+        },
+        {
+          "url": "https://www.channelstv.com/2026/11/02/us-will-have-to-give-iran-the-hammer-at-some-point-trump/",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/uk-news/rss",
+      "entries": 45,
+      "sample": "https://www.theguardian.com/society/2026/nov/02/domestic-violence-survivor-terror-attacker-released-without-tag",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/02/domestic-violence-survivor-terror-attacker-released-without-tag",
+          "words": 937
+        },
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/02/nhs-early-warning-system-child-illness-england",
+          "words": 597
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/us-news/rss",
+      "entries": 33,
+      "sample": "https://www.theguardian.com/us-news/live/2026/nov/01/trump-midterm-rallies-iowa-kansas",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/us-news/live/2026/nov/01/trump-midterm-rallies-iowa-kansas",
+          "words": 2556
+        },
+        {
+          "url": "https://www.theguardian.com/us-news/2026/nov/01/trump-iowa-rally",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/australia-news/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/australia-news/2026/nov/02/australian-author-craig-silvey-jailed-child-exploitation-material-ntwnfb",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/australia-news/2026/nov/02/australian-author-craig-silvey-jailed-child-exploitation-material-ntwnfb",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/australia-news/2026/nov/02/australia-economy-fifth-interest-rate-hike-looms",
+          "words": 649
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/sport/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/culture/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/artanddesign/rss",
+      "entries": 23,
+      "sample": "https://www.theguardian.com/artanddesign/gallery/2026/nov/01/japan-jimi-halloween-celebration-of-all-things-mundane-tokyo-shibuya-in-pictures",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/artanddesign/gallery/2026/nov/01/japan-jimi-halloween-celebration-of-all-things-mundane-tokyo-shibuya-in-pictures",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/artanddesign/ng-interactive/2026/nov/01/geoffrey-bardon-aboriginal-dot-painting-papunya",
+          "words": 2784
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/business/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/money/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/games/rss",
+      "entries": 7,
+      "sample": "https://www.theguardian.com/games/2026/oct/30/after-50-years-of-playing-video-games-im-finally-starring-in-one",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/games/2026/oct/30/after-50-years-of-playing-video-games-im-finally-starring-in-one",
+          "words": 900
+        },
+        {
+          "url": "https://www.theguardian.com/games/2026/oct/29/night-plane-review-join-the-jumbo-jet-to-hell-in-this-indie-horror-game",
+          "words": 600
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/technology/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/science/rss",
+      "entries": 28,
+      "sample": "https://www.theguardian.com/science/2026/oct/30/perfume-bottle-child-necklace-pompeii-wardrobe",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/science/2026/oct/30/perfume-bottle-child-necklace-pompeii-wardrobe",
+          "words": 670
+        },
+        {
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/30/the-guardian-view-on-50-years-of-the-selfish-gene-flawed-outdated-yet-still-a-model-of-truly-popular-science-writing",
+          "words": 663
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/society/health/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/society/2026/nov/02/nhs-early-warning-system-child-illness-england",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/02/nhs-early-warning-system-child-illness-england",
+          "words": 597
+        },
+        {
+          "url": "https://www.theguardian.com/world/commentisfree/2026/nov/01/the-guardian-view-on-listening-to-people-with-learning-disabilities-a-matter-of-life-and-death",
+          "words": 562
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/education/rss",
+      "entries": 16,
+      "sample": "https://www.theguardian.com/politics/2026/nov/01/uk-willing-to-spend-450m-a-year-on-eu-students-if-it-can-join-made-in-europe-scheme",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/politics/2026/nov/01/uk-willing-to-spend-450m-a-year-on-eu-students-if-it-can-join-made-in-europe-scheme",
+          "words": 1409
+        },
+        {
+          "url": "https://www.theguardian.com/uk-news/2026/oct/29/sara-won-a-prized-place-to-study-medicine-in-glasgow-why-is-the-home-office-blocking-her",
+          "words": 2235
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/environment/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/travel/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/food/rss",
+      "entries": 31,
+      "sample": "https://www.theguardian.com/food/2026/nov/02/cauliflower-recipes-disco-cauliflower-bhajis-maray-james-bates",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/food/2026/nov/02/cauliflower-recipes-disco-cauliflower-bhajis-maray-james-bates",
+          "words": 1140
+        },
+        {
+          "url": "https://www.theguardian.com/food/2026/nov/01/how-to-make-the-perfect-venison-casserole-recipe",
+          "words": 1906
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/lifeandstyle/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.theguardian.com/politics/rss",
+      "entries": 21,
+      "sample": "https://www.theguardian.com/world/2026/nov/02/uk-trade-ban-west-bank-settlements-israel-election-poll",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/02/uk-trade-ban-west-bank-settlements-israel-election-poll",
+          "words": 736
+        },
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/02/counsellors-psychotherapists-statutory-regulation-uk-professional-bodies",
+          "words": 960
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/film/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 302; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://feeds.bbci.co.uk/news/uk/rss.xml",
+      "entries": 35,
+      "sample": "https://www.bbc.co.uk/news/articles/cm9dzn8e737jo?at_medium=RSS&at_campaign=rss",
+      "article_samples": [
+        {
+          "url": "https://www.bbc.co.uk/news/articles/cm9dzn8e737jo?at_medium=RSS&at_campaign=rss",
+          "words": 1091
+        },
+        {
+          "url": "https://www.bbc.co.uk/news/articles/c6n4ed1l2pn1o?at_medium=RSS&at_campaign=rss",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.nasa.gov/news-release/feed/",
+      "entries": 10,
+      "sample": "https://science.nasa.gov/image-article/apod-2026-november-2-a-long-cloud-on-mars/",
+      "article_samples": [
+        {
+          "url": "https://science.nasa.gov/image-article/apod-2026-november-2-a-long-cloud-on-mars/",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://science.nasa.gov/earth/earth-observatory/pennsylvanias-grand-canyon/",
+          "words": 943
+        }
+      ]
+    },
+    {
+      "url": "https://www.cbc.ca/webfeed/rss/rss-canada",
+      "entries": 19,
+      "sample": "https://www.cbc.ca/news/canada/kitchener-waterloo/puslinch-fatal-car-crash-youths-9.7404772?cmp=rss",
+      "article_samples": [
+        {
+          "url": "https://www.cbc.ca/news/canada/kitchener-waterloo/puslinch-fatal-car-crash-youths-9.7404772?cmp=rss",
+          "words": 487
+        },
+        {
+          "url": "https://www.cbc.ca/news/canada/manitoba/brandon-medical-oncologist-doctor-cancer-9.7403937?cmp=rss",
+          "words": 1074
+        }
+      ]
+    },
+    {
+      "url": "https://www.rnz.co.nz/rss/national.xml",
+      "entries": 50,
+      "sample": "https://www.rnz.co.nz/news/environment/2299241/review-finds-no-evidence-of-anti-forestry-bias-at-gisborne-district-council",
+      "article_samples": [
+        {
+          "url": "https://www.rnz.co.nz/news/environment/2299241/review-finds-no-evidence-of-anti-forestry-bias-at-gisborne-district-council",
+          "words": 1457
+        },
+        {
+          "url": "https://www.rnz.co.nz/news/health/2302711/local-iwi-trust-takes-over-troubled-pahiatua-medical-centre",
+          "words": 1155
+        }
+      ]
+    },
+    {
+      "url": "https://www.myjoyonline.com/feed/",
+      "entries": 50,
+      "sample": "https://www.myjoyonline.com/todays-front-pages-monday-november-2-2026/",
+      "article_samples": [
+        {
+          "url": "https://www.myjoyonline.com/todays-front-pages-monday-november-2-2026/",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.myjoyonline.com/sakumono-murder-suspect-is-72-pistol-7-rounds-of-ammunition-retrieved-after-his-arrest-in-ashanti-region/",
+          "words": 493
+        }
+      ]
+    },
+    {
+      "url": "https://www.capitalfm.co.ke/news/feed/",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://www.sabcnews.com/sabcnews/feed/",
+      "entries": 10,
+      "sample": "https://www.sabcnews.com/sabcnews/un-peacekeeping-mission-in-western-sahara-has-ended-guterres/",
+      "article_samples": [
+        {
+          "url": "https://www.sabcnews.com/sabcnews/un-peacekeeping-mission-in-western-sahara-has-ended-guterres/",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        },
+        {
+          "url": "https://www.sabcnews.com/sabcnews/concerns-over-safety-of-voters-amid-cape-town-taxi-violence/",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        }
+      ]
+    },
+    {
+      "url": "https://www.aljazeera.com/xml/rss/all.xml",
+      "entries": 25,
+      "sample": "https://www.aljazeera.com/opinions/2026/11/2/rfk-jr-is-wrong-about-the-arab-world?traffic_source=rss",
+      "article_samples": [
+        {
+          "url": "https://www.aljazeera.com/opinions/2026/11/2/rfk-jr-is-wrong-about-the-arab-world?traffic_source=rss",
+          "words": 1061
+        },
+        {
+          "url": "https://www.aljazeera.com/news/2026/11/2/un-staffers-death-in-custody-exposes-houthi-political-extortion-in-yemen?traffic_source=rss",
+          "words": 652
+        }
+      ]
+    },
+    {
+      "url": "https://www.france24.com/en/rss",
+      "entries": 24,
+      "sample": "https://www.france24.com/en/asia-pacific/20261102-taliban-voice-alarm-over-us-plan-to-deport-afghan-migrants-via-pakistan",
+      "article_samples": [
+        {
+          "url": "https://www.france24.com/en/asia-pacific/20261102-taliban-voice-alarm-over-us-plan-to-deport-afghan-migrants-via-pakistan",
+          "words": 557
+        },
+        {
+          "url": "https://www.france24.com/en/tv-shows/sports/20261102-liga-yan-diomand%C3%A9-and-kylian-mbapp%C3%A9-score-again-for-real-madrid",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.dw.com/en/top-stories/s-9097/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 404; redirects are disabled or exhausted."
+    },
+    {
+      "url": "https://timesofindia.indiatimes.com/rssfeedstopstories.cms",
+      "entries": 33,
+      "sample": "https://timesofindia.indiatimes.com/city/hyderabad/caste-religion-complexion-height-and-education-how-hyderabad-fertility-racket-handpicked-egg-donors-women-recruited-from-7-states-offered-up-to-rs-50000/articleshow/135442709.cms",
+      "article_samples": [
+        {
+          "url": "https://timesofindia.indiatimes.com/city/hyderabad/caste-religion-complexion-height-and-education-how-hyderabad-fertility-racket-handpicked-egg-donors-women-recruited-from-7-states-offered-up-to-rs-50000/articleshow/135442709.cms",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://timesofindia.indiatimes.com/india/india-bloc-rally-at-ramlila-maidan-saw-creative-expression-take-centre-stage-as-slogans-posters-and-placards-delivered-the-message/articleshow/135444786.cms",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ]
+    },
+    {
+      "url": "https://www.dawn.com/feeds/home",
+      "entries": 27,
+      "sample": "https://www.dawn.com/news/2041543/us-backed-consortium-proposes-44bn-lng-project",
+      "article_samples": [
+        {
+          "url": "https://www.dawn.com/news/2041543/us-backed-consortium-proposes-44bn-lng-project",
+          "words": 841
+        },
+        {
+          "url": "https://www.dawn.com/news/2041584/lahores-air-quality-index-crosses-530-as-pollution-reaches-hazardous-levels",
+          "words": 718
+        }
+      ]
+    },
+    {
+      "url": "https://www.theguardian.com/world/nigeria/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/stage/2026/oct/28/girls-review-a-story-of-friendship-amidst-extreme-misogynist-violence",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/stage/2026/oct/28/girls-review-a-story-of-friendship-amidst-extreme-misogynist-violence",
+          "words": 497
+        },
+        {
+          "url": "https://www.theguardian.com/lifeandstyle/2026/oct/27/the-pest-ill-never-forget-rats-stood-six-seven-deep-beside-dormitory",
+          "words": 469
+        }
+      ],
+      "country": "ng",
+      "country_name": "Nigeria"
+    },
+    {
+      "url": "https://www.theguardian.com/world/usa/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted.",
+      "country": "us",
+      "country_name": "United States"
+    },
+    {
+      "url": "https://www.theguardian.com/uk-news/rss",
+      "entries": 45,
+      "sample": "https://www.theguardian.com/society/2026/nov/02/domestic-violence-survivor-terror-attacker-released-without-tag",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/02/domestic-violence-survivor-terror-attacker-released-without-tag",
+          "words": 937
+        },
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/02/nhs-early-warning-system-child-illness-england",
+          "words": 597
+        }
+      ],
+      "country": "gb",
+      "country_name": "United Kingdom"
+    },
+    {
+      "url": "https://www.theguardian.com/world/canada/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/30/canada-european-union-alliance",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/30/canada-european-union-alliance",
+          "words": 873
+        },
+        {
+          "url": "https://www.theguardian.com/tv-and-radio/2026/oct/30/sctv-greatest-show-you-never-heard-of-netflix-comedy-sketch-show-documentary",
+          "words": 1336
+        }
+      ],
+      "country": "ca",
+      "country_name": "Canada"
+    },
+    {
+      "url": "https://www.theguardian.com/australia-news/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/australia-news/2026/nov/02/australian-author-craig-silvey-jailed-child-exploitation-material-ntwnfb",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/australia-news/2026/nov/02/australian-author-craig-silvey-jailed-child-exploitation-material-ntwnfb",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/australia-news/2026/nov/02/australia-economy-fifth-interest-rate-hike-looms",
+          "words": 649
+        }
+      ],
+      "country": "au",
+      "country_name": "Australia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/newzealand/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/jacinda-ardern-sydney-opera-house-talk-advises-politicians-to-rebuild-trust",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/jacinda-ardern-sydney-opera-house-talk-advises-politicians-to-rebuild-trust",
+          "words": 692
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/31/nz-election-2026-who-is-bellwether-electorate-picking-as-winner",
+          "words": 920
+        }
+      ],
+      "country": "nz",
+      "country_name": "New Zealand"
+    },
+    {
+      "url": "https://www.theguardian.com/world/ghana/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/us-news/2026/oct/30/javits-frimpong-fatal-shooting-bronx-new-york",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/us-news/2026/oct/30/javits-frimpong-fatal-shooting-bronx-new-york",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/artanddesign/2026/oct/21/ibrahim-mahama-ghana-colonialism-fondation-cartier-paris",
+          "words": 801
+        }
+      ],
+      "country": "gh",
+      "country_name": "Ghana"
+    },
+    {
+      "url": "https://www.theguardian.com/world/kenya/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/30/roy-moxham-obituary",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/30/roy-moxham-obituary",
+          "words": 583
+        },
+        {
+          "url": "https://www.theguardian.com/global-development/2026/oct/28/africa-ebola-outbreak-could-reach-uk-says-top-health-official",
+          "words": 756
+        }
+      ],
+      "country": "ke",
+      "country_name": "Kenya"
+    },
+    {
+      "url": "https://www.theguardian.com/world/southafrica/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/anger-over-johannesburgs-run-down-infrastructure-elections",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/anger-over-johannesburgs-run-down-infrastructure-elections",
+          "words": 1044
+        },
+        {
+          "url": "https://www.theguardian.com/business/2026/oct/30/sinkholes-scarred-land-scapegoats-illegal-gold-mining-johannesburg",
+          "words": 1037
+        }
+      ],
+      "country": "za",
+      "country_name": "South Africa"
+    },
+    {
+      "url": "https://www.theguardian.com/world/egypt/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/commentisfree/2026/oct/31/norway-melania-trump-nobel-peace-prize",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/31/norway-melania-trump-nobel-peace-prize",
+          "words": 1258
+        },
+        {
+          "url": "https://www.theguardian.com/us-news/2026/oct/29/laura-loomer-trump-abdul-el-sayed-muslim-brotherhood",
+          "words": 1290
+        }
+      ],
+      "country": "eg",
+      "country_name": "Egypt"
+    },
+    {
+      "url": "https://www.theguardian.com/world/morocco/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/music/2026/oct/09/global-bands-on-how-punk-fires-up-their-lives",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/music/2026/oct/09/global-bands-on-how-punk-fires-up-their-lives",
+          "words": 2062
+        },
+        {
+          "url": "https://www.theguardian.com/commentisfree/2026/sep/29/the-guardian-view-on-moroccos-election-hosting-a-world-cup-will-not-placate-a-disillusioned-generation",
+          "words": 628
+        }
+      ],
+      "country": "ma",
+      "country_name": "Morocco"
+    },
+    {
+      "url": "https://www.theguardian.com/world/tanzania/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/books/2026/oct/02/john-iliffe-obituary",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/books/2026/oct/02/john-iliffe-obituary",
+          "words": 897
+        },
+        {
+          "url": "https://www.theguardian.com/business/2026/aug/11/sadru-visram-obituary",
+          "words": 438
+        }
+      ],
+      "country": "tz",
+      "country_name": "Tanzania"
+    },
+    {
+      "url": "https://www.theguardian.com/world/uganda/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/global-development/2026/oct/28/africa-ebola-outbreak-could-reach-uk-says-top-health-official",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/global-development/2026/oct/28/africa-ebola-outbreak-could-reach-uk-says-top-health-official",
+          "words": 756
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/23/ebola-swiss-patient-nigeria-dr-congo-concerns-virus-spread",
+          "words": 648
+        }
+      ],
+      "country": "ug",
+      "country_name": "Uganda"
+    },
+    {
+      "url": "https://www.theguardian.com/world/ethiopia/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/environment/2026/oct/25/neville-fay-obituary",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/environment/2026/oct/25/neville-fay-obituary",
+          "words": 582
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/15/eritrean-aggression-must-not-be-overlooked",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "et",
+      "country_name": "Ethiopia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/rwanda/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/sport/2026/oct/22/lewis-hamilton-aims-to-extend-career-till-early-2030s-so-he-can-race-in-african-grand-prix",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/sport/2026/oct/22/lewis-hamilton-aims-to-extend-career-till-early-2030s-so-he-can-race-in-african-grand-prix",
+          "words": 1040
+        },
+        {
+          "url": "https://www.theguardian.com/global-development/2026/sep/24/we-have-nothing-drc-displacement-crisis-worsens-as-fighting-continues",
+          "words": 1096
+        }
+      ],
+      "country": "rw",
+      "country_name": "Rwanda"
+    },
+    {
+      "url": "https://www.theguardian.com/world/senegal/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/global-development/2026/oct/15/senegal-homosexuality-criminalised-anti-lgbtq-arrests-hiv-testing-human-rights-watch",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/global-development/2026/oct/15/senegal-homosexuality-criminalised-anti-lgbtq-arrests-hiv-testing-human-rights-watch",
+          "words": 773
+        },
+        {
+          "url": "https://www.theguardian.com/global-development/2026/aug/03/senegal-st-louis-talibes-quran-children-forced-beg-human-trafficking-rights",
+          "words": 1121
+        }
+      ],
+      "country": "sn",
+      "country_name": "Senegal"
+    },
+    {
+      "url": "https://www.theguardian.com/world/cameroon/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/global-development/2026/oct/25/environment-cities-cameroon-yaounde-green-space-trees",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/global-development/2026/oct/25/environment-cities-cameroon-yaounde-green-space-trees",
+          "words": 939
+        },
+        {
+          "url": "https://www.theguardian.com/music/2026/sep/18/baka-beyond-sing-the-world-awake-review-cameroon-su-hart-martin-cradick-baka",
+          "words": 468
+        }
+      ],
+      "country": "cm",
+      "country_name": "Cameroon"
+    },
+    {
+      "url": "https://www.theguardian.com/world/ivory-coast/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/aug/04/biama-dance-ivorian-pop-culture-cote-d-ivoire-tik-tok",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/aug/04/biama-dance-ivorian-pop-culture-cote-d-ivoire-tik-tok",
+          "words": 982
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/jul/30/artists-creative-haven-cote-divoire-calm-soothing-grand-bassam",
+          "words": 920
+        }
+      ],
+      "country": "ci",
+      "country_name": "Côte d’Ivoire"
+    },
+    {
+      "url": "https://www.theguardian.com/world/germany/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+          "words": 936
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/hitler-eagles-nest-retreat-arson-attack-should-it-be-rebuilt",
+          "words": 1060
+        }
+      ],
+      "country": "de",
+      "country_name": "Germany"
+    },
+    {
+      "url": "https://www.theguardian.com/world/france/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+          "words": 936
+        },
+        {
+          "url": "https://www.theguardian.com/world/video/2026/nov/01/protests-europe-halloween-weekend-video",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "fr",
+      "country_name": "France"
+    },
+    {
+      "url": "https://www.theguardian.com/world/spain/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/02/spain-train-crash-us-citizens-japan-canada-dead",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/02/spain-train-crash-us-citizens-japan-canada-dead",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/tributes-marta-shahbazi-university-of-cambridge-scientist-spanish-train-crash",
+          "words": 557
+        }
+      ],
+      "country": "es",
+      "country_name": "Spain"
+    },
+    {
+      "url": "https://www.theguardian.com/world/italy/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/30/pope-leo-votes-us-midterms-first-political-ballot-pontiff",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/30/pope-leo-votes-us-midterms-first-political-ballot-pontiff",
+          "words": 596
+        },
+        {
+          "url": "https://www.theguardian.com/world/live/2026/oct/30/spain-investigates-toledo-crash-pedro-sanchez-france-italy-protests-latest-news-updates",
+          "words": 2711
+        }
+      ],
+      "country": "it",
+      "country_name": "Italy"
+    },
+    {
+      "url": "https://www.theguardian.com/world/portugal/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+          "words": 936
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/25/police-portugal-dogs-batons-dismantle-housing-protest-camps",
+          "words": 627
+        }
+      ],
+      "country": "pt",
+      "country_name": "Portugal"
+    },
+    {
+      "url": "https://www.theguardian.com/world/netherlands/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/commentisfree/2026/nov/02/king-charles-slavery-apology-caribbean-tour",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/commentisfree/2026/nov/02/king-charles-slavery-apology-caribbean-tour",
+          "words": 778
+        },
+        {
+          "url": "https://www.theguardian.com/music/2026/oct/30/the-weeks-best-new-songs-dutch-squat-punks-bombstrap-rotterdam",
+          "words": 590
+        }
+      ],
+      "country": "nl",
+      "country_name": "Netherlands"
+    },
+    {
+      "url": "https://www.theguardian.com/world/belgium/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/23/eu-uk-summit-burnham-ukraine-defence",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/23/eu-uk-summit-burnham-ukraine-defence",
+          "words": 979
+        },
+        {
+          "url": "https://www.theguardian.com/business/nils-pratley-on-finance/2026/oct/23/britains-gas-security-needs-reinforcement-last-minute-deals-with-belgium-are-not-a-proper-fix",
+          "words": 742
+        }
+      ],
+      "country": "be",
+      "country_name": "Belgium"
+    },
+    {
+      "url": "https://www.theguardian.com/world/switzerland/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/petrol-bomb-thrown-at-french-riot-police",
+          "words": 936
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/23/ebola-swiss-patient-nigeria-dr-congo-concerns-virus-spread",
+          "words": 648
+        }
+      ],
+      "country": "ch",
+      "country_name": "Switzerland"
+    },
+    {
+      "url": "https://www.theguardian.com/world/austria/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/food/2026/oct/19/core-values-the-austrian-scheme-bringing-forgotten-apple-varieties-back-to-life",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/food/2026/oct/19/core-values-the-austrian-scheme-bringing-forgotten-apple-varieties-back-to-life",
+          "words": 802
+        },
+        {
+          "url": "https://www.theguardian.com/society/2026/oct/18/mep-lena-schilling-nude-deepfakes-eu-action",
+          "words": 657
+        }
+      ],
+      "country": "at",
+      "country_name": "Austria"
+    },
+    {
+      "url": "https://www.theguardian.com/world/ireland/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/music/2026/oct/29/donal-lunny-obituary",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/music/2026/oct/29/donal-lunny-obituary",
+          "words": 1082
+        },
+        {
+          "url": "https://www.theguardian.com/business/2026/oct/29/poundland-brink-administration-12000-jobs-at-risk",
+          "words": 766
+        }
+      ],
+      "country": "ie",
+      "country_name": "Ireland"
+    },
+    {
+      "url": "https://www.theguardian.com/world/sweden/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/global-development/2026/oct/30/electrocutions-disease-and-no-pay-how-workers-risk-exploitation-in-europes-datacentres",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/global-development/2026/oct/30/electrocutions-disease-and-no-pay-how-workers-risk-exploitation-in-europes-datacentres",
+          "words": 1495
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/pragmatic-or-pointless-europe-rift-over-pick-up-phone-putin",
+          "words": 1364
+        }
+      ],
+      "country": "se",
+      "country_name": "Sweden"
+    },
+    {
+      "url": "https://www.theguardian.com/world/norway/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/29/trump-norway-shithouse-toilets",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/trump-norway-shithouse-toilets",
+          "words": 685
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/pragmatic-or-pointless-europe-rift-over-pick-up-phone-putin",
+          "words": 1364
+        }
+      ],
+      "country": "no",
+      "country_name": "Norway"
+    },
+    {
+      "url": "https://www.theguardian.com/world/denmark/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/society/2026/nov/01/english-childrens-homes-crisis-denmark-care-system-model",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/society/2026/nov/01/english-childrens-homes-crisis-denmark-care-system-model",
+          "words": 1157
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/pragmatic-or-pointless-europe-rift-over-pick-up-phone-putin",
+          "words": 1364
+        }
+      ],
+      "country": "dk",
+      "country_name": "Denmark"
+    },
+    {
+      "url": "https://www.theguardian.com/world/finland/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/commentisfree/picture/2026/nov/02/google-search-has-gone-from-being-very-handy-to-useless",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/commentisfree/picture/2026/nov/02/google-search-has-gone-from-being-very-handy-to-useless",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/finland-criminal-investigation-google-clearing-forest-datacentre",
+          "words": 651
+        }
+      ],
+      "country": "fi",
+      "country_name": "Finland"
+    },
+    {
+      "url": "https://www.theguardian.com/world/poland/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/31/donald-tusk-defends-overhaul-poland-constitutional-court-despite-protests",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/31/donald-tusk-defends-overhaul-poland-constitutional-court-despite-protests",
+          "words": 694
+        },
+        {
+          "url": "https://www.theguardian.com/world/video/2026/oct/31/riot-police-contain-protesters-at-polish-constitutional-court-video",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        }
+      ],
+      "country": "pl",
+      "country_name": "Poland"
+    },
+    {
+      "url": "https://www.theguardian.com/world/greece/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/31/mouria-historic-athens-cafe-closes-exarchia-gentrifies",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/31/mouria-historic-athens-cafe-closes-exarchia-gentrifies",
+          "words": 1067
+        },
+        {
+          "url": "https://www.theguardian.com/environment/2026/oct/30/severe-rainfall-flood-warnings-greece-turkey",
+          "words": 507
+        }
+      ],
+      "country": "gr",
+      "country_name": "Greece"
+    },
+    {
+      "url": "https://www.theguardian.com/world/ukraine/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/ukraine-defies-trump-resumes-attacks-russian-oil",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/ukraine-defies-trump-resumes-attacks-russian-oil",
+          "words": 949
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/02/ukraine-war-briefing-kyiv-says-air-raid-warning-app-likely-hacked-after-users-receive-false-alerts",
+          "words": 615
+        }
+      ],
+      "country": "ua",
+      "country_name": "Ukraine"
+    },
+    {
+      "url": "https://www.theguardian.com/world/turkey/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "tr",
+      "country_name": "Türkiye"
+    },
+    {
+      "url": "https://www.theguardian.com/world/romania/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/20/nato-black-sea-deployment-escalating-russian-attacks-ships",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/20/nato-black-sea-deployment-escalating-russian-attacks-ships",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        },
+        {
+          "url": "https://www.theguardian.com/business/2026/oct/18/drone-attacks-ships-black-sea-russia-ukraine-war",
+          "words": 1316
+        }
+      ],
+      "country": "ro",
+      "country_name": "Romania"
+    },
+    {
+      "url": "https://www.theguardian.com/world/czech-republic/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/film/2026/sep/22/czech-documentary-homelessness-pepa-lubojacki-if-pigeons-turned-to-gold",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/film/2026/sep/22/czech-documentary-homelessness-pepa-lubojacki-if-pigeons-turned-to-gold",
+          "words": 942
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/sep/20/baltic-spy-chiefs-warn-moscow-is-preparing-for-more-decisive-action-in-europe",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        }
+      ],
+      "country": "cz",
+      "country_name": "Czechia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/india/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/india-opposition-protest-rally-delhi",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/india-opposition-protest-rally-delhi",
+          "words": 898
+        },
+        {
+          "url": "https://www.theguardian.com/global-development/2026/oct/31/delhi-women-natureleopards-its-a-man-you-dont-want-run-in-to-the-delhi-women-trying-to-reclaim-their-right-to-nature",
+          "words": 1018
+        }
+      ],
+      "country": "in",
+      "country_name": "India"
+    },
+    {
+      "url": "https://www.theguardian.com/world/pakistan/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/news/ng-interactive/2026/oct/29/paid-for-book-clubs-fake-film-deals-emails-explosion-literary-scams-authors",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/news/ng-interactive/2026/oct/29/paid-for-book-clubs-fake-film-deals-emails-explosion-literary-scams-authors",
+          "words": 4061
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/26/saudi-pakistani-turkish-delegation-iran-avert-flare-up-conflict-us",
+          "words": 1020
+        }
+      ],
+      "country": "pk",
+      "country_name": "Pakistan"
+    },
+    {
+      "url": "https://www.theguardian.com/world/bangladesh/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/14/india-protests-election-commission-gyanesh-kumar",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/14/india-protests-election-commission-gyanesh-kumar",
+          "words": 1465
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/11/steve-jones-obituary",
+          "words": 454
+        }
+      ],
+      "country": "bd",
+      "country_name": "Bangladesh"
+    },
+    {
+      "url": "https://www.theguardian.com/world/sri-lanka/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 404; redirects are disabled or exhausted.",
+      "country": "lk",
+      "country_name": "Sri Lanka"
+    },
+    {
+      "url": "https://www.theguardian.com/world/china/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/nov/01/us-china-trade-war-trump-xi",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/us-china-trade-war-trump-xi",
+          "words": 1010
+        },
+        {
+          "url": "https://www.theguardian.com/politics/2026/nov/02/uk-making-up-china-policy-as-it-goes-along-mps",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        }
+      ],
+      "country": "cn",
+      "country_name": "China"
+    },
+    {
+      "url": "https://www.theguardian.com/world/japan/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "jp",
+      "country_name": "Japan"
+    },
+    {
+      "url": "https://www.theguardian.com/world/south-korea/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "kr",
+      "country_name": "South Korea"
+    },
+    {
+      "url": "https://www.theguardian.com/world/singapore/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/16/singapore-threatens-prosecute-indonesia-fires-toxic-haze-smoke",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/16/singapore-threatens-prosecute-indonesia-fires-toxic-haze-smoke",
+          "words": 847
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/15/indonesia-fires-dry-ice-dropped-toxic-haze-spreads",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        }
+      ],
+      "country": "sg",
+      "country_name": "Singapore"
+    },
+    {
+      "url": "https://www.theguardian.com/world/malaysia/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "my",
+      "country_name": "Malaysia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/indonesia/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/29/indonesia-protests-fire-haze-economy",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/indonesia-protests-fire-haze-economy",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        },
+        {
+          "url": "https://www.theguardian.com/world/video/2026/oct/22/indonesia-students-clash-police-protests-toxic-haze-video",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "id",
+      "country_name": "Indonesia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/philippines/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/uk-news/2026/oct/29/metropolitan-police-refers-itself-to-watchdog-over-meghan-warning-letter",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/uk-news/2026/oct/29/metropolitan-police-refers-itself-to-watchdog-over-meghan-warning-letter",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        },
+        {
+          "url": "https://www.theguardian.com/uk-news/2026/oct/25/thomas-markle-sr-philippines-investigation",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        }
+      ],
+      "country": "ph",
+      "country_name": "Philippines"
+    },
+    {
+      "url": "https://www.theguardian.com/world/thailand/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "th",
+      "country_name": "Thailand"
+    },
+    {
+      "url": "https://www.theguardian.com/world/vietnam/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/commentisfree/2026/oct/22/imprisoned-australian-pro-democracy-activist-hiep-tran",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/22/imprisoned-australian-pro-democracy-activist-hiep-tran",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        },
+        {
+          "url": "https://www.theguardian.com/australia-news/2026/oct/12/australian-democracy-campaigner-detained-in-vietnam-on-alleged-terrorism-offences-uncontactable-wife-says",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        }
+      ],
+      "country": "vn",
+      "country_name": "Vietnam"
+    },
+    {
+      "url": "https://www.theguardian.com/world/unitedarabemirates/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "ae",
+      "country_name": "United Arab Emirates"
+    },
+    {
+      "url": "https://www.theguardian.com/world/saudiarabia/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/us-news/2026/oct/31/as-trump-fans-the-flames-of-a-world-on-fire-can-diplomacy-take-back-control",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/us-news/2026/oct/31/as-trump-fans-the-flames-of-a-world-on-fire-can-diplomacy-take-back-control",
+          "words": 2514
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/26/saudi-pakistani-turkish-delegation-iran-avert-flare-up-conflict-us",
+          "words": 1020
+        }
+      ],
+      "country": "sa",
+      "country_name": "Saudi Arabia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/qatar/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "qa",
+      "country_name": "Qatar"
+    },
+    {
+      "url": "https://www.theguardian.com/world/israel/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "il",
+      "country_name": "Israel"
+    },
+    {
+      "url": "https://www.theguardian.com/world/brazil/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "br",
+      "country_name": "Brazil"
+    },
+    {
+      "url": "https://www.theguardian.com/world/mexico/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "mx",
+      "country_name": "Mexico"
+    },
+    {
+      "url": "https://www.theguardian.com/world/argentina/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "ar",
+      "country_name": "Argentina"
+    },
+    {
+      "url": "https://www.theguardian.com/world/chile/rss",
+      "entries": 20,
+      "sample": "https://www.theguardian.com/world/2026/oct/29/brazil-victory-planet-democracy-lessons-lula-win",
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/brazil-victory-planet-democracy-lessons-lula-win",
+          "error": "Publisher denied or limited source access (HTTP 429); provide permitted verified source text."
+        },
+        {
+          "url": "https://www.theguardian.com/books/2026/oct/17/isabel-allende-wins-premio-planeta-spanish-literary-prize-pseudonym",
+          "words": 749
+        }
+      ],
+      "country": "cl",
+      "country_name": "Chile"
+    },
+    {
+      "url": "https://www.theguardian.com/world/colombia/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "co",
+      "country_name": "Colombia"
+    },
+    {
+      "url": "https://www.theguardian.com/world/peru/rss",
+      "error": "DocumentHTTPError: Source returned HTTP 429; redirects are disabled or exhausted.",
+      "country": "pe",
+      "country_name": "Peru"
+    },
+    {
+      "url": "https://www.adaderana.lk/rss.php",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted.",
+      "country": "lk"
+    },
+    {
+      "url": "https://www.dailysabah.com/rssFeed/turkey",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted.",
+      "country": "tr"
+    },
+    {
+      "url": "https://www3.nhk.or.jp/rss/news/cat0.xml",
+      "entries": 7,
+      "sample": "http://www3.nhk.or.jp/news/html/20260808/k10015199841000.html",
+      "article_samples": [
+        {
+          "url": "http://www3.nhk.or.jp/news/html/20260808/k10015199841000.html",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        },
+        {
+          "url": "http://www3.nhk.or.jp/news/html/20260808/k10015200211000.html",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        }
+      ],
+      "country": "jp"
+    },
+    {
+      "url": "https://www.koreatimes.co.kr/www/rss/nation.xml",
+      "error": "DocumentHTTPError: Source returned HTTP 301; redirects are disabled or exhausted.",
+      "country": "kr"
+    },
+    {
+      "url": "https://www.thestar.com.my/rss/News/Nation",
+      "error": "DocumentHTTPError: Source returned HTTP 404; redirects are disabled or exhausted.",
+      "country": "my"
+    },
+    {
+      "url": "https://en.antaranews.com/rss/news.xml",
+      "error": "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xa0 in position 30631: invalid start byte",
+      "country": "id"
+    },
+    {
+      "url": "https://www.philstar.com/rss/headlines",
+      "entries": 10,
+      "sample": "https://www.philstar.com/headlines/2026/11/02/2567322/almost-200000-passengers-expected-pitx-post-undas",
+      "article_samples": [
+        {
+          "url": "https://www.philstar.com/headlines/2026/11/02/2567322/almost-200000-passengers-expected-pitx-post-undas",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        },
+        {
+          "url": "https://www.philstar.com/headlines/2026/11/02/2567315/china-says-gibo-gave-beijing-less-five-working-days-notice-asean-defense-talks",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        }
+      ],
+      "country": "ph"
+    },
+    {
+      "url": "https://www.bangkokpost.com/rss/data/topstories.xml",
+      "entries": 10,
+      "sample": "https://www.bangkokpost.com/thailand/general/3347180/police-investigating-spending-by-beauty-queens-foundation",
+      "article_samples": [
+        {
+          "url": "https://www.bangkokpost.com/thailand/general/3347180/police-investigating-spending-by-beauty-queens-foundation",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.bangkokpost.com/thailand/general/3347051/fire-sweeps-through-houses-in-bangkok-community",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        }
+      ],
+      "country": "th"
+    },
+    {
+      "url": "https://e.vnexpress.net/rss/news.rss",
+      "entries": 60,
+      "sample": "https://e.vnexpress.net/news/news/crime/over-5-200-vapes-and-components-found-in-4-foreigners-luggage-at-singapore-changi-airport-5139772.html",
+      "article_samples": [
+        {
+          "url": "https://e.vnexpress.net/news/news/crime/over-5-200-vapes-and-components-found-in-4-foreigners-luggage-at-singapore-changi-airport-5139772.html",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://e.vnexpress.net/news/news/hanoi-to-offer-154-to-women-having-2-children-before-age-35-5139731.html",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "vn"
+    },
+    {
+      "url": "https://www.khaleejtimes.com/feed",
+      "error": "DocumentHTTPError: Source returned HTTP 404; redirects are disabled or exhausted.",
+      "country": "ae"
+    },
+    {
+      "url": "https://thepeninsulaqatar.com/feed",
+      "error": "ValueError: XML entities are not permitted.",
+      "country": "qa"
+    },
+    {
+      "url": "https://www.timesofisrael.com/feed/",
+      "entries": 15,
+      "sample": "https://www.timesofisrael.com/to-replace-netanyahu-eisenkot-must-learn-from-his-rivals-playbook/",
+      "article_samples": [
+        {
+          "url": "https://www.timesofisrael.com/to-replace-netanyahu-eisenkot-must-learn-from-his-rivals-playbook/",
+          "error": "Publisher denied or limited source access (HTTP 403); provide permitted verified source text."
+        },
+        {
+          "url": "https://www.timesofisrael.com/man-suspected-of-killing-wife-with-axe-in-petah-tikva-before-taking-his-own-life/",
+          "error": "Publisher denied or limited source access (HTTP 403); provide permitted verified source text."
+        }
+      ],
+      "country": "il"
+    },
+    {
+      "url": "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml",
+      "entries": 10,
+      "sample": "https://agenciabrasil.ebc.com.br/politica/noticia/2026-11/lula-garante-que-programas-sociais-serao-mantidos",
+      "article_samples": [
+        {
+          "url": "https://agenciabrasil.ebc.com.br/politica/noticia/2026-11/lula-garante-que-programas-sociais-serao-mantidos",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://agenciabrasil.ebc.com.br/esportes/noticia/2026-11/palmeiras-sai-na-frente-do-vasco-na-semifinal-da-copa-do-brasil-1-0",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "br"
+    },
+    {
+      "url": "https://www.jornada.com.mx/rss/edicion.xml",
+      "entries": 75,
+      "sample": "https://www.jornada.com.mx/2026/11/01/opinion/002a1edi?partner=rss",
+      "article_samples": [
+        {
+          "url": "https://www.jornada.com.mx/2026/11/01/opinion/002a1edi?partner=rss",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        },
+        {
+          "url": "https://www.jornada.com.mx/2026/11/01/capital/026a1cap?partner=rss",
+          "error": "Original source could not be retrieved securely; supply verified source text."
+        }
+      ],
+      "country": "mx"
+    },
+    {
+      "url": "https://buenosairesherald.com/feed",
+      "entries": 10,
+      "sample": "https://buenosairesherald.com/sports/football/boca-river-kickoff-new-superclasico-with-tournament-title-in-sight",
+      "article_samples": [
+        {
+          "url": "https://buenosairesherald.com/sports/football/boca-river-kickoff-new-superclasico-with-tournament-title-in-sight",
+          "words": 685
+        },
+        {
+          "url": "https://buenosairesherald.com/society/pope-leos-argentina-trip-whats-changed-and-whats-not-since-john-paul-ii",
+          "words": 1432
+        }
+      ],
+      "country": "ar"
+    },
+    {
+      "url": "https://colombiareports.com/feed/",
+      "entries": 10,
+      "sample": "https://colombiareports.com/colombias-government-presents-economic-rescue-bill/",
+      "article_samples": [
+        {
+          "url": "https://colombiareports.com/colombias-government-presents-economic-rescue-bill/",
+          "words": 444
+        },
+        {
+          "url": "https://colombiareports.com/ten-years-of-peace-and-attempts-to-destroy-it/",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "co"
+    },
+    {
+      "url": "https://andina.pe/ingles/rss.aspx",
+      "entries": 20,
+      "sample": "https://andina.pe/agencia/noticia-foreign-minister-highlights-president-keiko-fujimoris-highly-positive-trip-to-salvador-1098161.aspx",
+      "article_samples": [
+        {
+          "url": "https://andina.pe/agencia/noticia-foreign-minister-highlights-president-keiko-fujimoris-highly-positive-trip-to-salvador-1098161.aspx",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://andina.pe/agencia/noticia-peru-and-unicef-advance-strategies-for-highly-vulnerable-children-1097976.aspx",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        }
+      ],
+      "country": "pe"
+    },
+    {
+      "country": "tr",
+      "country_name": "Türkiye",
+      "url": "https://www.theguardian.com/world/turkey/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/environment/2026/oct/30/severe-rainfall-flood-warnings-greece-turkey",
+          "words": 507
+        }
+      ]
+    },
+    {
+      "country": "lk",
+      "country_name": "Sri Lanka",
+      "url": "https://www.theguardian.com/world/srilanka/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/21/john-staley-obituary",
+          "words": 439
+        }
+      ]
+    },
+    {
+      "country": "jp",
+      "country_name": "Japan",
+      "url": "https://www.theguardian.com/world/japan/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/artanddesign/gallery/2026/nov/01/japan-jimi-halloween-celebration-of-all-things-mundane-tokyo-shibuya-in-pictures",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/uk-news/2026/oct/30/one-mans-war-on-the-scourge-of-sodcasting",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/hello-kitty-japanese-spy-show-vivant-china-outcry",
+          "words": 534
+        }
+      ]
+    },
+    {
+      "country": "kr",
+      "country_name": "South Korea",
+      "url": "https://www.theguardian.com/world/south-korea/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/30/why-is-north-korea-fortifying-its-border-with-south-korea",
+          "words": 931
+        }
+      ]
+    },
+    {
+      "country": "my",
+      "country_name": "Malaysia",
+      "url": "https://www.theguardian.com/world/malaysia/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/books/2026/oct/29/ike-ong-obituary",
+          "words": 483
+        }
+      ]
+    },
+    {
+      "country": "id",
+      "country_name": "Indonesia",
+      "url": "https://www.theguardian.com/world/indonesia/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/indonesia-protests-fire-haze-economy",
+          "words": 1035
+        }
+      ]
+    },
+    {
+      "country": "ph",
+      "country_name": "Philippines",
+      "url": "https://www.theguardian.com/world/philippines/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/uk-news/2026/oct/29/metropolitan-police-refers-itself-to-watchdog-over-meghan-warning-letter",
+          "words": 675
+        }
+      ]
+    },
+    {
+      "country": "th",
+      "country_name": "Thailand",
+      "url": "https://www.theguardian.com/world/thailand/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/business/2026/oct/17/imf-warns-scale-subsidies-weather-global-chaos-untenable",
+          "words": 1530
+        }
+      ]
+    },
+    {
+      "country": "vn",
+      "country_name": "Vietnam",
+      "url": "https://www.theguardian.com/world/vietnam/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/commentisfree/2026/oct/22/imprisoned-australian-pro-democracy-activist-hiep-tran",
+          "words": 874
+        }
+      ]
+    },
+    {
+      "country": "ae",
+      "country_name": "United Arab Emirates",
+      "url": "https://www.theguardian.com/world/unitedarabemirates/rss",
+      "error": "Source returned HTTP 404; redirects are disabled or exhausted."
+    },
+    {
+      "country": "qa",
+      "country_name": "Qatar",
+      "url": "https://www.theguardian.com/world/qatar/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/negotiators-braced-for-worst-over-us-iran-talks-to-reopen-strait-of-hormuz",
+          "words": 796
+        }
+      ]
+    },
+    {
+      "country": "il",
+      "country_name": "Israel",
+      "url": "https://www.theguardian.com/world/israel/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/02/israel-opposition-bloc-arab-coalition-knesset-yousef-jabareen",
+          "words": 1199
+        }
+      ]
+    },
+    {
+      "country": "br",
+      "country_name": "Brazil",
+      "url": "https://www.theguardian.com/world/brazil/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/31/brazil-lula-social-media",
+          "words": 1106
+        }
+      ]
+    },
+    {
+      "country": "mx",
+      "country_name": "Mexico",
+      "url": "https://www.theguardian.com/world/mexico/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/film/2026/nov/02/i-died-review-moving-portrait-of-tzotzil-women-confronting-patriarchal-violence-in-the-mexican-highlands",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/sport/live/2026/oct/31/canelo-alvarez-v-christian-mbilli-wbc-super-middleweight-championship-live-buildup",
+          "words": 2689
+        }
+      ]
+    },
+    {
+      "country": "pe",
+      "country_name": "Peru",
+      "url": "https://www.theguardian.com/world/peru/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/news/audio/2026/nov/02/a-perfect-storm-how-the-super-el-nino-is-devastating-the-fishing-industry-podcast",
+          "error": "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
+        },
+        {
+          "url": "https://www.theguardian.com/world/2026/oct/29/brazil-victory-planet-democracy-lessons-lula-win",
+          "words": 1443
+        }
+      ]
+    },
+    {
+      "country": "ae",
+      "country_name": "United Arab Emirates",
+      "url": "https://www.theguardian.com/world/united-arab-emirates/rss",
+      "entries": 20,
+      "article_samples": [
+        {
+          "url": "https://www.theguardian.com/world/2026/nov/01/negotiators-braced-for-worst-over-us-iran-talks-to-reopen-strait-of-hormuz",
+          "words": 796
+        }
+      ]
+    }
+  ]
+}

@@ -45,6 +45,7 @@ class AutomaticNewsPublishingTests(TestCase):
         self.assertEqual(article.seo_description, article.description)
         self.assertEqual(article.og_title, article.seo_title)
         self.assertEqual(self.client.get('/api/news/').data['count'], 1)
+        self.client.force_authenticate(get_user_model().objects.create_user('rss-publishing', is_staff=True))
         self.assertIn(article.title, self.client.get('/api/rss/').content.decode())
         self.assertIn(f'/news/{article.pk}', self.client.get('/api/sitemap/').content.decode())
 

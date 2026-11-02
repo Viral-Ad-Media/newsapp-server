@@ -373,13 +373,12 @@ class LopsidedCoverageTests(NewsFixtures):
         from django.core.management import call_command
 
         call_command("seed_news", stdout=StringIO())
+        from django.contrib.auth import get_user_model
+        get_user_model().objects.create_superuser('editor-seed-test', 'editor-seed@example.test', 'isolated-editor-test-password-only')
         token_res = self.client.post(
-            "/api/token/",
-            {
-                "username": "viraladmediacontent@gmail.com",
-                "password": "Viraladmedia2018**",
-            },
-            format="json",
+            '/api/token/',
+            {'username': 'editor-seed@example.test', 'password': 'isolated-editor-test-password-only'},
+            format='json',
         )
         self.assertEqual(token_res.status_code, 200)
         self.assertTrue(token_res.data.get("is_superuser"))
@@ -411,6 +410,7 @@ class LopsidedCoverageTests(NewsFixtures):
         self.assertEqual(created.data["title"], "Superadmin test blog post")
 
     def test_rss_feed_xml_and_fetch_rss_command(self):
+        from django.contrib.auth import get_user_model
         from io import StringIO
         from django.core.management import call_command
 
@@ -419,6 +419,7 @@ class LopsidedCoverageTests(NewsFixtures):
             call_command("fetch_rss", offline=True, stdout=out)
         self.assertIn("created 2", out.getvalue())
 
+        self.client.force_authenticate(get_user_model().objects.create_user('rss-test-operator', is_staff=True))
         rss_res = self.client.get("/api/rss/")
         self.assertEqual(rss_res.status_code, 200)
         self.assertIn("application/rss+xml", rss_res["Content-Type"])

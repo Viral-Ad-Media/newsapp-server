@@ -4,8 +4,22 @@ from . import views
 from .admin_api import AdminAPI
 from .ask import AskNews
 from .recovery import PasswordResetRequestView, PasswordResetConfirmView
+from .editorial import EditionView, StoriesView, SourcesView, ReaderChoices, ReaderChoiceDetail, HistoryView, ReportView, EditorialAdmin, CoverageMonitor
 
 urlpatterns = [
+    path("edition/", EditionView.as_view()),
+    path("stories/", StoriesView.as_view()),
+    path("stories/<int:pk>/", StoriesView.as_view()),
+    path("sources/", SourcesView.as_view()),
+    path("sources/<int:pk>/", SourcesView.as_view()),
+    path("reader-choices/", ReaderChoices.as_view()),
+    path("reader-choices/<str:kind>/<int:pk>/", ReaderChoiceDetail.as_view()),
+    path("history/", HistoryView.as_view()),
+    path("history/<int:pk>/", HistoryView.as_view()),
+    path("article-reports/<int:pk>/", ReportView.as_view()),
+    path("admin/coverage-monitor/", CoverageMonitor.as_view()),
+    path("admin/editorial/<str:resource>/", EditorialAdmin.as_view()),
+    path("admin/editorial/<str:resource>/<int:pk>/", EditorialAdmin.as_view()),
     path("admin/<str:resource>/", AdminAPI.as_view()),
     path("admin/<str:resource>/<int:pk>/", AdminAPI.as_view()),
     path("admin/<str:resource>/<int:pk>/<str:action>/", AdminAPI.as_view()),

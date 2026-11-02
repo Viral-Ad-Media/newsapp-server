@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-from .views import service_status
+from .views import service_status, PasswordLoginView
 from .social_auth import GoogleLoginView
 from rest_framework.routers import DefaultRouter
 from news.views import (
@@ -46,6 +46,7 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('accounts/', include('allauth.urls')),  # <-- Include allauth URLs
     path('api/auth/google/', GoogleLoginView.as_view(), name='google-login'),
+    path('api/auth/login/', PasswordLoginView.as_view(), name='rest_login'),
     path('api/auth/', include('dj_rest_auth.urls')),  # Login/Logout/Password reset etc.
     path('api/auth/registration/', include('dj_rest_auth.registration.urls')),  # Registration
     path('api/token/', EmailOrUsernameTokenObtainPairView.as_view(), name='token_obtain_pair'),

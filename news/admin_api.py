@@ -19,7 +19,7 @@ from .models import (
     CrawlRun,
     AdminEvent,
 )
-from .automation import config, queue_run, event, Busy
+from .automation import config, queue_run, cancel_run, event, Busy
 from .pagination import NewsPagination
 from .safe_fetch import validate_feed_url
 
@@ -47,6 +47,15 @@ class CategoryInput(serializers.ModelSerializer):
 
 class SourceInput(serializers.ModelSerializer):
     article_count = serializers.IntegerField(read_only=True)
+    catalogue_verification = serializers.SerializerMethodField()
+
+    def get_catalogue_verification(self, obj):
+        import json
+        from .source_coverage import CATALOGUE_PATH
+        if not hasattr(self, '_catalogue'):
+            self._catalogue = {entry['feed_url']: entry['verification'] for entry in json.loads(CATALOGUE_PATH.read_text())['sources']}
+        entry = self._catalogue.get(obj.feed_url)
+        return {'checked_on': entry['checked_on'], 'readable_samples': sum(sample.get('words', 0) >= 400 for sample in entry['article_samples'])} if entry else None
 
     class Meta:
         model = NewsSource
@@ -63,8 +72,17 @@ class SourceInput(serializers.ModelSerializer):
             "last_error",
             "retrieved",
             "article_count",
+            "catalogue_verification",
+            "description", "review_notes", "review_evidence_url", "reviewed_at", "review_status", "publisher_group",
         ]
-        read_only_fields = ["last_attempt", "last_success", "last_error", "retrieved"]
+        read_only_fields = ["last_attempt", "last_success", "last_error", "retrieved", "reviewed_at"]
+
+    def validate_location(self, value):
+        from .regions import normalize_country
+        location = normalize_country(value)
+        if not location:
+            raise serializers.ValidationError('Choose a supported country or World for a global feed.')
+        return location
 
     def validate(self, data):
         feed = data.get("feed_url", getattr(self.instance, "feed_url", None))
@@ -78,14 +96,10 @@ class SourceInput(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 "An RSS/Atom feed URL is required before enabling."
             )
-        if (
-            enabled
-            and NewsSource.objects.filter(enabled=True)
-            .exclude(pk=getattr(self.instance, "pk", None))
-            .count()
-            >= 20
-        ):
-            raise serializers.ValidationError("At most 20 feeds may be enabled.")
+        if data.get("review_status", getattr(self.instance, "review_status", "unreviewed")) == "reviewed":
+            if not data.get("review_notes", getattr(self.instance, "review_notes", "")).strip() or not data.get("review_evidence_url", getattr(self.instance, "review_evidence_url", "")):
+                raise serializers.ValidationError("A reviewed source needs public review notes and an evidence URL.")
+            data["reviewed_at"] = timezone.now()
         return data
 
 
@@ -120,8 +134,9 @@ class ArticleInput(serializers.ModelSerializer):
             "seo_title",
             "seo_description",
             "image_alt",
+            "editorial_type", "why_matters", "context_source_url", "image_credit", "updated_at",
         ]
-        read_only_fields = ["created_at", "imported"]
+        read_only_fields = ["created_at", "imported", "updated_at"]
         extra_kwargs = {
             "revision": {"required": False},
             "content": {"required": False, "allow_blank": True},
@@ -165,6 +180,9 @@ class ArticleInput(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     {field: "This field cannot be blank."}
                 )
+        context = data.get("why_matters", getattr(self.instance, "why_matters", ""))
+        if context.strip() and not data.get("context_source_url", getattr(self.instance, "context_source_url", "")):
+            raise serializers.ValidationError({"context_source_url": "Provide a supporting source for the editorial context."})
         if not self.instance and not data.get("content"):
             data["content"] = data.get("description", "")
         if not data.get("archived", getattr(self.instance, "archived", False)) and (not self.instance or "content" in data or data.get("archived") is False):
@@ -175,12 +193,22 @@ class ArticleInput(serializers.ModelSerializer):
         return data
 
 
+class PublishingRuleInput(serializers.Serializer):
+    source = serializers.IntegerField(min_value=1)
+    category = serializers.IntegerField(min_value=1, allow_null=True)
+    limit = serializers.IntegerField(min_value=1, max_value=100)
+
+
 class SettingsInput(serializers.ModelSerializer):
+    publishing_rules = PublishingRuleInput(many=True, required=False)
+
     def to_internal_value(self, data):
         if set(data) - {
             "enabled",
             "interval_minutes",
             "max_per_source",
+            "publish_per_source",
+            "publishing_rules",
             "timeout_seconds",
             "revision",
         }:
@@ -189,9 +217,41 @@ class SettingsInput(serializers.ModelSerializer):
             )
         return super().to_internal_value(data)
 
-    interval_minutes = serializers.IntegerField(min_value=60, max_value=1440)
+    interval_minutes = serializers.IntegerField(min_value=1, max_value=1000)
     max_per_source = serializers.IntegerField(min_value=1, max_value=100)
+    publish_per_source = serializers.IntegerField(min_value=1, max_value=100, required=False)
     timeout_seconds = serializers.IntegerField(min_value=2, max_value=15)
+
+    def validate_publishing_rules(self, rules):
+        if len(rules) > 200:
+            raise serializers.ValidationError('Use at most 200 publishing rules.')
+        source_ids = {rule['source'] for rule in rules}
+        category_ids = {rule['category'] for rule in rules if rule['category'] is not None}
+        if NewsSource.objects.filter(pk__in=source_ids).count() != len(source_ids):
+            raise serializers.ValidationError('A selected source no longer exists. Refresh the source list.')
+        if NewsCategory.objects.filter(pk__in=category_ids).count() != len(category_ids):
+            raise serializers.ValidationError('A selected category no longer exists. Refresh the category list.')
+        seen, totals = set(), {}
+        for rule in rules:
+            pair = (rule['source'], rule['category'])
+            if pair in seen:
+                raise serializers.ValidationError('Each source/category combination can appear only once.')
+            seen.add(pair)
+            totals[rule['source']] = totals.get(rule['source'], 0) + rule['limit']
+        if any(total > 100 for total in totals.values()):
+            raise serializers.ValidationError('Combined publishing limits must not exceed 100 articles per source per interval.')
+        if any((source, None) in seen and sum(pair[0] == source for pair in seen) > 1 for source in source_ids):
+            raise serializers.ValidationError('Choose all categories or individual categories for a source, not both.')
+        return rules
+
+    def validate(self, data):
+        rules = data.get('publishing_rules', getattr(self.instance, 'publishing_rules', []))
+        totals = {}
+        for rule in rules:
+            totals[rule['source']] = totals.get(rule['source'], 0) + rule['limit']
+        # A requested publish target must not be silently truncated by the scan limit.
+        data['max_per_source'] = max(data.get('max_per_source', getattr(self.instance, 'max_per_source', 20)), data.get('publish_per_source', getattr(self.instance, 'publish_per_source', 2)), *totals.values())
+        return data
 
     class Meta:
         model = AutomationSettings
@@ -199,6 +259,8 @@ class SettingsInput(serializers.ModelSerializer):
             "enabled",
             "interval_minutes",
             "max_per_source",
+            "publish_per_source",
+            "publishing_rules",
             "timeout_seconds",
             "revision",
             "next_run",
@@ -243,6 +305,11 @@ def filtered(qs, request, search_fields, date_field):
 class AdminAPI(APIView):
     permission_classes = [IsSuperAdmin]
 
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super().finalize_response(request, response, *args, **kwargs)
+        response['Cache-Control'] = 'private, no-store'
+        return response
+
     def handle_exception(self, exc):
         from .article_writing import ArticlePreparationError
         if isinstance(exc, ArticlePreparationError):
@@ -255,6 +322,11 @@ class AdminAPI(APIView):
         return super().handle_exception(exc)
 
     def get(self, request, resource="dashboard", pk=None, action=None):
+        if action:
+            return Response({'detail': 'Not found'}, status=404)
+        if resource == 'source-coverage':
+            from .source_coverage import source_coverage
+            return Response(source_coverage())
         if resource == "preparations":
             from .models import ArticlePreparation
             from .utils.ai_summarizer import client
@@ -271,6 +343,7 @@ class AdminAPI(APIView):
         if resource == "dashboard":
             cfg = config()
             last = CrawlRun.objects.order_by("-id").first()
+            active = CrawlRun.objects.filter(status__in=['queued', 'running']).order_by('id').first()
             return Response(
                 {
                     "stats": {
@@ -293,17 +366,9 @@ class AdminAPI(APIView):
                     },
                     "settings": SettingsInput(cfg).data,
                     "last_run": RunOutput(last).data if last else None,
-                    "active_run": (
-                        RunOutput(
-                            CrawlRun.objects.filter(
-                                status__in=["queued", "running"]
-                            ).first()
-                        ).data
-                        if CrawlRun.objects.filter(
-                            status__in=["queued", "running"]
-                        ).exists()
-                        else None
-                    ),
+                    "active_run": RunOutput(active).data if active else None,
+                    'can_cancel_pending_runs': True,
+                    'scheduler_healthy': bool(cfg.worker_seen and cfg.worker_seen > timezone.now()-timedelta(minutes=5)),
                     "recent_articles": ArticleInput(
                         NewsArticle.all_objects.order_by("-created_at", "-id")[:10],
                         many=True,
@@ -414,6 +479,13 @@ class AdminAPI(APIView):
         return Response({"detail": "Not found"}, status=404)
 
     def post(self, request, resource, pk=None, action=None):
+        if resource == 'runs' and pk and action == 'cancel':
+            get_object_or_404(CrawlRun, pk=pk)
+            try:
+                run = cancel_run(pk, actor=request.user)
+            except Busy as exc:
+                return Response({'detail': str(exc)}, status=409)
+            return Response(RunOutput(run).data)
         if (resource == "articles" and pk and action == "prepare") or resource == "preparations":
             from .article_jobs import queue_article
             from .article_writing import article_quality
@@ -510,7 +582,7 @@ class AdminAPI(APIView):
                     )
             serial = cls(obj, data=data, partial=True)
             serial.is_valid(raise_exception=True)
-            extras = {"revision": obj.revision + 1} if resource == "articles" else {}
+            extras = {"revision": obj.revision + 1, "updated_at": timezone.now()} if resource == "articles" else {}
             if (
                 resource == "sources"
                 and "feed_url" in data
@@ -540,6 +612,8 @@ class AdminAPI(APIView):
                 else NewsCategory.objects
             )
             obj = get_object_or_404(model.select_for_update(), pk=pk)
+            if resource == 'categories' and any(rule['category'] == pk for rule in config().publishing_rules):
+                return Response({'detail': 'Remove this category from publishing rules before deleting it.'}, status=409)
             if (
                 resource == "categories"
                 and NewsArticle.all_objects.filter(categories=obj).exists()
