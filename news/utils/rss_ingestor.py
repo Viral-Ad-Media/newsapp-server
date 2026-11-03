@@ -147,8 +147,10 @@ def parse_rss_or_atom_xml(
                     link = text_val
             elif nname in ("description", "summary") and text_val:
                 description = strip_html_tags(text_val)
-            elif nname in ("encoded", "content") and text_val:
-                content = strip_html_tags(text_val)
+            elif nname in ("encoded", "content") and (text_val or list(node)):
+                candidate = strip_html_tags(" ".join(node.itertext()))
+                if len(candidate) > len(content):
+                    content = candidate
             elif nname in ("pubdate", "published", "updated", "date") and text_val:
                 pub_date = text_val
             elif nname in ("creator", "author"):

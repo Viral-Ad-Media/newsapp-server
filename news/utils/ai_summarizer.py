@@ -1,11 +1,12 @@
 from decouple import config
+from newsapp.writing_config import openai_key
 
 try:
     from openai import OpenAI
 except ImportError:  # pragma: no cover - optional dependency
     OpenAI = None
 
-OPENAI_API_KEY = config("OPENAI_API_KEY", default="")
+OPENAI_API_KEY = openai_key()
 OPENAI_SUMMARY_MODEL = config("OPENAI_SUMMARY_MODEL", default="gpt-4o-mini")
 client = (
     OpenAI(api_key=OPENAI_API_KEY, timeout=20, max_retries=0)

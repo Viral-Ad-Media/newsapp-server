@@ -8,9 +8,14 @@ import urllib3
 from requests.certs import where as trusted_ca_bundle
 
 
+class DocumentNetworkError(ValueError):
+    details = {'code': 'network_unavailable'}
+
+
 class DocumentHTTPError(ValueError):
-    def __init__(self, status):
+    def __init__(self, status, retry_after=None):
         self.status = int(status)
+        self.retry_after = retry_after
         super().__init__(
             f"Source returned HTTP {self.status}; redirects are disabled or exhausted."
         )
@@ -39,7 +44,9 @@ def validate_feed_url(url):
         ):
             raise ValueError()
         return parsed, host, sorted(addresses)[0]
-    except (ValueError, OSError, UnicodeError):
+    except OSError:
+        raise DocumentNetworkError('Source DNS lookup is temporarily unavailable.') from None
+    except (ValueError, UnicodeError):
         raise ValueError(
             "Use a public HTTPS feed URL without credentials, query strings or redirects."
         ) from None
@@ -109,7 +116,7 @@ def fetch_document(
         if allow_missing and response.status in (404, 410):
             return ""
         if response.status != 200:
-            raise DocumentHTTPError(response.status)
+            raise DocumentHTTPError(response.status, response.headers.get("Retry-After"))
         if response.headers.get("Content-Encoding", "identity").lower() != "identity":
             raise ValueError("Compressed feeds are not supported.")
         chunks, size, deadline = [], 0, time.monotonic() + timeout

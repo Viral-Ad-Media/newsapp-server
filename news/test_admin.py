@@ -310,10 +310,13 @@ class AdminTests(TestCase):
             side_effect=[XML, ValueError("secret-token-in-remote-error")],
         ):
             queue_run()
+            first = tick()
             run = tick()
-        self.assertEqual(run.status, "partial")
+        self.assertEqual(first.counts['published'], 1)
+        self.assertEqual(NewsArticle.objects.count(), 1)
+        self.assertEqual(run.status, "failed")
         self.assertEqual(run.counts["failed_sources"], 1)
-        self.assertEqual(run.counts["published"], 1)
+        self.assertEqual(run.counts["published"], 0)
         self.assertTrue(AdminEvent.objects.filter(severity="error", run=run).exists())
         self.assertNotIn("secret-token", str(self.client.get("/api/admin/logs/").data))
 
@@ -321,11 +324,12 @@ class AdminTests(TestCase):
         "news.automation.fetch_xml",
         return_value="<rss><channel><item><title>Missing fields</title></item></channel></rss>",
     )
-    def test_invalid_article_not_published_or_reported_success(self, _):
+    def test_invalid_feed_items_are_reported_as_skipped_without_publication(self, _):
         queue_run()
         run = tick()
         self.assertEqual(run.counts["invalid"], 1)
-        self.assertEqual(run.status, "failed")
+        self.assertEqual(run.counts['skip_reasons']['invalid_record'], 1)
+        self.assertEqual(run.status, "success")
         self.assertEqual(NewsArticle.objects.count(), 0)
 
     def test_settings_validation_optimistic_revision_and_audit(self):

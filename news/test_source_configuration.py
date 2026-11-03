@@ -220,10 +220,10 @@ class SourceConfigurationTests(TestCase):
         evidence.side_effect = retrieve
         queue_run()
         run = tick()
-        self.assertEqual(run.counts["created"], 2)
+        self.assertEqual(run.counts["created"], 1)
         self.assertEqual(run.counts["invalid"], 2)
-        self.assertEqual(writer.call_count, 2)
-        self.assertEqual(evidence.call_count, 4)
+        self.assertEqual(writer.call_count, 1)
+        self.assertEqual(evidence.call_count, 3)
         sources[2].refresh_from_db()
         self.assertIsNone(sources[2].last_attempt)
         # A durable continuation now owns the next batch of this interval.

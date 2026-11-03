@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.utils import timezone
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from cloudinary.models import CloudinaryField
@@ -7,6 +8,7 @@ from taggit.managers import TaggableManager  # Import the TaggableManager for ta
 
 
 class NewsSource(models.Model):
+    feed_quality = models.JSONField(default=dict, db_default={}, blank=True)
     description = models.TextField(blank=True)
     review_notes = models.TextField(blank=True)
     review_evidence_url = models.URLField(max_length=2000, blank=True)
@@ -275,6 +277,9 @@ class AutomationSettings(models.Model):
 
 
 class CrawlRun(models.Model):
+    request_key = models.UUIDField(null=True, blank=True, db_index=True)
+    publishing_rules = models.JSONField(null=True, blank=True, default=None)
+    request_state = models.JSONField(default=dict, db_default={}, blank=True)
     trigger = models.CharField(max_length=20)
     status = models.CharField(max_length=20, default="queued", db_index=True)
     source = models.ForeignKey(NewsSource, null=True, blank=True, on_delete=models.SET_NULL)
@@ -333,3 +338,43 @@ class ArticlePreparation(models.Model):
 
     class Meta:
         constraints = [models.UniqueConstraint(fields=["article"], condition=models.Q(status="queued"), name="one_queued_article_preparation")]
+
+
+class ArticleTranslation(models.Model):
+    article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE, related_name='translations')
+    language = models.CharField(max_length=8)
+    part = models.CharField(max_length=8)
+    fingerprint = models.CharField(max_length=64)
+    payload = models.JSONField(default=dict)
+    started_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['article', 'language', 'part', 'fingerprint'], name='unique_article_translation')]
+
+
+class PublishingRetry(models.Model):
+    source = models.ForeignKey(NewsSource, on_delete=models.CASCADE, related_name='publishing_retries')
+    run = models.ForeignKey(CrawlRun, on_delete=models.SET_NULL, null=True, blank=True)
+    kind = models.CharField(max_length=12, default='article')
+    key = models.CharField(max_length=64)
+    scope = models.CharField(max_length=40, default='scheduled')
+    item = models.JSONField(default=dict, encoder=DjangoJSONEncoder)
+    status = models.CharField(max_length=20, default='retry_wait', db_index=True)
+    attempts = models.PositiveIntegerField(default=0)
+    next_attempt = models.DateTimeField(null=True, blank=True, db_index=True)
+    reason_code = models.CharField(max_length=40, blank=True)
+    reason = models.CharField(max_length=300, blank=True)
+    manual = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(default=timezone.now)
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=['source','kind','key','scope'],name='unique_publishing_retry')]
+
+
+class WritingServiceHealth(models.Model):
+    code = models.CharField(max_length=40, default='not_checked')
+    message = models.CharField(max_length=300, default='No successful writing request recorded yet.')
+    checked_at = models.DateTimeField(default=timezone.now)
+    last_success = models.DateTimeField(null=True, blank=True)
+    retry_after = models.DateTimeField(null=True, blank=True)

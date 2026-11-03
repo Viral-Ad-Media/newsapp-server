@@ -6,7 +6,10 @@ from .ask import AskNews
 from .recovery import PasswordResetRequestView, PasswordResetConfirmView
 from .editorial import EditionView, StoriesView, SourcesView, ReaderChoices, ReaderChoiceDetail, HistoryView, ReportView, EditorialAdmin, CoverageMonitor
 
+from .translations import ArticleTranslationView
+
 urlpatterns = [
+    path("translations/<int:pk>/", ArticleTranslationView.as_view()),
     path("edition/", EditionView.as_view()),
     path("stories/", StoriesView.as_view()),
     path("stories/<int:pk>/", StoriesView.as_view()),
@@ -18,6 +21,9 @@ urlpatterns = [
     path("history/<int:pk>/", HistoryView.as_view()),
     path("article-reports/<int:pk>/", ReportView.as_view()),
     path("admin/coverage-monitor/", CoverageMonitor.as_view()),
+    path("admin/retries/retry/", AdminAPI.as_view(), {"resource": "retries", "action": "retry"}),
+    path("admin/sources/disable-all/", AdminAPI.as_view(), {"resource": "sources", "action": "disable-all"}),
+    path("admin/sources/enable-all/", AdminAPI.as_view(), {"resource": "sources", "action": "enable-all"}),
     path("admin/editorial/<str:resource>/", EditorialAdmin.as_view()),
     path("admin/editorial/<str:resource>/<int:pk>/", EditorialAdmin.as_view()),
     path("admin/<str:resource>/", AdminAPI.as_view()),
