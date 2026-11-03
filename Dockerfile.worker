@@ -8,9 +8,9 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN useradd --create-home worker
-COPY manage.py ./
+COPY manage.py worker_supervisor.py ./
 COPY newsapp/ ./newsapp/
 COPY news/ ./news/
 USER worker
 
-CMD ["python", "manage.py", "run_news_worker"]
+CMD ["python", "worker_supervisor.py"]

@@ -18,6 +18,7 @@ from .models import (
     AutomationSettings,
     CrawlRun,
     AdminEvent,
+    PublishingRetry,
 )
 from .automation import config, queue_run, cancel_run, event, Busy
 from .pagination import NewsPagination
@@ -72,10 +73,10 @@ class SourceInput(serializers.ModelSerializer):
             "last_error",
             "retrieved",
             "article_count",
-            "catalogue_verification",
+            "catalogue_verification", "feed_quality",
             "description", "review_notes", "review_evidence_url", "reviewed_at", "review_status", "publisher_group",
         ]
-        read_only_fields = ["last_attempt", "last_success", "last_error", "retrieved", "reviewed_at"]
+        read_only_fields = ["last_attempt", "last_success", "last_error", "retrieved", "reviewed_at", "feed_quality"]
 
     def validate_location(self, value):
         from .regions import normalize_country
@@ -87,14 +88,24 @@ class SourceInput(serializers.ModelSerializer):
     def validate(self, data):
         feed = data.get("feed_url", getattr(self.instance, "feed_url", None))
         enabled = data.get("enabled", getattr(self.instance, "enabled", False))
-        if feed:
+        if enabled and not (feed or '').strip():
+            from .source_feeds import catalogue_feed
+            feed = catalogue_feed(data.get('name', getattr(self.instance, 'name', '')), data.get('url', getattr(self.instance, 'url', '')), data.get('location', getattr(self.instance, 'location', 'world')))
+            if not feed:
+                from .source_feeds import discover_feed
+                feed = discover_feed(data.get('url', getattr(self.instance, 'url', '')))
+            if feed:
+                if NewsSource.objects.filter(feed_url=feed).exclude(pk=getattr(self.instance, 'pk', None)).exists():
+                    raise serializers.ValidationError({'feed_url': 'This publisher feed already exists under another source. Enable that configured source instead.'})
+                data['feed_url'] = feed
+        if feed and (not self.instance or 'feed_url' in data or (enabled and not self.instance.enabled)):
             try:
                 validate_feed_url(feed)
             except ValueError as exc:
                 raise serializers.ValidationError({"feed_url": str(exc)})
         if enabled and not feed:
             raise serializers.ValidationError(
-                "An RSS/Atom feed URL is required before enabling."
+                {"feed_url": "No known RSS feed is configured for this source. Edit the source and add its publisher RSS/Atom URL before enabling."}
             )
         if data.get("review_status", getattr(self.instance, "review_status", "unreviewed")) == "reviewed":
             if not data.get("review_notes", getattr(self.instance, "review_notes", "")).strip() or not data.get("review_evidence_url", getattr(self.instance, "review_evidence_url", "")):
@@ -193,8 +204,18 @@ class ArticleInput(serializers.ModelSerializer):
         return data
 
 
+class RetryOutput(serializers.ModelSerializer):
+    source_name = serializers.CharField(source='source.name', read_only=True)
+    title = serializers.SerializerMethodField()
+    def get_title(self, obj):
+        return str(obj.item.get('title') or ('Feed retrieval' if obj.kind == 'feed' else 'Unknown report'))[:255]
+    class Meta:
+        model = PublishingRetry
+        fields = ['id','source','source_name','kind','title','status','attempts','next_attempt','reason_code','reason','updated_at']
+
+
 class PublishingRuleInput(serializers.Serializer):
-    source = serializers.IntegerField(min_value=1)
+    source = serializers.IntegerField(min_value=0)
     category = serializers.IntegerField(min_value=1, allow_null=True)
     limit = serializers.IntegerField(min_value=1, max_value=100)
 
@@ -225,7 +246,9 @@ class SettingsInput(serializers.ModelSerializer):
     def validate_publishing_rules(self, rules):
         if len(rules) > 200:
             raise serializers.ValidationError('Use at most 200 publishing rules.')
-        source_ids = {rule['source'] for rule in rules}
+        source_ids = {rule['source'] for rule in rules if rule['source'] != 0}
+        if any(rule['source'] == 0 for rule in rules) and source_ids:
+            raise serializers.ValidationError('Use All sources rules or individual source rules, not both.')
         category_ids = {rule['category'] for rule in rules if rule['category'] is not None}
         if NewsSource.objects.filter(pk__in=source_ids).count() != len(source_ids):
             raise serializers.ValidationError('A selected source no longer exists. Refresh the source list.')
@@ -240,7 +263,7 @@ class SettingsInput(serializers.ModelSerializer):
             totals[rule['source']] = totals.get(rule['source'], 0) + rule['limit']
         if any(total > 100 for total in totals.values()):
             raise serializers.ValidationError('Combined publishing limits must not exceed 100 articles per source per interval.')
-        if any((source, None) in seen and sum(pair[0] == source for pair in seen) > 1 for source in source_ids):
+        if any((source, None) in seen and sum(pair[0] == source for pair in seen) > 1 for source in {rule['source'] for rule in rules}):
             raise serializers.ValidationError('Choose all categories or individual categories for a source, not both.')
         return rules
 
@@ -250,7 +273,7 @@ class SettingsInput(serializers.ModelSerializer):
         for rule in rules:
             totals[rule['source']] = totals.get(rule['source'], 0) + rule['limit']
         # A requested publish target must not be silently truncated by the scan limit.
-        data['max_per_source'] = max(data.get('max_per_source', getattr(self.instance, 'max_per_source', 20)), data.get('publish_per_source', getattr(self.instance, 'publish_per_source', 2)), *totals.values())
+        data['max_per_source'] = max(100 if any(rule['category'] is None for rule in rules) else 1, data.get('max_per_source', getattr(self.instance, 'max_per_source', 20)), data.get('publish_per_source', getattr(self.instance, 'publish_per_source', 2)), *totals.values())
         return data
 
     class Meta:
@@ -324,6 +347,11 @@ class AdminAPI(APIView):
     def get(self, request, resource="dashboard", pk=None, action=None):
         if action:
             return Response({'detail': 'Not found'}, status=404)
+        if resource == 'publishing':
+            from .on_demand import publishing_readiness, run_progress
+            if pk:
+                return Response(run_progress(get_object_or_404(CrawlRun, pk=pk)))
+            return Response(publishing_readiness())
         if resource == 'source-coverage':
             from .source_coverage import source_coverage
             return Response(source_coverage())
@@ -340,7 +368,14 @@ class AdminAPI(APIView):
                     "can_delete": request.user.is_superuser,
                 }
             )
+        if resource == 'retries':
+            qs = PublishingRetry.objects.select_related('source').order_by('-updated_at','-pk')
+            state = request.query_params.get('status')
+            if state:
+                qs = qs.filter(status=state)
+            return page(self, request, qs, RetryOutput)
         if resource == "dashboard":
+            from .publishing_retries import retry_summary, writing_health
             cfg = config()
             last = CrawlRun.objects.order_by("-id").first()
             active = CrawlRun.objects.filter(status__in=['queued', 'running']).order_by('id').first()
@@ -365,6 +400,8 @@ class AdminAPI(APIView):
                         .count(),
                     },
                     "settings": SettingsInput(cfg).data,
+                    "retry_summary": retry_summary(),
+                    "writing_service": writing_health(),
                     "last_run": RunOutput(last).data if last else None,
                     "active_run": RunOutput(active).data if active else None,
                     'can_cancel_pending_runs': True,
@@ -479,6 +516,43 @@ class AdminAPI(APIView):
         return Response({"detail": "Not found"}, status=404)
 
     def post(self, request, resource, pk=None, action=None):
+        if resource == 'retries' and action == 'retry' and not pk:
+            from .publishing_retries import requeue_failed
+            return Response({'queued': requeue_failed(request.user)}, status=202)
+        if resource == 'sources' and action in ('enable-all', 'disable-all') and not pk:
+            enable = action == 'enable-all'
+            with transaction.atomic():
+                config()
+                AutomationSettings.objects.select_for_update().get(pk=1)
+                if enable:
+                    from .source_feeds import catalogue_feed
+                    for source in NewsSource.objects.select_for_update().filter(Q(feed_url__isnull=True) | Q(feed_url__regex=r'^\s*$')):
+                        feed = catalogue_feed(source.name, source.url, source.location)
+                        if feed and not NewsSource.objects.filter(feed_url=feed).exclude(pk=source.pk).exists():
+                            source.feed_url = feed
+                            source.save(update_fields=['feed_url'])
+                rows = list(NewsSource.objects.select_for_update().exclude(feed_url__isnull=True).exclude(feed_url__regex=r'^\s*$').order_by('pk').values('id', 'enabled'))
+                if not enable:
+                    rows = list(NewsSource.objects.select_for_update().order_by('pk').values('id', 'enabled'))
+                ids = [row['id'] for row in rows if row['enabled'] != enable]
+                changed = NewsSource.objects.filter(pk__in=ids).update(enabled=enable)
+                result = {'enabled': changed, 'already_enabled': len(rows) - len(ids), 'without_feed': NewsSource.objects.count() - len(rows)}
+                if not enable:
+                    result = {'disabled': changed, 'already_disabled': len(rows) - len(ids)}
+                event('audit', 'Enabled all configured feed sources' if enable else 'Disabled all sources', actor=request.user, details={**result, 'source_ids': ids})
+            return Response(result)
+        if resource == 'publishing' and not pk and not action:
+            from .on_demand import OnDemandInput, publishing_readiness, run_progress
+            serial = OnDemandInput(data=request.data)
+            serial.is_valid(raise_exception=True)
+            if not serial.validated_data['dry_run'] and not publishing_readiness()['writing_configured']:
+                return Response({'detail': 'Rewriting is not configured. Set OPENAI_API_KEY on the backend and worker, then redeploy/restart them. You can still test matching feeds without publishing.'}, status=503)
+            try:
+                run = queue_run(actor=request.user, dry_run=serial.validated_data['dry_run'], publishing_rules=serial.validated_data['rules'])
+            except Busy as exc:
+                active = CrawlRun.objects.filter(status__in=['queued', 'running']).first()
+                return Response({'detail': str(exc), 'active_run_id': active.pk if active else None}, status=409)
+            return Response(run_progress(run), status=202)
         if resource == 'runs' and pk and action == 'cancel':
             get_object_or_404(CrawlRun, pk=pk)
             try:
@@ -554,15 +628,9 @@ class AdminAPI(APIView):
                     )
                 serial = SettingsInput(cfg, data=request.data, partial=True)
                 serial.is_valid(raise_exception=True)
-                serial.save(
-                    revision=cfg.revision + 1,
-                    next_run=timezone.now()
-                    + timedelta(
-                        minutes=serial.validated_data.get(
-                            "interval_minutes", cfg.interval_minutes
-                        )
-                    ),
-                )
+                timing_changed = ('interval_minutes' in serial.validated_data and serial.validated_data['interval_minutes'] != cfg.interval_minutes) or (serial.validated_data.get('enabled') is True and not cfg.enabled)
+                next_run = timezone.now() + timedelta(minutes=serial.validated_data.get('interval_minutes', cfg.interval_minutes)) if timing_changed else cfg.next_run
+                serial.save(revision=cfg.revision + 1, next_run=next_run)
                 event("audit", "Automation settings updated", actor=request.user)
                 return Response(serial.data)
             if resource not in ["articles", "categories", "sources"] or not pk:

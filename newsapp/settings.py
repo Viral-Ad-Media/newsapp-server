@@ -50,11 +50,23 @@ ALLOWED_HOSTS = [
     if host.strip()
 ]
 
+# Vercel health checks and previews use deployment-specific hostnames. Trust only
+# exact hostnames supplied to this process by the platform, never *.vercel.app.
+import os
+from urllib.parse import urlsplit
+if os.environ.get('VERCEL') == '1':
+    for key in ['VERCEL_URL', 'VERCEL_BRANCH_URL', 'VERCEL_PROJECT_PRODUCTION_URL']:
+        value = os.environ.get(key, '').strip()
+        host = urlsplit('https://' + value).hostname if value and '://' not in value else None
+        if host and host not in ALLOWED_HOSTS:
+            ALLOWED_HOSTS.append(host)
+
 
 # Load the API key from environment variables
 NEWS_API_KEY = config("NEWS_API_KEY", default="")
 NEWS_DATA_IO_API_KEY = config("NEWS_DATA_IO_API_KEY", default="")
-OPENAI_API_KEY = config("OPENAI_API_KEY", default="")
+from .writing_config import openai_key
+OPENAI_API_KEY = openai_key()
 
 
 # Application definition
@@ -307,9 +319,11 @@ SIMPLE_JWT["CHECK_REVOKE_TOKEN"] = True
 
 # Full article preparation uses the existing server-only OpenAI credential.
 ARTICLE_WRITING_MODEL = config("ARTICLE_WRITING_MODEL", default="gpt-4o-mini")
-ARTICLE_GENERATION_PER_RUN = 2
 
 # Use a separate verifier so the small drafting model does not grade its own prose.
 ARTICLE_REVIEW_MODEL = config("ARTICLE_REVIEW_MODEL", default="gpt-4.1-mini")
 
 ARTICLE_REVISION_MODEL = config("ARTICLE_REVISION_MODEL", default=ARTICLE_REVIEW_MODEL)
+
+REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["translation"] = "90/min"
+ARTICLE_TRANSLATION_MODEL = config("ARTICLE_TRANSLATION_MODEL", default="gpt-4o-mini")

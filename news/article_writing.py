@@ -275,17 +275,19 @@ def source_evidence(url, source_url):
     except ArticlePreparationError:
         raise
     except Exception as exc:
+        from .publishing_failures import failure_info
+        info = failure_info(exc)
         status = getattr(exc, "status", None)
         if status in (404, 410):
             raise ArticlePreparationError(
-                f"Original source is missing (HTTP {status}); a verified replacement URL or source text is required."
+                f"Original source is missing (HTTP {status}); a verified replacement URL or source text is required.", details=info
             ) from None
         if status in (401, 403, 429):
             raise ArticlePreparationError(
-                f"Publisher denied or limited source access (HTTP {status}); provide permitted verified source text."
+                f"Publisher denied or limited source access (HTTP {status}); provide permitted verified source text.", details=info
             ) from None
         raise ArticlePreparationError(
-            "Original source could not be retrieved securely; supply verified source text."
+            "Original source could not be retrieved securely; supply verified source text.", details=info
         ) from None
     parser = SourceHTML()
     parser.feed(raw)
@@ -589,7 +591,11 @@ def prepare_article(
                         "seo_description",
                     }.issubset(output):
                         raise ValueError("Invalid correction")
-                except Exception:
+                except Exception as exc:
+                    from .publishing_failures import failure_info
+                    info = failure_info(exc, 'writing')
+                    if info['code'] != 'invalid_draft':
+                        raise ArticlePreparationError(info['message'], details=info) from None
                     raise first_issue from None
         verification = client.with_options(
             timeout=25, max_retries=0
@@ -682,7 +688,7 @@ def prepare_article(
         }
     except ArticlePreparationError:
         raise
-    except Exception:
-        raise ArticlePreparationError(
-            "Article writing service failed or returned an invalid draft; no article was published."
-        ) from None
+    except Exception as exc:
+        from .publishing_failures import failure_info
+        info = failure_info(exc, 'writing')
+        raise ArticlePreparationError(info['message'], details=info) from None

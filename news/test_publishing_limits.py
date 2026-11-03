@@ -177,8 +177,8 @@ class PublishingLimitTests(TestCase):
         self.assertEqual(
             NewsArticle.objects.filter(source=self.sources[0]).count(), 100
         )
-        self.assertEqual(NewsArticle.objects.filter(source=self.sources[1]).count(), 2)
-        self.assertEqual(self.writer.call_count, 102)
+        self.assertEqual(NewsArticle.objects.filter(source=self.sources[1]).count(), 4)
+        self.assertEqual(self.writer.call_count, 104)
 
         self.assertTrue(
             all(run.counts.get("published", 0) <= 2 for run in CrawlRun.objects.all())
@@ -195,7 +195,7 @@ class PublishingLimitTests(TestCase):
         )
         queue_run()
         self.drain()
-        self.assertEqual(self.writer.call_count, 102)
+        self.assertEqual(self.writer.call_count, 104)
 
     def test_rules_select_only_listed_sources_and_clearing_them_restores_default(self):
         self.save_settings(

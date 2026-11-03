@@ -184,12 +184,13 @@ connection budgets before scaling web and worker instances.
 
 Collections may contain more than 20 enabled feeds. Each worker batch considers
 up to 20 least recently attempted feeds, including never-attempted feeds first.
-The existing model allowance remains two calls per batch. Candidate/evidence work
-is separately limited to six items per batch and two per publisher; failed evidence
+Each transaction allows one article-writing attempt, including its existing
+revision/review checks. Candidate/evidence work is limited to three items per
+batch and two per publisher; failed evidence
 does not spend a model call. Unfinished sources are persisted in a queued
 continuation and processed on later worker ticks within the same interval.
-Completed batches and their quotas commit together, so a 100-story target does
-not require one long transaction. Source-specific feed checks still target the
+Each completed article and its quotas commit together before another article
+starts, so a later failure cannot roll back an earlier publication. Source-specific feed checks still target the
 requested source, and dry runs use no model calls or persistent publishing quota.
 
 ## Publishing rules and flexible intervals
@@ -477,3 +478,12 @@ The **Editorial** and **Coverage** workspaces, event following/comparison,
 publisher preferences, article transparency and reading controls are documented in
 [editorial-reader-upgrade.md](editorial-reader-upgrade.md), including migration,
 rollout steps, operational boundaries and verification results.
+
+## Admin controls and publishing repair
+
+The original Dashboard, Articles and Sources layouts are retained. Settings uses
+an All sources option in its existing dropdown. Sources offers Enable all / Disable
+all followed by Apply. Create/Edit forms remain in their original location and
+scroll into view when opened. See [on-demand-publishing.md](on-demand-publishing.md)
+for the interval behavior, legacy source handling, worker compatibility migration
+0024, automatic reader translation and deployment order.
