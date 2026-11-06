@@ -4,6 +4,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 MESSAGES = {
+ 'photo_unavailable':'A suitable real photograph is not available yet. Prepared writing is saved and automatic retry is scheduled.',
  'network_timeout':'Source request timed out. Automatic retry scheduled.',
  'network_unavailable':'Source network connection is temporarily unavailable.',
  'publisher_rate_limit':'Publisher rate limit reached (HTTP 429).',
@@ -25,7 +26,7 @@ MESSAGES = {
  'feed_invalid':'Feed is empty, malformed or contains no parseable entries.',
  'unknown_failure':'Article processing failed. Review the source and writing configuration.',
 }
-TRANSIENT={'network_timeout','network_unavailable','publisher_rate_limit','publisher_unavailable','writing_rate_limit','writing_timeout','writing_unavailable','invalid_draft'}
+TRANSIENT={'photo_unavailable','network_timeout','network_unavailable','publisher_rate_limit','publisher_unavailable','writing_rate_limit','writing_timeout','writing_unavailable','invalid_draft'}
 WRITING={'writing_not_configured','writing_auth','writing_balance','writing_rate_limit','writing_timeout','writing_unavailable'}
 DELAYS=(1,5,15,60,180)
 

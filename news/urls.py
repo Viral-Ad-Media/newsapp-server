@@ -8,7 +8,10 @@ from .editorial import EditionView, StoriesView, SourcesView, ReaderChoices, Rea
 
 from .translations import ArticleTranslationView
 
+from .photo_library import ArticlePhotoView
+
 urlpatterns = [
+    path("article-photos/<int:pk>/", ArticlePhotoView.as_view()),
     path("translations/<int:pk>/", ArticleTranslationView.as_view()),
     path("edition/", EditionView.as_view()),
     path("stories/", StoriesView.as_view()),

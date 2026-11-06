@@ -228,7 +228,7 @@ class SourceHTML(HTMLParser):
             self.captures[-1]["text"].append(data)
 
 
-def source_evidence(url, source_url):
+def source_document(url, source_url, *, timeout=10, redirects=2):
     """Only the saved publisher's public host; pinned HTTPS, robots and size limits."""
     from .safe_fetch import fetch_document
 
@@ -252,7 +252,8 @@ def source_evidence(url, source_url):
                 f"https://{origin.netloc}/robots.txt",
                 accept="text/plain",
                 allow_missing=True,
-                redirects=2,
+                redirects=redirects,
+                timeout=timeout,
                 allowed_host=saved_host,
             )
             policy = RobotFileParser()
@@ -268,7 +269,8 @@ def source_evidence(url, source_url):
         raw = fetch_document(
             url,
             accept="text/html",
-            redirects=2,
+            redirects=redirects,
+            timeout=timeout,
             allowed_host=saved_host,
             url_check=check_robots,
         )
@@ -289,6 +291,11 @@ def source_evidence(url, source_url):
         raise ArticlePreparationError(
             "Original source could not be retrieved securely; supply verified source text.", details=info
         ) from None
+    return raw
+
+
+def source_evidence(url, source_url):
+    raw = source_document(url, source_url)
     parser = SourceHTML()
     parser.feed(raw)
     text = "\n\n".join(parser.blocks)[:60000]
@@ -296,7 +303,8 @@ def source_evidence(url, source_url):
         raise ArticlePreparationError(
             "Source has insufficient accessible article text; a headline or RSS summary cannot support a full article."
         )
-    return text
+    from .source_photos import SourceEvidence, article_photo
+    return SourceEvidence(text, article_photo(raw, url))
 
 
 def evidence_numbers(value):

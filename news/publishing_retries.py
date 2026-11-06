@@ -56,7 +56,7 @@ def record_failure(source, item, run, exc, kind='article'):
     held=bool((getattr(exc,'details',{}) or {}).get('held'))
     if not held:
         obj.attempts+=1
-    obj.item={key:item[key] for key in ('title','description','content','source_text','author','article_url','published_at','categories') if key in item}
+    obj.item={key:item[key] for key in ('title','description','content','source_text','author','article_url','published_at','categories','remote_image_url','image_alt','image_credit','trend','_prepared_article','_prepared_fingerprint') if key in item}
     obj.reason_code,obj.reason=info['code'],info['message']
     obj.status='retry_wait' if info['retryable'] else 'blocked'
     obj.next_attempt=retry_time(max(1,obj.attempts),info) if info['retryable'] else None
@@ -152,7 +152,8 @@ def tick_retries():
             window=SimpleNamespace(counts=dict(source_state['counts']),attempted=source_state['attempted'])
             limits={str(r['category']) if r['category'] is not None else '*':r['limit'] for r in root.publishing_rules if r['source']==job.source_id}
         else:
-            if cfg.publishing_rules and not any(r['source'] in (0,job.source_id) for r in cfg.publishing_rules):
+            from .publishing_limits import matching_source_rules
+            if cfg.publishing_rules and not matching_source_rules(cfg.publishing_rules, job.source_id):
                 _finish(job,'skipped','source_not_selected','Retry skipped: source is outside the saved publishing rules.');return job
             limits=source_limits(cfg,job.source_id)
             window=publishing_window(job.source,timezone.now(),cfg.interval_minutes)

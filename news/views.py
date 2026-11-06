@@ -1,3 +1,5 @@
+from .public_cache import cached_public
+from .source_feeds import source_group_ids
 from .category_filters import filter_category
 from .regions import filter_country, country_query, COUNTRY_NAMES
 from .seo import SEO_FIELDS, SeoInputSerializer, analyze_seo
@@ -76,6 +78,10 @@ class NewsList(generics.ListAPIView):
 
     serializer_class = NewsArticleSerializer
 
+    @cached_public
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         queryset = (
             NewsArticle.objects.select_related("source", "story")
@@ -110,7 +116,7 @@ class NewsList(generics.ListAPIView):
         elif bias in {"left", "center", "right", "polarized", "balanced"}:
             queryset = queryset.filter(dominant_bias=bias)
 
-        # Filter by time frame (fallback to latest anchor date if static dataset is older)
+        # Filter by our publication time; original publisher date is retained separately.
         time_filter = self.request.query_params.get("filter")
         if time_filter in {"last_day", "last_week", "last_month"}:
             days_map = {"last_day": 1, "last_week": 7, "last_month": 30}
@@ -286,8 +292,8 @@ class PersonalizedNewsList(NewsList):
         profile, _ = ReaderProfile.objects.get_or_create(user=self.request.user)
         queryset = super().get_queryset()
         if profile.categories.exists() or profile.followed_sources.exists() or profile.followed_stories.filter(published=True).exists():
-            queryset = queryset.filter(Q(categories__in=profile.categories.all()) | Q(source__in=profile.followed_sources.all()) | Q(story__in=profile.followed_stories.filter(published=True))).distinct()
-        return queryset.exclude(source__in=profile.muted_sources.all())
+            queryset = queryset.filter(Q(categories__in=profile.categories.all()) | Q(source_id__in=source_group_ids(profile.followed_sources.values_list("id", flat=True))) | Q(story__in=profile.followed_stories.filter(published=True))).distinct()
+        return queryset.exclude(source_id__in=source_group_ids(profile.muted_sources.values_list("id", flat=True)))
 
 
 class LiveNewsList(NewsList):

@@ -105,6 +105,12 @@ class NewsCategoryLiteSerializer(serializers.ModelSerializer):
 
 
 class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if is_placeholder_image(data.get('og_image_url')):
+            data['og_image_url'] = ''
+        return data
+
     article_prepared = serializers.SerializerMethodField()
     developing_story = serializers.SerializerMethodField()
     corrections = serializers.SerializerMethodField()
@@ -147,7 +153,7 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
         model = NewsArticle
         fields = [
             "id",
-            "editorial_type", "why_matters", "context_source_url", "image_credit", "updated_at", "developing_story", "corrections", "recommendation_reason",
+            "editorial_type", "why_matters", "context_source_url", "image_credit", "image_origin", "image_reference_url", "updated_at", "developing_story", "corrections", "recommendation_reason",
             "title",
             "author",
             "description",
@@ -160,7 +166,7 @@ class NewsArticleSerializer(TaggitSerializer, serializers.ModelSerializer):
             "remote_image_url",
             "categories",
             "location",
-            "published_at",
+            "published_at", "source_published_at",
             "source",
             "total_sources",
             "left_coverage",

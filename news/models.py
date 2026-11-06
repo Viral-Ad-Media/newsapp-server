@@ -7,7 +7,27 @@ from cloudinary.models import CloudinaryField
 from taggit.managers import TaggableManager  # Import the TaggableManager for tagging
 
 
+class PublicArticleQuerySet(models.QuerySet):
+    def update(self, **kwargs):
+        result = super().update(**kwargs)
+        private_health = self.model.__name__ == 'NewsSource' and set(kwargs) <= {'enabled','last_attempt','last_success','last_error','retrieved','feed_quality'}
+        if result and not private_health:
+            from .public_cache import invalidate_public
+            invalidate_public(using=self.db)
+        return result
+
+    def bulk_create(self, objs, **kwargs):
+        result = super().bulk_create(objs, **kwargs)
+        if result:
+            from .public_cache import invalidate_public
+            invalidate_public(using=self.db)
+        return result
+
+
+
 class NewsSource(models.Model):
+    objects = models.Manager.from_queryset(PublicArticleQuerySet)()
+    feed_owner = models.ForeignKey('self', null=True, blank=True, on_delete=models.SET_NULL, related_name='feed_aliases')
     feed_quality = models.JSONField(default=dict, db_default={}, blank=True)
     description = models.TextField(blank=True)
     review_notes = models.TextField(blank=True)
@@ -33,6 +53,7 @@ class NewsSource(models.Model):
 
 
 class NewsCategory(models.Model):
+    objects = models.Manager.from_queryset(PublicArticleQuerySet)()
     slug = models.SlugField(max_length=120, null=True, blank=True, unique=True)
     description = models.TextField(blank=True)
 
@@ -43,7 +64,9 @@ class NewsCategory(models.Model):
         return self.name
 
 
-class PublishedArticles(models.Manager):
+
+
+class PublishedArticles(models.Manager.from_queryset(PublicArticleQuerySet)):
     def get_queryset(self):
         return super().get_queryset().filter(archived=False)
 
@@ -54,9 +77,11 @@ class NewsArticle(models.Model):
     why_matters = models.TextField(blank=True)
     context_source_url = models.URLField(max_length=2000, blank=True)
     image_credit = models.CharField(max_length=500, blank=True)
+    image_origin = models.CharField(max_length=12, default='source', db_default='source')
+    image_reference_url = models.URLField(max_length=2000, blank=True, default='', db_default='')
     updated_at = models.DateTimeField(null=True, blank=True)
     objects = PublishedArticles()
-    all_objects = models.Manager()
+    all_objects = models.Manager.from_queryset(PublicArticleQuerySet)()
     archived = models.BooleanField(default=False, db_index=True)
     imported = models.BooleanField(default=False)
     ingestion_key = models.CharField(max_length=64, unique=True, null=True, blank=True)
@@ -71,6 +96,7 @@ class NewsArticle(models.Model):
     categories = models.ManyToManyField(NewsCategory, related_name="articles")
     location = models.CharField(max_length=100, blank=True, null=True)
     published_at = models.DateTimeField(default=timezone.now, db_index=True)
+    source_published_at = models.DateTimeField(null=True, blank=True)
     source = models.ForeignKey(NewsSource, on_delete=models.CASCADE)
 
     article_url = models.URLField(max_length=2000, blank=True)
@@ -201,6 +227,7 @@ class ReaderProfile(models.Model):
 
 
 class DevelopingStory(models.Model):
+    objects = models.Manager.from_queryset(PublicArticleQuerySet)()
     """Editor-maintained event; broad category similarity is not event evidence."""
     title = models.CharField(max_length=255)
     location = models.CharField(max_length=100, default="ng")
@@ -238,6 +265,7 @@ class ArticleReport(models.Model):
 
 
 class HomepagePlacement(models.Model):
+    objects = models.Manager.from_queryset(PublicArticleQuerySet)()
     article = models.ForeignKey(NewsArticle, on_delete=models.CASCADE)
     location = models.CharField(max_length=100, default="ng")
     slot = models.CharField(max_length=20, choices=[("lead", "Lead"), ("supporting", "Supporting"), ("feature", "Feature")])
@@ -247,6 +275,7 @@ class HomepagePlacement(models.Model):
 
 
 class HomepageSection(models.Model):
+    objects = models.Manager.from_queryset(PublicArticleQuerySet)()
     title = models.CharField(max_length=100)
     location = models.CharField(max_length=100, default="ng")
     category = models.ForeignKey(NewsCategory, on_delete=models.CASCADE)
@@ -266,6 +295,7 @@ class ReadingHistory(models.Model):
 class AutomationSettings(models.Model):
     # A singleton is shared by web requests and any number of workers.
     enabled = models.BooleanField(default=False)
+    trends_enabled = models.BooleanField(default=True, db_default=True)
     interval_minutes = models.PositiveIntegerField(default=60, validators=[MinValueValidator(1), MaxValueValidator(1000)])
     max_per_source = models.PositiveIntegerField(default=20)
     publish_per_source = models.PositiveIntegerField(default=2, validators=[MinValueValidator(1), MaxValueValidator(100)])
@@ -378,3 +408,43 @@ class WritingServiceHealth(models.Model):
     checked_at = models.DateTimeField(default=timezone.now)
     last_success = models.DateTimeField(null=True, blank=True)
     retry_after = models.DateTimeField(null=True, blank=True)
+
+
+class TopicPhoto(models.Model):
+    key = models.CharField(max_length=64, unique=True)
+    topic = models.CharField(max_length=100)
+    url = models.URLField(max_length=2000)
+    reference_url = models.URLField(max_length=2000)
+    credit = models.CharField(max_length=500)
+    caption = models.CharField(max_length=255)
+
+
+class SourcePhotoCheck(models.Model):
+    hosted = models.BooleanField(default=False, db_default=False)
+    fallback_requested = models.BooleanField(default=False, db_default=False)
+    article = models.OneToOneField(NewsArticle, on_delete=models.CASCADE, related_name='photo_check')
+    asset = models.OneToOneField(TopicPhoto, null=True, blank=True, on_delete=models.SET_NULL)
+    status = models.CharField(max_length=20, default='pending')
+    attempts = models.PositiveIntegerField(default=0)
+    next_attempt = models.DateTimeField(default=timezone.now, null=True, blank=True)
+    checked_at = models.DateTimeField(null=True, blank=True)
+    reason = models.CharField(max_length=300, blank=True)
+
+
+class PublicContentRevision(models.Model):
+    generation = models.PositiveBigIntegerField(default=1)
+
+
+class PublicResponseCache(models.Model):
+    key = models.CharField(max_length=64, primary_key=True)
+    generation = models.PositiveBigIntegerField()
+    payload = models.JSONField(encoder=DjangoJSONEncoder)
+    expires_at = models.DateTimeField(db_index=True)
+
+
+class TrendSnapshot(models.Model):
+    country = models.CharField(max_length=2, primary_key=True)
+    topics = models.JSONField(default=list)
+    fetched_at = models.DateTimeField(null=True, blank=True)
+    next_attempt = models.DateTimeField(default=timezone.now, db_index=True)
+    error = models.CharField(max_length=200, blank=True)

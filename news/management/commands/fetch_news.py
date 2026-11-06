@@ -207,9 +207,16 @@ class Command(BaseCommand):
                 skipped_count += 1
                 self.stderr.write(f"Article preparation blocked: {exc}")
                 continue
+            from news.source_photos import photo_url
+            page_photo = getattr(evidence, 'photo', {})
+            defaults['remote_image_url'] = photo_url(defaults['remote_image_url']) or page_photo.get('url', '')
+            if defaults['remote_image_url']:
+                defaults['image_alt'] = page_photo.get('alt') or title[:255]
+                defaults['image_credit'] = page_photo.get('credit') or f'Image via {source_name}'
+                defaults['image_reference_url'] = article_url
             defaults.update({key: prepared[key] for key in ("content", "focus_keyword", "seo_title", "seo_description")})
             if published:
-                defaults["published_at"] = published
+                defaults["source_published_at"] = published
             stats = article.get("sentiment_stats")
             if isinstance(stats, dict):
                 for label in ("positive", "neutral", "negative"):

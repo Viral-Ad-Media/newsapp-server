@@ -1,0 +1,12 @@
+.env
+.env.*
+.venv
+.local
+**/__pycache__
+**/*.pyc
+**/*.sqlite3
+docs
+news/test*.py
+news/article_test_data.py
+newsapp/test*.py
+requirements-dev.txt

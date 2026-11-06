@@ -3,4 +3,4 @@ import re
 
 def is_placeholder_image(value):
     value = str(value or "")
-    return bool(re.search(r"placeholder|feature1\.webp|abokinews/starter/story-(?:2|1[1-9]|20)(?:\.[a-z0-9]+)?(?:$|[?#])", value, re.I))
+    return bool(re.search(r"placeholder|feature1\.webp|/images/editorial/|/api/news-illustration(?:\?|$)|abokinews/starter/story-(?:2|1[1-9]|20)(?:\.[a-z0-9]+)?(?:$|[?#])", value, re.I))

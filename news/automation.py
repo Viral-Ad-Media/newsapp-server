@@ -34,6 +34,9 @@ def event(kind, message, **kwargs):
 
 
 def queue_run(trigger="manual", source=None, actor=None, dry_run=False, publishing_rules=None):
+    if source:
+        from .source_feeds import effective_source
+        source = effective_source(source)
     config()
     with transaction.atomic():
         AutomationSettings.objects.select_for_update().get(pk=1)
@@ -126,6 +129,7 @@ def feed_batch(source, cfg, run):
     return items
 
 
+@transaction.atomic
 def store_item(item, source, dry_run=False, run=None, budget=None, categories=None):
     title = strip_html_tags(item.get("title", "")).strip()[:255]
     summary = strip_html_tags(item.get("description", "")).strip()[:1000]
@@ -150,25 +154,43 @@ def store_item(item, source, dry_run=False, run=None, budget=None, categories=No
         # Failed retrieval must not consume the allowance for another publisher.
         for index in range(1, len(budget)):
             budget[index] -= 1
-    from .utils.ai_summarizer import client
-    if client is None:
-        raise ArticlePreparationError("OPENAI_API_KEY is not configured; full article cannot be prepared.")
-    from .publishing_retries import writing_hold, mark_writing_success
-    hold = writing_hold()
-    if hold:
-        raise ArticlePreparationError(hold.message, details={'code': hold.code, 'held': True, 'retry_after': max(0, int((hold.retry_after-timezone.now()).total_seconds()))})
+    from .publishing_retries import mark_writing_success
     evidence = item.get("source_text") or item.get("content") or ""
     if len(words(evidence)) < 400:
         evidence = source_evidence(url, source.url)
-    if budget is not None:
-        budget[0] -= 1
-    prepared = prepare_article(title=title, summary=summary, evidence=evidence, source_name=source.name, source_url=url)
+    from .source_photos import photo_url
+    page_photo = getattr(evidence, 'photo', {})
+    image_url = photo_url(item.get('remote_image_url'), url) or page_photo.get('url', '')
+    # Persist trusted preparation on an individual retry when only its photo is
+    # blocked. The next attempt must not pay to rewrite the same report again.
+    item['source_text'] = str(evidence)
+    if image_url: item['remote_image_url'] = image_url
+    fingerprint = hashlib.sha256(__import__('json').dumps([source.pk,url,title,summary,str(evidence)],ensure_ascii=False).encode()).hexdigest()
+    prepared = item.get('_prepared_article') if item.get('_prepared_fingerprint') == fingerprint else None
+    from .article_writing import article_quality
+    required = ('content','focus_keyword','seo_title','seo_description')
+    if not isinstance(prepared,dict) or not all(isinstance(prepared.get(field),str) for field in required) or not article_quality(prepared['content'])['passed']:
+        from .utils.ai_summarizer import client
+        from .publishing_retries import writing_hold
+        if client is None:
+            raise ArticlePreparationError('OPENAI_API_KEY is not configured; full article cannot be prepared.')
+        hold = writing_hold()
+        if hold:
+            raise ArticlePreparationError(hold.message, details={'code':hold.code,'held':True,'retry_after':max(0,int((hold.retry_after-timezone.now()).total_seconds()))})
+        if budget is not None: budget[0] -= 1
+        prepared = prepare_article(title=title, summary=summary, evidence=evidence, source_name=source.name, source_url=url)
+        item['_prepared_article'] = prepared
+        item['_prepared_fingerprint'] = fingerprint
     if not dry_run:
         mark_writing_success()
         article = NewsArticle.all_objects.create(
             title=title,
             description=summary,
             content=prepared["content"],
+            remote_image_url=image_url,
+            image_alt=(item.get("image_alt") or page_photo.get("alt") or title)[:255] if image_url else "",
+            image_credit=(item.get("image_credit") or page_photo.get("credit") or (f"Image via {source.name}" if image_url else ""))[:500],
+            image_reference_url=url if image_url else "",
             focus_keyword=prepared["focus_keyword"],
             seo_title=prepared["seo_title"],
             seo_description=prepared["seo_description"],
@@ -176,7 +198,8 @@ def store_item(item, source, dry_run=False, run=None, budget=None, categories=No
             article_url=url,
             ingestion_key=key,
             imported=True,
-            published_at=item["published_at"],
+            published_at=timezone.now(),
+            source_published_at=item["published_at"],
             author=item.get("author", "")[:255],
             location=item_location(item.get('categories'), source.location),
             total_sources=1,
@@ -187,6 +210,13 @@ def store_item(item, source, dry_run=False, run=None, budget=None, categories=No
         article.tags.add('ai-assisted-source-article')
         from .category_taxonomy import item_categories
         article.categories.add(*(categories if categories is not None else item_categories(item.get('categories'), source.default_category)))
+        if not image_url:
+            from .photo_library import cached_fallback, resolve_photo
+            photograph = cached_fallback(article) or resolve_photo(article,source_first=False)
+            if not photograph:
+                raise ArticlePreparationError('A real topic photograph is still being prepared.',details={'code':'photo_unavailable'})
+            NewsArticle.all_objects.filter(pk=article.pk).update(remote_image_url=photograph['image_url'],image_alt=photograph['image_alt'],image_credit=photograph['image_credit'],image_origin=photograph['image_origin'],image_reference_url=photograph['image_reference_url'])
+
         event(
             "publishing",
             "Imported article published",
@@ -194,6 +224,7 @@ def store_item(item, source, dry_run=False, run=None, budget=None, categories=No
             source=source,
             run=run,
             status="published",
+            details={"selection": "google_trends_match" if item.get("trend") else "source_recency", "trend": item.get("trend")},
         )
     return "eligible" if dry_run else "created"
 
@@ -282,13 +313,14 @@ def tick():
             sources = NewsSource.objects.filter(pk__in={rule['source'] for rule in run.publishing_rules}).exclude(feed_url__isnull=True).exclude(feed_url='').order_by(F('last_attempt').asc(nulls_first=True), 'id')
         elif cfg.publishing_rules and run.trigger != 'test' and not any(rule['source'] == 0 for rule in cfg.publishing_rules):
             # A rule set is the editor's selected publishing source list.
-            sources = sources.filter(pk__in={rule['source'] for rule in cfg.publishing_rules})
+            from .source_feeds import source_group_ids
+            sources = sources.filter(pk__in=source_group_ids(rule['source'] for rule in cfg.publishing_rules))
         if run.pending_sources is not None:
             sources = sources.filter(pk__in=run.pending_sources)
         source_ids = list(sources.values_list('id', flat=True))
         pending = []
         from .category_taxonomy import item_categories
-        from .publishing_limits import source_limits, publishing_window, matching_limits, has_capacity, source_has_capacity, record_publication
+        from .publishing_limits import source_limits, publishing_window, matching_limits, has_capacity, source_has_capacity, record_publication, matching_source_rules
         # Process at most 20 feeds per run; oldest attempts first prevent starvation
         # when the configured collection contains more regions than a single batch.
         from .publishing_retries import record_failure, pending_issue, feed_issue, resolve_feed
@@ -330,10 +362,11 @@ def tick():
             counts["sources"] += 1
             source.last_attempt = timezone.now()
             try:
-                per_category = not on_demand and any(rule['source'] in (0, source.pk) and rule['category'] is None for rule in cfg.publishing_rules)
+                per_category = not on_demand and any(rule['category'] is None for rule in matching_source_rules(cfg.publishing_rules, source.pk))
                 items = feed_batch(source, cfg, run)[: (100 if on_demand or per_category else cfg.max_per_source)]
                 from .seo import words
-                items.sort(key=lambda item: len(words(item.get('source_text') or item.get('content') or '')) >= 400, reverse=True)
+                from .trends import rank_items
+                items = rank_items(items, source, enabled=cfg.trends_enabled)
                 source.feed_quality = {'checked_at': timezone.now().isoformat(), 'entries': len(items), 'full_text_entries': sum(len(words(item.get('source_text') or item.get('content') or '')) >= 400 for item in items)}
                 resolve_feed(source, run)
                 eligible = 0
