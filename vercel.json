@@ -5,8 +5,11 @@
     "news-worker": {
       "root": ".",
       "entrypoint": "Dockerfile.worker",
-      "instances": { "iad1": 1 },
+      "instances": {
+        "iad1": 1
+      },
       "terminationGracePeriodSeconds": 3600
     }
-  }
+  },
+  "ignoreCommand": "python scripts/ignore-docs-build.py"
 }

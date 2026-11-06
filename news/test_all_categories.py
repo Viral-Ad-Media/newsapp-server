@@ -62,7 +62,9 @@ class AllCategoryPublishingTests(TestCase):
         self.fetch.side_effect=lambda source,timeout:[dict(title=f'{source.pk} report {i}',description='Summary',article_url=f'https://example.org/{source.pk}/multi/{i}',published_at=timezone.now()-timedelta(minutes=5),categories=labels) for i,labels in enumerate([['Sports','Business'],['Sports'],['Business']])]
         self.save_settings(publishing_rules=[{'source':self.sources[0].pk,'category':None,'limit':1}])
         queue_run(); self.drain()
-        self.assertEqual(NewsArticle.objects.count(),1)
+        self.assertEqual(NewsArticle.objects.count(),2)
+        self.assertEqual(NewsArticle.objects.filter(categories=self.sports).count(),1)
+        self.assertEqual(NewsArticle.objects.filter(categories=self.business).count(),1)
         window=SourcePublishingWindow.objects.get(source=self.sources[0])
         self.assertEqual(window.counts[str(self.sports.pk)],1)
         self.assertEqual(window.counts[str(self.business.pk)],1)

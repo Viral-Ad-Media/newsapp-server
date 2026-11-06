@@ -1,4 +1,4 @@
-"""Match complete country tokens; a country edition never includes the global desk."""
+"""Country editions match precise tokens; the World edition includes every report."""
 import re
 from django.db.models import Q
 
@@ -44,4 +44,6 @@ def country_query(location, field="location"):
     return Q(**{f"{field}__iregex": pattern})
 
 def filter_country(queryset, location):
+    if normalize_country(location) == "world":
+        return queryset
     return queryset.filter(country_query(location)) if location else queryset

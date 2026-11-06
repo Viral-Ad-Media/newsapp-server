@@ -111,6 +111,16 @@ class Command(BaseCommand):
                         continue
                     defaults.update({key: prepared[key] for key in ("content", "focus_keyword", "seo_title", "seo_description")})
                     defaults["imported"] = True
+                    from django.utils import timezone as django_timezone
+                    defaults['source_published_at'] = published_at
+                    defaults['published_at'] = previous.published_at if previous else django_timezone.now()
+                    from news.source_photos import photo_url
+                    page_photo = getattr(evidence, 'photo', {})
+                    defaults['remote_image_url'] = photo_url(defaults.get('remote_image_url')) or page_photo.get('url', '')
+                    if defaults['remote_image_url']:
+                        defaults['image_alt'] = page_photo.get('alt') or item['title'][:255]
+                        defaults['image_credit'] = page_photo.get('credit') or f'Image via {source.name}'
+                        defaults['image_reference_url'] = item['article_url']
 
                 article, was_created = NewsArticle.objects.update_or_create(
                     article_url=item["article_url"],

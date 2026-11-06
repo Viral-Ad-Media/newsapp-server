@@ -263,3 +263,42 @@ class ReaderUpdatesTests(TestCase):
                 ).status_code,
                 400,
             )
+
+class PublicationVisibilityTests(TestCase):
+    @patch('news.utils.ai_summarizer.client', new=object())
+    @patch('news.article_writing.prepare_article')
+    def test_imported_old_report_is_new_in_latest_live_and_24_hours(self, prepare):
+        from .automation import store_item
+        from .test_article_writing import PREPARED
+        prepare.return_value = PREPARED
+        source = NewsSource.objects.create(name='Publisher',url='https://example.org',location='ng')
+        original = timezone.now()-timedelta(days=7)
+        item = {'title':'Newly published football report','description':'A real source report','article_url':'https://example.org/new-report','published_at':original,'content':' '.join(['Evidence']*450),'categories':['Sports']}
+        store_item(item,source,False)
+        article=NewsArticle.objects.get(title=item['title'])
+        self.assertEqual(article.source_published_at, original)
+        self.assertGreater(article.published_at, timezone.now()-timedelta(minutes=1))
+        client=APIClient();user=get_user_model().objects.create_user('live-reader');client.force_authenticate(user)
+        for path in ['/api/news/?location=ng','/api/news/?location=ng&filter=last_day','/api/live/?location=ng']:
+            result=client.get(path)
+            self.assertEqual(result.status_code,200)
+            self.assertEqual(result.data['results'][0]['id'],article.pk)
+            self.assertIn('no-store',result['Cache-Control'])
+        edition=client.get('/api/edition/?location=ng')
+        self.assertEqual(edition.data['latest'][0]['id'],article.pk)
+
+    def test_existing_import_date_repair_preserves_original_and_manual_dates(self):
+        import importlib
+        from django.apps import apps
+        from django.db import connection
+        from types import SimpleNamespace
+        source=NewsSource.objects.create(name='Date publisher',url='https://example.org')
+        original=timezone.now()-timedelta(days=10)
+        imported=NewsArticle.all_objects.create(title='Existing import',description='Report',content='Report',source=source,imported=True,published_at=original)
+        manual=NewsArticle.all_objects.create(title='Manual article',description='Report',content='Report',source=source,published_at=original)
+        migration=importlib.import_module('news.migrations.0027_newsarticle_source_published_at')
+        for _ in range(2):migration.separate_publication_dates(apps,SimpleNamespace(connection=connection))
+        imported.refresh_from_db();manual.refresh_from_db()
+        self.assertEqual(imported.source_published_at,original)
+        self.assertEqual(imported.published_at,imported.created_at)
+        self.assertEqual(manual.published_at,original)

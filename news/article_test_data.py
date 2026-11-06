@@ -24,3 +24,8 @@ PREPARED = {
     "quality": {"passed": True, "word_count": 500},
     "seo": {"score": 85},
 }
+
+# A source-declared photograph accompanies the source text fixture. No network
+# request or real hosted image is used by these isolated publishing tests.
+from .source_photos import SourceEvidence
+FULL_ARTICLE = SourceEvidence(FULL_ARTICLE, {'url':'https://publisher.test/source-photo.jpg','alt':'Source report photograph','credit':'Fixture photographer'})

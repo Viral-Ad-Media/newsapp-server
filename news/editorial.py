@@ -1,3 +1,5 @@
+from .public_cache import cached_public, invalidate_public
+from .source_feeds import source_group_ids
 """Editorial curation and reader controls. No generated ratings or event matches."""
 from datetime import timedelta
 from urllib.parse import urlsplit
@@ -56,6 +58,7 @@ def story_payload(story, detail=False):
 
 
 class EditionView(APIView):
+    @cached_public
     def get(self, request):
         location = normalize_country(request.query_params.get("location"))
         if not location:
@@ -89,7 +92,7 @@ class EditionView(APIView):
         return Response({"location": location, **{slot: NewsArticleCardSerializer([by_id[i] for i in ids], many=True).data for slot, ids in slots.items()},
                          "latest": NewsArticleCardSerializer(latest[:6], many=True).data,
                          "sections": [{"title": s.title, "category": s.category_id, "category_name": s.category.name,
-                                       "articles": NewsArticleCardSerializer(qs.filter(categories=s.category).distinct()[:3], many=True).data} for s in sections]})
+                                       "articles": NewsArticleCardSerializer(qs.filter(categories=s.category).distinct()[:3], many=True).data} for s in sections]}, headers={"Cache-Control": "no-store"})
 
 
 class StoriesView(APIView):
@@ -113,11 +116,12 @@ class StoriesView(APIView):
 
 class SourcesView(APIView):
     def get(self, request, pk=None):
-        qs = NewsSource.objects.all().order_by("name", "id")
+        qs = NewsSource.objects.select_related("feed_owner").order_by("name", "id")
         if pk:
             source = get_object_or_404(qs, pk=pk)
-            articles = filter_country(reports().filter(source=source), request.query_params.get("location")).order_by("-published_at", "-id")
+            articles = filter_country(reports().filter(source_id__in=source_group_ids([source.pk])), request.query_params.get("location")).order_by("-published_at", "-id")
             return Response({"source": NewsSourceSerializer(source).data, "articles": NewsArticleCardSerializer(articles[:24], many=True).data})
+        qs = qs.filter(feed_owner__isnull=True)
         # Public publisher list contains neither feed URLs nor private diagnostics.
         location = request.query_params.get("location")
         if location:
@@ -127,8 +131,8 @@ class SourcesView(APIView):
 
 def preference_payload(profile):
     return {"categories": list(profile.categories.values_list("id", flat=True)),
-            "sources": list(profile.followed_sources.values_list("id", flat=True)),
-            "muted_sources": list(profile.muted_sources.values_list("id", flat=True)),
+            "sources": sorted(source_group_ids(profile.followed_sources.values_list("id", flat=True))),
+            "muted_sources": sorted(source_group_ids(profile.muted_sources.values_list("id", flat=True))),
             "stories": list(profile.followed_stories.filter(published=True).values_list("id", flat=True))}
 
 
@@ -159,6 +163,7 @@ class ReaderChoices(APIView):
             for key, values in serial.validated_data.items():
                 if len(values) > 300:
                     raise serializers.ValidationError("Choose at most 300 items per preference.")
+                values = source_group_ids([v.pk for v in values]) if key in ('sources','muted_sources') else values
                 getattr(profile, mapping[key]).set(values)
             # Muting always wins over following.
             profile.followed_sources.remove(*profile.muted_sources.all())
@@ -176,11 +181,12 @@ class ReaderChoiceDetail(ReaderChoices):
         with transaction.atomic():
             ReaderProfile.objects.get_or_create(user=request.user)
             profile = ReaderProfile.objects.select_for_update().get(user=request.user)
-            getattr(profile, {"sources": "followed_sources", "muted_sources": "muted_sources", "stories": "followed_stories"}[kind]).add(item)
+            group = source_group_ids([item.pk]) if kind in ('sources','muted_sources') else [item.pk]
+            getattr(profile, {"sources": "followed_sources", "muted_sources": "muted_sources", "stories": "followed_stories"}[kind]).add(*group)
             if kind == "sources":
-                profile.muted_sources.remove(item)
+                profile.muted_sources.remove(*group)
             if kind == "muted_sources":
-                profile.followed_sources.remove(item)
+                profile.followed_sources.remove(*group)
         return Response(preference_payload(profile))
 
     def delete(self, request, kind, pk):
@@ -190,7 +196,8 @@ class ReaderChoiceDetail(ReaderChoices):
         with transaction.atomic():
             ReaderProfile.objects.get_or_create(user=request.user)
             profile = ReaderProfile.objects.select_for_update().get(user=request.user)
-            getattr(profile, relation).remove(pk)
+            group = source_group_ids([pk]) if kind in ('sources','muted_sources') else [pk]
+            getattr(profile, relation).remove(*group)
         return Response(preference_payload(profile))
 
 
@@ -437,5 +444,6 @@ class CoverageMonitor(APIView):
 
 
 def filter_location(value, code):
+    if code == "world": return True
     import re
     return code in {normalize_country(token) for token in re.split(r"[,;|]", value or "")}

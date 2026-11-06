@@ -1,3 +1,4 @@
+from .trends import trends_status
 """Private operations. Existing staff role is the administrative boundary."""
 
 from datetime import timedelta
@@ -47,6 +48,33 @@ class CategoryInput(serializers.ModelSerializer):
 
 
 class SourceInput(serializers.ModelSerializer):
+    feed_url = serializers.URLField(required=False, allow_null=True, allow_blank=True, validators=[])
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.feed_owner_id:
+            from .source_feeds import effective_source
+            owner = super().to_representation(effective_source(instance))
+            for field in ('feed_url','last_attempt','last_success','last_error','retrieved','feed_quality','catalogue_verification'):
+                data[field] = owner[field]
+        return data
+
+    def create(self, validated_data):
+        result = super().create(validated_data)
+        if result.feed_owner_id and result.enabled:
+            from .source_feeds import effective_source
+            owner = effective_source(result)
+            NewsSource.objects.filter(Q(pk=owner.pk) | Q(feed_owner=owner)).update(enabled=True)
+        return result
+
+    def update(self, instance, validated_data):
+        result = super().update(instance, validated_data)
+        if 'enabled' in validated_data:
+            from .source_feeds import effective_source
+            owner = effective_source(result)
+            NewsSource.objects.filter(Q(pk=owner.pk) | Q(feed_owner=owner)).update(enabled=validated_data['enabled'])
+            result.enabled = validated_data['enabled']
+        return result
     article_count = serializers.IntegerField(read_only=True)
     catalogue_verification = serializers.SerializerMethodField()
 
@@ -73,10 +101,10 @@ class SourceInput(serializers.ModelSerializer):
             "last_error",
             "retrieved",
             "article_count",
-            "catalogue_verification", "feed_quality",
+            "catalogue_verification", "feed_quality", "feed_owner",
             "description", "review_notes", "review_evidence_url", "reviewed_at", "review_status", "publisher_group",
         ]
-        read_only_fields = ["last_attempt", "last_success", "last_error", "retrieved", "reviewed_at", "feed_quality"]
+        read_only_fields = ["last_attempt", "last_success", "last_error", "retrieved", "reviewed_at", "feed_quality", "feed_owner"]
 
     def validate_location(self, value):
         from .regions import normalize_country
@@ -88,25 +116,39 @@ class SourceInput(serializers.ModelSerializer):
     def validate(self, data):
         feed = data.get("feed_url", getattr(self.instance, "feed_url", None))
         enabled = data.get("enabled", getattr(self.instance, "enabled", False))
+        from .source_feeds import OFFICIAL_FEEDS, publisher_host, effective_source, catalogue_feed
+        publisher_url = data.get('url', getattr(self.instance, 'url', ''))
+        official = OFFICIAL_FEEDS.get(publisher_host(publisher_url))
+        if self.instance and self.instance.feed_owner_id and (not feed or feed == effective_source(self.instance).feed_url):
+            owner = effective_source(self.instance)
+            feed = owner.feed_url
+            data.update(feed_owner=owner, feed_url=None)
+        elif self.instance and self.instance.feed_owner_id and 'feed_url' in data:
+            data['feed_owner'] = None
         if enabled and not (feed or '').strip():
-            from .source_feeds import catalogue_feed
-            feed = catalogue_feed(data.get('name', getattr(self.instance, 'name', '')), data.get('url', getattr(self.instance, 'url', '')), data.get('location', getattr(self.instance, 'location', 'world')))
+            feed = official['feed'] if official else catalogue_feed(data.get('name', getattr(self.instance, 'name', '')), publisher_url, data.get('location', getattr(self.instance, 'location', 'world')))
             if not feed:
                 from .source_feeds import discover_feed
-                feed = discover_feed(data.get('url', getattr(self.instance, 'url', '')))
+                feed = discover_feed(publisher_url)
             if feed:
-                if NewsSource.objects.filter(feed_url=feed).exclude(pk=getattr(self.instance, 'pk', None)).exists():
-                    raise serializers.ValidationError({'feed_url': 'This publisher feed already exists under another source. Enable that configured source instead.'})
                 data['feed_url'] = feed
-        if feed and (not self.instance or 'feed_url' in data or (enabled and not self.instance.enabled)):
+                if official:
+                    data.update(url=official['url'], location=official['location'])
+                    if not data.get('default_category', getattr(self.instance, 'default_category', None)):
+                        data['default_category'] = NewsCategory.objects.filter(name__iexact=official['category']).first()
+        if feed:
+            owner = NewsSource.objects.filter(feed_url=feed).exclude(pk=getattr(self.instance,'pk',None)).first()
+            if owner:
+                if publisher_host(publisher_url) != publisher_host(owner.url):
+                    raise serializers.ValidationError({'feed_url':'This feed is already configured for another publisher.'})
+                data.update(feed_owner=effective_source(owner), feed_url=None)
+        if feed and not data.get('feed_owner') and not (official and feed == official['feed']) and (not self.instance or 'feed_url' in data or (enabled and not self.instance.enabled)):
             try:
                 validate_feed_url(feed)
             except ValueError as exc:
-                raise serializers.ValidationError({"feed_url": str(exc)})
+                raise serializers.ValidationError({'feed_url': str(exc)})
         if enabled and not feed:
-            raise serializers.ValidationError(
-                {"feed_url": "No known RSS feed is configured for this source. Edit the source and add its publisher RSS/Atom URL before enabling."}
-            )
+            raise serializers.ValidationError({'feed_url':'No publisher feed is configured. Add a publisher-advertised RSS/Atom URL before enabling.'})
         if data.get("review_status", getattr(self.instance, "review_status", "unreviewed")) == "reviewed":
             if not data.get("review_notes", getattr(self.instance, "review_notes", "")).strip() or not data.get("review_evidence_url", getattr(self.instance, "review_evidence_url", "")):
                 raise serializers.ValidationError("A reviewed source needs public review notes and an evidence URL.")
@@ -226,7 +268,7 @@ class SettingsInput(serializers.ModelSerializer):
     def to_internal_value(self, data):
         if set(data) - {
             "enabled",
-            "interval_minutes",
+            "interval_minutes", "trends_enabled",
             "max_per_source",
             "publish_per_source",
             "publishing_rules",
@@ -246,6 +288,9 @@ class SettingsInput(serializers.ModelSerializer):
     def validate_publishing_rules(self, rules):
         if len(rules) > 200:
             raise serializers.ValidationError('Use at most 200 publishing rules.')
+        from .source_feeds import effective_source
+        mapping = {s.pk: effective_source(s).pk for s in NewsSource.objects.filter(pk__in={r['source'] for r in rules if r['source']}).select_related('feed_owner')}
+        rules = [{**r, 'source': mapping.get(r['source'], r['source'])} for r in rules]
         source_ids = {rule['source'] for rule in rules if rule['source'] != 0}
         if any(rule['source'] == 0 for rule in rules) and source_ids:
             raise serializers.ValidationError('Use All sources rules or individual source rules, not both.')
@@ -279,7 +324,7 @@ class SettingsInput(serializers.ModelSerializer):
     class Meta:
         model = AutomationSettings
         fields = [
-            "enabled",
+            "enabled", "trends_enabled",
             "interval_minutes",
             "max_per_source",
             "publish_per_source",
@@ -402,6 +447,7 @@ class AdminAPI(APIView):
                     "settings": SettingsInput(cfg).data,
                     "retry_summary": retry_summary(),
                     "writing_service": writing_health(),
+                    "trends": trends_status(),
                     "last_run": RunOutput(last).data if last else None,
                     "active_run": RunOutput(active).data if active else None,
                     'can_cancel_pending_runs': True,
@@ -443,7 +489,11 @@ class AdminAPI(APIView):
                     value = serializers.IntegerField(min_value=1).run_validation(
                         request.query_params[key]
                     )
-                    qs = qs.filter(**{field: value})
+                    if key == 'source':
+                        from .source_feeds import source_group_ids
+                        qs = qs.filter(source_id__in=source_group_ids([value]))
+                    else:
+                        qs = qs.filter(**{field: value})
             state = request.query_params.get("status")
             if state in ["published", "archived"]:
                 qs = qs.filter(archived=state == "archived")
@@ -525,18 +575,16 @@ class AdminAPI(APIView):
                 config()
                 AutomationSettings.objects.select_for_update().get(pk=1)
                 if enable:
-                    from .source_feeds import catalogue_feed
+                    from .source_feeds import repair_feed_source
                     for source in NewsSource.objects.select_for_update().filter(Q(feed_url__isnull=True) | Q(feed_url__regex=r'^\s*$')):
-                        feed = catalogue_feed(source.name, source.url, source.location)
-                        if feed and not NewsSource.objects.filter(feed_url=feed).exclude(pk=source.pk).exists():
-                            source.feed_url = feed
-                            source.save(update_fields=['feed_url'])
-                rows = list(NewsSource.objects.select_for_update().exclude(feed_url__isnull=True).exclude(feed_url__regex=r'^\s*$').order_by('pk').values('id', 'enabled'))
+                        repair_feed_source(source)
+                configured = Q(feed_owner__isnull=False) | (Q(feed_url__isnull=False) & ~Q(feed_url__regex=r'^\s*$'))
+                rows = list(NewsSource.objects.select_for_update().filter(configured).order_by('pk').values('id','enabled'))
                 if not enable:
                     rows = list(NewsSource.objects.select_for_update().order_by('pk').values('id', 'enabled'))
                 ids = [row['id'] for row in rows if row['enabled'] != enable]
                 changed = NewsSource.objects.filter(pk__in=ids).update(enabled=enable)
-                result = {'enabled': changed, 'already_enabled': len(rows) - len(ids), 'without_feed': NewsSource.objects.count() - len(rows)}
+                result = {'enabled': changed, 'already_enabled': len(rows) - len(ids), 'without_feed': NewsSource.objects.count() - len(rows), 'unconfigured': list(NewsSource.objects.exclude(pk__in=[row['id'] for row in rows]).values('id','name'))}
                 if not enable:
                     result = {'disabled': changed, 'already_disabled': len(rows) - len(ids)}
                 event('audit', 'Enabled all configured feed sources' if enable else 'Disabled all sources', actor=request.user, details={**result, 'source_ids': ids})

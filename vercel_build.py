@@ -39,9 +39,10 @@ def main():
         raise RuntimeError("Another database deployment is running. Retry this build.")
     try:
         call_command("migrate", interactive=False)
-        call_command("seed_news")
-        call_command("seed_blog_posts")
-        call_command('configure_news_sources')
+        if os.environ.get('NEWS_BOOTSTRAP_DATA') == '1':
+            call_command('seed_news')
+            call_command('seed_blog_posts')
+            call_command('configure_news_sources')
     finally:
         with connection.cursor() as cursor:
             cursor.execute("SELECT pg_advisory_unlock(%s)", [DEPLOY_LOCK])

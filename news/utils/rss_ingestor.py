@@ -130,6 +130,9 @@ def parse_rss_or_atom_xml(
         pub_date = ""
         author = ""
         image_url = ""
+        image_alt = ""
+        image_credit = ""
+        image_markup = ""
         categories = []
 
         for node in entry:
@@ -147,7 +150,11 @@ def parse_rss_or_atom_xml(
                     link = text_val
             elif nname in ("description", "summary") and text_val:
                 description = strip_html_tags(text_val)
+                image_markup += text_val
             elif nname in ("encoded", "content") and (text_val or list(node)):
+                image_markup += text_val
+                if list(node):
+                    image_markup += "".join(ET.tostring(child, encoding="unicode") for child in node)
                 candidate = strip_html_tags(" ".join(node.itertext()))
                 if len(candidate) > len(content):
                     content = candidate
@@ -160,6 +167,8 @@ def parse_rss_or_atom_xml(
                     for sub in node:
                         if _local_name(sub.tag).lower() == "name" and (sub.text or "").strip():
                             author = sub.text.strip()
+            elif nname == "credit" and text_val:
+                image_credit = strip_html_tags(text_val)[:500]
             elif nname == "category":
                 cat_term = node.attrib.get("term") or text_val
                 if cat_term:
@@ -195,6 +204,11 @@ def parse_rss_or_atom_xml(
             except (ValueError, TypeError):
                 items.append({})
                 continue
+        from news.source_photos import photo_url, feed_photo
+        image_url = photo_url(image_url, link or channel_link)
+        if not image_url:
+            candidate = feed_photo(image_markup, link or channel_link)
+            image_url, image_alt = candidate['url'], candidate['alt']
         summary_text = description or content[:320]
         full_content = content if len(content) > len(summary_text) else summary_text
 
@@ -210,6 +224,8 @@ def parse_rss_or_atom_xml(
                 "source_text": content or description,
                 "published_at": parse_rss_date(pub_date),
                 "remote_image_url": image_url,
+                "image_alt": image_alt,
+                "image_credit": image_credit,
                 "location": default_location,
                 "categories": categories[:3] if categories else [default_category],
             }

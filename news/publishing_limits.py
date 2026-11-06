@@ -4,8 +4,14 @@ from datetime import timedelta
 from .models import SourcePublishingWindow, NewsCategory
 
 
+def matching_source_rules(rules, source_id):
+    from .source_feeds import source_group_ids
+    group = source_group_ids([source_id]) | {source_id, 0}
+    return [rule for rule in rules if rule['source'] in group]
+
+
 def source_limits(config, source_id, category_ids=None):
-    rules = [rule for rule in config.publishing_rules if rule["source"] in (0, source_id)]
+    rules = matching_source_rules(config.publishing_rules, source_id)
     if not rules:
         return {"*": config.publish_per_source}
     all_categories = next((rule for rule in rules if rule['category'] is None), None)

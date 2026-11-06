@@ -25,6 +25,9 @@ class CountryEditionTests(APITestCase):
         for path in ["/api/news/", "/api/lopsided/"]:
             self.assertEqual(self.ids(path, "us"), expected)
 
+    def test_world_edition_includes_all_countries_and_world_reports(self):
+        self.assertEqual(self.ids('/api/news/', 'world'), {article.pk for article in self.articles.values()})
+
     def test_uk_does_not_include_world_or_other_countries(self):
         self.assertEqual(self.ids("/api/news/", "gb"), {self.articles[key].id for key in ["gb", "uk"]})
 

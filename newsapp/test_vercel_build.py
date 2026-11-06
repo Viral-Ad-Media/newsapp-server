@@ -43,9 +43,6 @@ class VercelBuildTests(SimpleTestCase):
             command.call_args_list,
             [
                 call("migrate", interactive=False),
-                call("seed_news"),
-                call("seed_blog_posts"),
-                call('configure_news_sources'),
             ],
         )
         cursor.execute.assert_any_call(
@@ -59,6 +56,7 @@ class VercelBuildTests(SimpleTestCase):
             "VERCEL_ENV": "production",
             "DATABASE_URL": "postgresql://pooled/db",
             "DATABASE_URL_UNPOOLED": "postgresql://direct/db",
+            'NEWS_BOOTSTRAP_DATA': '1',
         },
         clear=True,
     )

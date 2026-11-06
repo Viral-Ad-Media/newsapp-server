@@ -21,7 +21,7 @@ class DocumentHTTPError(ValueError):
         )
 
 
-def validate_feed_url(url):
+def validate_feed_url(url, *, allow_query=False):
     try:
         parsed = urlsplit(url)
         if (
@@ -31,7 +31,7 @@ def validate_feed_url(url):
             or parsed.password
             or parsed.port not in (None, 443)
             or parsed.fragment
-            or parsed.query
+            or (parsed.query and not allow_query)
         ):
             raise ValueError()
         host = parsed.hostname.encode("idna").decode("ascii")
@@ -62,6 +62,7 @@ def fetch_document(
     redirects=0,
     allowed_host=None,
     url_check=None,
+    allow_query=False,
 ):
     parsed = urlsplit(url)
     if redirects and not allowed_host:
@@ -71,7 +72,7 @@ def fetch_document(
         publisher = allowed_host.lower().removeprefix("www.")
         if normalized != publisher and not normalized.endswith("." + publisher):
             raise ValueError("Redirect leaves the saved publisher domain.")
-    parsed, host, address = validate_feed_url(url)
+    parsed, host, address = validate_feed_url(url, allow_query=True) if allow_query else validate_feed_url(url)
     if url_check:
         url_check(url)
     pool = urllib3.HTTPSConnectionPool(
@@ -87,7 +88,7 @@ def fetch_document(
     try:
         response = pool.urlopen(
             "GET",
-            parsed.path or "/",
+            (parsed.path or "/") + (("?" + parsed.query) if parsed.query else ""),
             headers={
                 "Host": host,
                 "User-Agent": "AbokiNews/1.0",
@@ -112,6 +113,7 @@ def fetch_document(
                 redirects=redirects - 1,
                 allowed_host=allowed_host,
                 url_check=url_check,
+                allow_query=allow_query,
             )
         if allow_missing and response.status in (404, 410):
             return ""

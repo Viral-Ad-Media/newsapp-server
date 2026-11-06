@@ -12,3 +12,10 @@ __pycache__
 media
 staticfiles
 .vercel
+docs
+news/test*.py
+newsapp/test*.py
+**/tests
+scripts
+requirements-dev.txt
+news/article_test_data.py

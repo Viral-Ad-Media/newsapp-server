@@ -1,6 +1,7 @@
 from .article_test_data import FULL_ARTICLE, PREPARED
 from unittest.mock import patch
 from django.urls import reverse
+from django.utils import timezone
 from django.test import override_settings
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -252,7 +253,8 @@ class NewsIngestionTests(NewsFixtures):
             self.assertEqual(command.save_articles(articles), (2, 0))
             self.assertEqual(command.save_articles(articles), (0, 2))
         imported = NewsArticle.objects.get(title="Imported")
-        self.assertEqual(imported.published_at, parse_datetime("2024-10-01T10:00:00Z"))
+        self.assertEqual(imported.source_published_at, parse_datetime("2024-10-01T10:00:00Z"))
+        self.assertLess(abs((timezone.now() - imported.published_at).total_seconds()), 60)
         self.assertEqual(imported.content, PREPARED["content"])
         self.assertEqual(imported.location, "ng")
         data = NewsArticle.objects.get(title="NewsData")
