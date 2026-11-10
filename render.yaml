@@ -1,0 +1,114 @@
+# Keep Neon and Cloudinary. No Render database or persistent disk is provisioned.
+services:
+  - type: web
+    name: newsapp-server
+    runtime: python
+    repo: https://github.com/Viral-Ad-Media/newsapp-server
+    branch: main
+    region: virginia
+    plan: free
+    autoDeployTrigger: 'off'
+    buildCommand: pip install -r requirements.txt && python render_deploy.py build
+    startCommand: python render_deploy.py serve
+    healthCheckPath: /health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: PYTHONUNBUFFERED
+        value: '1'
+      - key: DEBUG
+        value: 'False'
+      - key: NEWS_BOOTSTRAP_DATA
+        value: '0'
+      - key: ALLOWED_HOSTS
+        value: localhost,127.0.0.1,newsapp-server-8zzq.onrender.com
+      - key: CORS_ALLOWED_ORIGINS
+        value: https://my-news-app-blond-six.vercel.app
+      - key: PUBLISHING_SITE_URL
+        value: https://my-news-app-blond-six.vercel.app
+      - key: PASSWORD_RESET_FRONTEND_URL
+        value: https://my-news-app-blond-six.vercel.app
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: DATABASE_URL_UNPOOLED
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: NEWS_API_KEY
+        sync: false
+      - key: NEWS_DATA_IO_API_KEY
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  # Apply only when approving the paid worker; do not run alongside Vercel's daemon.
+  - type: worker
+    name: newsapp-worker
+    runtime: python
+    repo: https://github.com/Viral-Ad-Media/newsapp-server
+    branch: main
+    region: virginia
+    plan: 0.5c-512mb
+    autoDeployTrigger: 'off'
+    buildCommand: pip install -r requirements.txt
+    startCommand: python render_deploy.py worker
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: PYTHONUNBUFFERED
+        value: '1'
+      - key: DEBUG
+        value: 'False'
+      - key: NEWS_BOOTSTRAP_DATA
+        value: '0'
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: SECRET_KEY
+      - key: DATABASE_URL
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: DATABASE_URL_UNPOOLED
+      - key: DATABASE_URL_UNPOOLED
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: DATABASE_URL_UNPOOLED
+      - key: OPENAI_API_KEY
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: OPENAI_API_KEY
+      - key: NEWS_API_KEY
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: NEWS_API_KEY
+      - key: NEWS_DATA_IO_API_KEY
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: NEWS_DATA_IO_API_KEY
+      - key: CLOUDINARY_CLOUD_NAME
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: CLOUDINARY_CLOUD_NAME
+      - key: CLOUDINARY_API_KEY
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: CLOUDINARY_API_KEY
+      - key: CLOUDINARY_API_SECRET
+        fromService:
+          type: web
+          name: newsapp-server
+          envVarKey: CLOUDINARY_API_SECRET

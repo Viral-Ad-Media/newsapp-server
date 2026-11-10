@@ -61,6 +61,13 @@ if os.environ.get('VERCEL') == '1':
         if host and host not in ALLOWED_HOSTS:
             ALLOWED_HOSTS.append(host)
 
+# Render supplies this exact hostname to the service. Do not trust *.onrender.com.
+if os.environ.get("RENDER") == "true":
+    value = os.environ.get("RENDER_EXTERNAL_HOSTNAME", "").strip().lower()
+    host = urlsplit("https://" + value).hostname if value else None
+    if host and host == value and "*" not in host and host not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(host)
+
 
 # Load the API key from environment variables
 NEWS_API_KEY = config("NEWS_API_KEY", default="")

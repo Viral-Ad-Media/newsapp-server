@@ -174,6 +174,17 @@ CI runs checks and tests on Python 3.11 and 3.12. The merged repair was validate
 
 ## Deployment and migration
 
+### Render migration
+
+The prepared Render API is `https://newsapp-server-8zzq.onrender.com`. It is awaiting
+production credentials and verification; the frontend has not been switched.
+See [the Render migration guide](docs/render-migration.md) for the API/worker
+Blueprint, preserved Neon database, secret transfer, migration locking, provider
+checks, frontend cutover and rollback. Applying `render.yaml` also provisions a
+paid continuous worker; review that resource before applying.
+
+### Existing Vercel deployment
+
 ### Neon on Vercel
 
 Connect the Neon integration to the **newsapp-server** Vercel project and ensure these variables are enabled for **Production**:
