@@ -6,6 +6,17 @@ from django.test import SimpleTestCase
 
 
 class DeploymentHostTests(SimpleTestCase):
+    def test_render_hostname_is_exact_and_platform_scoped(self):
+        env = {**os.environ, 'DEBUG': 'True', 'ALLOWED_HOSTS': 'api.example.test',
+               'VERCEL': '0', 'RENDER': 'true',
+               'RENDER_EXTERNAL_HOSTNAME': 'newsapp-server-8zzq.onrender.com'}
+        script = 'import json; from newsapp.settings import ALLOWED_HOSTS; print(json.dumps(ALLOWED_HOSTS))'
+        result = subprocess.run([sys.executable, '-c', script], env=env, capture_output=True, text=True, check=True)
+        self.assertEqual(json.loads(result.stdout), ['api.example.test', 'newsapp-server-8zzq.onrender.com'])
+        env['RENDER'] = 'false'
+        result = subprocess.run([sys.executable, '-c', script], env=env, capture_output=True, text=True, check=True)
+        self.assertEqual(json.loads(result.stdout), ['api.example.test'])
+
     def hosts(self, platform):
         env = {**os.environ, 'DEBUG': 'True', 'ALLOWED_HOSTS': 'api.example.test', 'VERCEL': platform,
                'VERCEL_URL': 'news-server-unique.vercel.app', 'VERCEL_BRANCH_URL': 'news-server-git-main.vercel.app',
