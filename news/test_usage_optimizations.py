@@ -77,7 +77,7 @@ class WorkerPlanTests(TestCase):
     def test_idle_probe_does_not_touch_heartbeat_or_execution_fence(self):
         cfg=config();before=cfg.worker_seen
         work_plan();cfg.refresh_from_db();self.assertEqual(cfg.worker_seen,before)
-        self.assertEqual([idle_delay(i) for i in range(5)],[5,10,20,30,30])
+        self.assertEqual([idle_delay(i) for i in range(5)],[5,10,20,40,60])
 
 
 class TrendsTests(TestCase):

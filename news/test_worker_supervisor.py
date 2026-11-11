@@ -73,7 +73,7 @@ class ContinuousWorkerTests(TestCase):
                 def sleep(_):
                     if tick.call_count>=2:
                         handlers[worker.signal.SIGTERM]()
-                with patch.object(worker.time,'sleep',side_effect=sleep):
+                with patch.object(worker.Event,'wait',side_effect=sleep):
                     stderr=io.StringIO()
                     Command(stdout=io.StringIO(),stderr=stderr).handle(once=False)
                 self.assertEqual(tick.call_count,2)

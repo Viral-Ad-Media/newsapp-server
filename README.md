@@ -174,6 +174,15 @@ CI runs checks and tests on Python 3.11 and 3.12. The merged repair was validate
 
 ## Deployment and migration
 
+### Worker CPU and function storage
+
+Vercel hosts the existing news worker while the Django API runs on Render. The
+worker uses a lean readiness query, signal-interruptible idle waits and image
+retry deadlines. Vercel builds a small static worker-host page with the daemon
+instead of another Django HTTP function bundle. See [worker-efficiency.md](docs/worker-efficiency.md)
+for measured local results, idle latency, build validation, retained deployment
+storage and rollout checks. No paid Render worker is created.
+
 ### Render migration
 
 The prepared Render API is `https://newsapp-server-8zzq.onrender.com`. It is awaiting
