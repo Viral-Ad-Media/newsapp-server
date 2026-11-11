@@ -12,7 +12,7 @@ import tempfile
 import time
 
 
-def supervise(*, command=None, timeout=None, retry_delay=5, check_interval=2):
+def supervise(*, command=None, timeout=None, retry_delay=5, check_interval=15):
     timeout = timeout if timeout is not None else int(os.environ.get('NEWS_WORKER_STALL_SECONDS', '900'))
     if timeout < 120:
         raise ValueError('NEWS_WORKER_STALL_SECONDS must be at least 120 seconds.')

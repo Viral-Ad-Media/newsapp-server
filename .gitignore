@@ -149,3 +149,6 @@ GitHub.sublime-settings
 
 # Isolated local admin database and development secret
 /.local/
+
+# Static Vercel worker-host build output
+/worker-site/

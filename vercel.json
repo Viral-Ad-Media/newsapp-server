@@ -1,6 +1,26 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "python vercel_build.py",
+  "framework": null,
+  "installCommand": "",
+  "buildCommand": "python scripts/build-worker-site.py",
+  "outputDirectory": "worker-site",
+  "redirects": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://newsapp-server-8zzq.onrender.com/api/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/admin/:path*",
+      "destination": "https://newsapp-server-8zzq.onrender.com/admin/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/health/:path*",
+      "destination": "https://newsapp-server-8zzq.onrender.com/health/:path*",
+      "permanent": false
+    }
+  ],
   "daemons": {
     "news-worker": {
       "root": ".",
